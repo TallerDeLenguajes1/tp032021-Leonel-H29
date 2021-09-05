@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<nlog xmlns="http://www.nlog-project.org/schemas/NLog.xsd"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      autoReload="true"
+      internalLogLevel="Info"
+      internalLogFile="c:\temp\internal-nlog-AspNetCore.txt">
+
+  <extensions>
+    <add assembly="NLog.Web.AspNetCore"/>
+  </extensions>
+
+  <targets>
+    <target xsi:type="File" name="Empleados" fileName="..\logs\ListaEmpleados.log" />
+    <target xsi:type="File" name="Excepciones" fileName="..\logs\ListaErrores.log" />
+    
+  </targets>
+
+  <rules>
+
+    <logger name="*" level="Info" writeTo="Empleados" />
+    <logger name="*" minlevel ="Warn" maxLevel="Fatal" writeTo="Excepciones" />
+    
+  </rules>
+</nlog>

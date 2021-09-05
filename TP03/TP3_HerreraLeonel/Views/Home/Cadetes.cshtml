@@ -1,0 +1,47 @@
+﻿
+@{
+    ViewData["Title"] = "Cadetes";
+}
+
+<!--
+<h1>Cadetes</h1>
+-->
+<div class="text-center">
+    <h1 class="display-4">Registro de Empleados</h1>
+
+    <div class="card">
+        <div class="card-body">
+            <form asp-action="GuardarEmpleado" method="post">
+                <fieldset>
+                    <legend>Ingrese los datos</legend>
+                    <div class="mb-3">
+                        <label class="form-label">APELLIDO/S</label>
+                        <input type="text" id="_Apellido" name="_Apellido" class="form-control" placeholder="Ingrese sus apellidos" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">NOMBRE/S</label>
+                        <input type="text" id="_Nombre" name="_Nombre" class="form-control" placeholder="Ingrese sus nombres" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">DIRECCION</label>
+                        <input type="text" id="_Direccion" name="_Direccion" class="form-control" placeholder="Ingrese su direccion" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">FECHA DE NACIMIENTO</label>
+                        <input type="date" id="_FechaNacimiento" name="_FechaNacimiento" class="form-control" placeholder="Ingrese sus fecha de nacimiento" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">FECHA DE INGRESO</label>
+                        <input type="date" id="_FechaIngreso" name="_FechaIngreso" class="form-control" placeholder="Ingrese sus fecha de nacimiento" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" title="Enviar">ENVIAR</button>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>
