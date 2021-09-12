@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TP3_Herrera_Leonel.Entities
+namespace TP3_HerreraLeonel.Entities
 {
     public class Cadeteria
     {

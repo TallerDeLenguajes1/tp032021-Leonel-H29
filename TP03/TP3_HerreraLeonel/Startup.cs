@@ -8,11 +8,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TP3_HerreraLeonel.Entities;
 
 namespace TP3_HerreraLeonel
 {
     public class Startup
     {
+        static List<Cadete> listaCadetes = new List<Cadete>();
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -24,6 +26,7 @@ namespace TP3_HerreraLeonel
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
+            services.AddSingleton(listaCadetes);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

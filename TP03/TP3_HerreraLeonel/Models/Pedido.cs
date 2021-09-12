@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TP3_Herrera_Leonel.Entities
+namespace TP3_HerreraLeonel.Entities
 {
    
     public class Pedido
@@ -29,10 +29,10 @@ namespace TP3_Herrera_Leonel.Entities
 
         public Pedido(string observacion, Estados estado, string _Nombre, string _Direccion, string _Telefo)
         {
-            Nro = count++;
-            Observacion = observacion;
-            Estado = estado;
-            Cliente = new Cliente(_Nombre, _Direccion, _Telefo);
+            this.Nro = count++;
+            this.Observacion = observacion;
+            this.Estado = estado;
+            this.Cliente = new Cliente(_Nombre, _Direccion, _Telefo);
         }
     }
 }

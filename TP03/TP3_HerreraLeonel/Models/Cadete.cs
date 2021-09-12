@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TP3_Herrera_Leonel.Entities
+namespace TP3_HerreraLeonel.Entities
 {
     public class Cadete
     {
@@ -13,13 +13,13 @@ namespace TP3_Herrera_Leonel.Entities
         private string nombre;
         private string direccion;
         private string telefono;
-        private List<Pedido> listadoPedidos;
+        private List<Pedido> listadoPedidos = new List<Pedido>();
 
         public int Id { get => id; set => id = value; }
         public string Nombre { get => nombre; set => nombre = value; }
         public string Direccion { get => direccion; set => direccion = value; }
         public string Telefono { get => telefono; set => telefono = value; }
-        internal List<Pedido> ListadoPedidos { get => listadoPedidos; set => listadoPedidos = value; }
+        public List<Pedido> ListadoPedidos { get => listadoPedidos; set => listadoPedidos = value; }
 
         public Cadete()
         {
@@ -28,19 +28,16 @@ namespace TP3_Herrera_Leonel.Entities
 
         public Cadete(string nombre, string direccion, string telefono)
         {
-            Id = count++;
+            count++;
+            id = count;
             Nombre = nombre;
             Direccion = direccion;
             Telefono = telefono;
-            ListadoPedidos = new List<Pedido>();
         }
 
         public void AgregarPedido(Pedido P)
         {
-            if(P.Estado != Pedido.Estados.Entregado)
-            {
-                ListadoPedidos.Add(P);
-            }
+            ListadoPedidos.Add(P);
         }
 
         public int Pago()

@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using TP3_HerreraLeonel.Models;
-using TP3_Herrera_Leonel.Entities;
+using TP3_HerreraLeonel.Entities;
 
 namespace TP3_HerreraLeonel.Controllers
 {

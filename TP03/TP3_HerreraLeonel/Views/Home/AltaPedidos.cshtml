@@ -2,14 +2,14 @@
 @{
     ViewData["Title"] = "Alta Pedidos";
 }
-@model List<TP3_Herrera_Leonel.Entities.Cadete>
+@model List<TP3_HerreraLeonel.Entities.Cadete>
 
 <div class="text-center">
-    <h1 class="display-4">Registro de Cadetes</h1>
+    <h1 class="display-4">Alta de Pedidos</h1>
 
     <div class="card">
         <div class="card-body">
-            <form asp-action="AltaCadetes" method="post">
+            <form asp-action="AltaPedidos" method="post">
                 <fieldset>
                     <legend>Ingrese los datos</legend>
 
@@ -31,7 +31,8 @@
                     </div>
                     <div>
                         <label for="Cadete" class="form-label">CADETE</label>
-                        <select class="form-select" aria-label="Default select example" name="_IdCadete" id="_IdCadete">
+                        <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" name="_IdCadete" id="_IdCadete">
+                            <option selected disabled>--SELECCIONE UN CADETE--</option>
                             @foreach (var item in Model)
                             {
                                 <option value="@item.Id">@item.Nombre</option>
