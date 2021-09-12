@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TP03
+namespace TP3_Herrera_Leonel.Entities
 {
-    class Cadete
+    public class Cadete
     {
+        private static int count = 0;
         private int id;
         private string nombre;
         private string direccion;
@@ -25,9 +26,9 @@ namespace TP03
 
         }
 
-        public Cadete(int id, string nombre, string direccion, string telefono)
+        public Cadete(string nombre, string direccion, string telefono)
         {
-            Id = id;
+            Id = count++;
             Nombre = nombre;
             Direccion = direccion;
             Telefono = telefono;
@@ -36,10 +37,23 @@ namespace TP03
 
         public void AgregarPedido(Pedido P)
         {
-            if(P.Estado != Estados.Entregado)
+            if(P.Estado != Pedido.Estados.Entregado)
             {
                 ListadoPedidos.Add(P);
             }
+        }
+
+        public int Pago()
+        {
+            int aux = 0;
+            foreach (var item in listadoPedidos)
+            {
+                if (item.Estado == Pedido.Estados.Entregado)
+                {
+                    aux += 100;
+                }
+            }
+            return aux;
         }
     }
 }

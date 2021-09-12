@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TP03
+namespace TP3_Herrera_Leonel.Entities
 {
-    class Cliente
+    public class Cliente
     {
+        private static int count = 0;
         private int id;
         private string nombre;
         private string direccion;
@@ -23,17 +24,18 @@ namespace TP03
 
         }
 
-        public Cliente(int id, string nombre, string direccion, string telefono)
+        public Cliente(string nombre, string direccion, string telefono)
         {
-            Id = id;
+            Id = count++;
             Nombre = nombre;
             Direccion = direccion;
             Telefono = telefono;
         }
-
+        /*
         public static Cliente CrearCliente()
         {
             return new Cliente();
         }
+        */
     }
 }

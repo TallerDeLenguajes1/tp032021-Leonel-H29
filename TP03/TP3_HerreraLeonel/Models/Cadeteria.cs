@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TP03
+namespace TP3_Herrera_Leonel.Entities
 {
-    class Cadeteria
+    public class Cadeteria
     {
         private string nombre;
         private List<Cadete> listadoCadetes;

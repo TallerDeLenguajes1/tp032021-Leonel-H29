@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TP03
+namespace TP3_Herrera_Leonel.Entities
 {
-    public enum Estados {Recibido, En_Camino, Entregado};
-
-    class Pedido
+   
+    public class Pedido
     {
+        private static int count = 0;
+        public enum Estados { Recibido, En_Camino, Entregado };
         private int nro;
         private string observacion;
         private Cliente cliente;
@@ -26,12 +27,12 @@ namespace TP03
 
         }
 
-        public Pedido(int nro, string observacion, Estados estado)
+        public Pedido(string observacion, Estados estado, string _Nombre, string _Direccion, string _Telefo)
         {
-            Nro = nro;
+            Nro = count++;
             Observacion = observacion;
             Estado = estado;
-            Cliente = Cliente.CrearCliente();
+            Cliente = new Cliente(_Nombre, _Direccion, _Telefo);
         }
     }
 }

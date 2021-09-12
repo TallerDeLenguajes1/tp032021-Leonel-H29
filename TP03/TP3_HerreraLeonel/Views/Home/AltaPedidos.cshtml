@@ -1,0 +1,48 @@
+﻿
+@{
+    ViewData["Title"] = "Alta Pedidos";
+}
+@model List<TP3_Herrera_Leonel.Entities.Cadete>
+
+<div class="text-center">
+    <h1 class="display-4">Registro de Cadetes</h1>
+
+    <div class="card">
+        <div class="card-body">
+            <form asp-action="AltaCadetes" method="post">
+                <fieldset>
+                    <legend>Ingrese los datos</legend>
+
+                    <div class="mb-3">
+                        <label for="name" class="form-label">NOMBRE COMPLETO</label>
+                        <input type="text" class="form-control" id="_NombreClie" name="_NombreClie" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="address" class="form-label">DIRECCION</label>
+                        <input type="text" class="form-control" id="_DireccionClie" name="_DireccionClie" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phoneNumber" class="form-label">TELEFONO</label>
+                        <input type="text" class="form-control" id="_TelefonoClie" name="_TelefonoClie" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Observations" class="form-label">OBSERVACIONES</label>
+                        <textarea type="text" class="form-control" id="_Obs" name="_Obs"></textarea>
+                    </div>
+                    <div>
+                        <label for="Cadete" class="form-label">CADETE</label>
+                        <select class="form-select" aria-label="Default select example" name="_IdCadete" id="_IdCadete">
+                            @foreach (var item in Model)
+                            {
+                                <option value="@item.Id">@item.Nombre</option>
+                            }
+
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" title="Enviar">ENVIAR</button>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>

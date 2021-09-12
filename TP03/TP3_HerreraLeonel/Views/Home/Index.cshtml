@@ -1,12 +1,41 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-
+@model List<TP3_Herrera_Leonel.Entities.Cadete>
 <div class="text-center">
-    <h1 
-        class="display-4"
-        style="font-family:Impact"
-    >
-        TP3: HERRERA LEONEL
-    </h1>
+    <div class="alert alert-secondary" role="alert">
+        <h1 class="display-4"
+            style="font-family:Impact">
+            TP3: HERRERA LEONEL ESTEBAN
+        </h1>
+    </div>
+
+
+
+    <div class="text-center">
+        <h1 class="display-4">Lista de Cadetes</h1>
+
+        <table class="table table-striped">
+
+            <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">Direccion</th>
+                <th scope="col">Telefono</th>
+                <th scope="col">Cantidad de Pedidos</th>
+            </tr>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Nombre</td>
+                    <td>@item.Direccion</td>
+                    <td>@item.Telefono</td>
+                    <td>@item.ListadoPedidos.Count()</td>
+                </tr>
+            }
+
+        </table>
+
+    </div>
+
+
 </div>
