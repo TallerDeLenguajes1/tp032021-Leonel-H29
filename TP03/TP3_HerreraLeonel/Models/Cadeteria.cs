@@ -8,21 +8,13 @@ namespace TP3_HerreraLeonel.Entities
 {
     public class Cadeteria
     {
-        private string nombre;
-        private List<Cadete> listadoCadetes;
-
-        public string Nombre { get => nombre; set => nombre = value; }
-        internal List<Cadete> ListadoCadetes { get => listadoCadetes; set => listadoCadetes = value; }
+        public List<Cadete> ListadoCadetes { get; set; }
+        public List<Pedido> ListadoPedidos { get; set; }
 
         public Cadeteria()
         {
-
-        }
-
-        public Cadeteria(string nombre)
-        {
-            Nombre = nombre;
             ListadoCadetes = new List<Cadete>();
+            ListadoPedidos = new List<Pedido>();
         }
     }
 }
