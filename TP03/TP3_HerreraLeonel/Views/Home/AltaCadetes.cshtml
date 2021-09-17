@@ -1,38 +1,8 @@
 ﻿
 @{
-    ViewData["Title"] = "Alta Cadetes";
+    ViewData["Title"] = "Home";
 }
 
 <!--
 <h1>Cadetes</h1>
 -->
-<div class="text-center">
-    <h1 class="display-4">Registro de Cadetes</h1>
-
-    <div class="card">
-        <div class="card-body">
-            <form asp-action="AltaCadetes" method="post">
-                <fieldset>
-                    <legend>Ingrese los datos</legend>
-
-                    <div class="mb-3">
-                        <label class="form-label">NOMBRE/S</label>
-                        <input type="text" id="_Nombre" name="_Nombre" class="form-control" placeholder="Ingrese sus nombre completo" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">DIRECCION</label>
-                        <input type="text" id="_Direccion" name="_Direccion" class="form-control" placeholder="Ingrese su direccion" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">TELEFONO</label>
-                        <input type="text" id="_Telefono" name="_Telefono" class="form-control" placeholder="Ingrese su numero de telefono" required>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary" title="Enviar">ENVIAR</button>
-                </fieldset>
-            </form>
-        </div>
-    </div>
-</div>

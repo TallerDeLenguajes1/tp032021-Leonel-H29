@@ -10,12 +10,12 @@ using TP3_HerreraLeonel.Entities;
 
 namespace TP3_HerreraLeonel.Controllers
 {
-    public class PedidosController : Controller
+    public class PedidoController : Controller
     {
-        private readonly ILogger<PedidosController> _logger;
+        private readonly ILogger<PedidoController> _logger;
         private readonly DBTemporal dB;
 
-        public PedidosController(ILogger<PedidosController> logger, DBTemporal dataBase)
+        public PedidoController(ILogger<PedidoController> logger, DBTemporal dataBase)
         {
             _logger = logger;
             dB = dataBase;
@@ -33,7 +33,7 @@ namespace TP3_HerreraLeonel.Controllers
         }
        
 
-        public IActionResult AltaPedidos(string _NombreClie, string _DireccionClie, string _TelefonoClie, string _Obs, Pedido.Estados _Estado, int _IdCadete)
+        public IActionResult AltaPedido(string _NombreClie, string _DireccionClie, string _TelefonoClie, string _Obs, Pedido.Estados _Estado, int _IdCadete)
         {
             if (_NombreClie == null || _DireccionClie == null || _TelefonoClie == null)
             {
