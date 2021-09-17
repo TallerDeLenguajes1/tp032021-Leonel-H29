@@ -30,17 +30,17 @@ namespace TP3_HerreraLeonel.Controllers
         {
             return View();
         }
-        public IActionResult AltaCadetes(string _Nombre, string _Direccion, string _Telefono)
+        public IActionResult AltaCadete(string _Nombre, string _Direccion, string _Telefono)
         {
             if (_Nombre == null || _Direccion == null || _Telefono == null)
             {
-                return View();
+                return View(dB.Cadeteria.ListadoCadetes);
             }
             else
             {
                 Cadete nuevoCadete = new Cadete(_Nombre, _Direccion, _Telefono);
                 dB.Cadeteria.ListadoCadetes.Add(nuevoCadete);
-                return View();
+                return View(dB.Cadeteria.ListadoCadetes);
             }
         }
 
