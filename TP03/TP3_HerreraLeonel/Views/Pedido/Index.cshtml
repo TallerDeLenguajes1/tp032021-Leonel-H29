@@ -1,5 +1,43 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    ViewData["Title"] = "Listado de Pedidos";
 }
+@model List<TP3_HerreraLeonel.Entities.Pedido>
+
+<div class="text-center">
+
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#">Listado</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-controller="Pedido" asp-action="AltaPedido" title="Alta">Alta</a>
+        </li>
+    </ul>
+    <h1 class="display-4">Lista de Pedidos</h1>
+
+    <table class="table table-striped">
+
+        <tr>
+            <th scope="col">N°</th>
+            <th scope="col">Observacion</th>
+            <th scope="col" colspan="3">Cliente</th>
+            <th scope="col">Estado</th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td><b>@item.Nro</b></td>
+                <td>@item.Observacion</td>
+                <td>@item.Cliente.Nombre</td>
+                <td>@item.Cliente.Direccion</td>
+                <td>@item.Cliente.Telefono</td>
+                <td>@item.Estado</td>
+            </tr>
+        }
+
+    </table>
+
+</div>
+
+
+

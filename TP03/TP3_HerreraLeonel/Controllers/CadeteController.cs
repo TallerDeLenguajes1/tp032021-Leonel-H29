@@ -43,6 +43,11 @@ namespace TP3_HerreraLeonel.Controllers
                 return View(dB.Cadeteria.ListadoCadetes);
             }
         }
+        public void DeleteAll_Cadetes()
+        {
+            dB.Cadeteria.DeleteAllCadetes();   
+            //return View();
+        }
 
         public void CargarCadete(string _Nombre, string _Direccion, string _Telefono)
         {

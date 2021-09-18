@@ -19,12 +19,12 @@ namespace TP3_HerreraLeonel.Entities
         public int Nro { get => nro; set => nro = value; }
         public string Observacion { get => observacion; set => observacion = value; }
         
-        internal Cliente Cliente { get => cliente; set => cliente = value; }
+        public Cliente Cliente { get => cliente; set => cliente = value; }
         public Estados Estado { get => estado; set => estado = value; }
 
         public Pedido()
         {
-
+            this.Cliente = new Cliente();
         }
 
         public Pedido(string observacion, Estados estado, string _Nombre, string _Direccion, string _Telefo)
@@ -34,5 +34,6 @@ namespace TP3_HerreraLeonel.Entities
             this.Estado = estado;
             this.Cliente = new Cliente(_Nombre, _Direccion, _Telefo);
         }
+
     }
 }

@@ -24,7 +24,7 @@ namespace TP3_HerreraLeonel.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return View(dB.Cadeteria.ListadoPedidos);
         }
 
         public IActionResult Privacy()
@@ -50,13 +50,19 @@ namespace TP3_HerreraLeonel.Controllers
                         item.AgregarPedido(nuevoPedido);
                     }
                 }
+                dB.Cadeteria.ListadoPedidos.Add(nuevoPedido);
 
                 return View(dB.Cadeteria.ListadoCadetes);
             }
         }
+        public IActionResult DeleteAll_Pedidos()
+        {
+            dB.Cadeteria.DeleteAllPedidos();
+            return View(dB.Cadeteria.ListadoCadetes);
+        }
 
 
-        
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
