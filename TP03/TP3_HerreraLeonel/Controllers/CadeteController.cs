@@ -43,6 +43,11 @@ namespace TP3_HerreraLeonel.Controllers
                 return View(dB.Cadeteria.ListadoCadetes);
             }
         }
+        public void Eliminar_Cadetes(int id)
+        {
+            dB.Cadeteria.ListadoCadetes.Remove(dB.Cadeteria.ListadoCadetes[id]);
+            //return View();
+        }
         public void DeleteAll_Cadetes()
         {
             dB.Cadeteria.DeleteAllCadetes();   

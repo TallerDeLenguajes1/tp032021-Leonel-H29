@@ -29,7 +29,8 @@ namespace TP3_HerreraLeonel.Entities
 
         public Pedido(string observacion, Estados estado, string _Nombre, string _Direccion, string _Telefo)
         {
-            this.Nro = count++;
+            count++;
+            this.Nro = count;
             this.Observacion = observacion;
             this.Estado = estado;
             this.Cliente = new Cliente(_Nombre, _Direccion, _Telefo);
