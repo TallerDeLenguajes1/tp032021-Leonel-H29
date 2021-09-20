@@ -14,7 +14,8 @@ namespace TP3_HerreraLeonel
 {
     public class Startup
     {
-        static List<Cadete> listaCadetes = new List<Cadete>();
+        //static List<Cadete> listaCadetes = new List<Cadete>();
+        static DBTemporal DB = new DBTemporal();
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -26,7 +27,7 @@ namespace TP3_HerreraLeonel
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
-            services.AddSingleton(listaCadetes);
+            services.AddSingleton(DB);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
