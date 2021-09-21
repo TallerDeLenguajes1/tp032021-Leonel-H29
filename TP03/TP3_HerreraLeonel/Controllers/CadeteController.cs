@@ -43,15 +43,20 @@ namespace TP3_HerreraLeonel.Controllers
                 return View(dB.Cadeteria.ListadoCadetes);
             }
         }
-        public void Eliminar_Cadetes(int id)
+        public void EliminarCadete(int id)
         {
-            dB.Cadeteria.ListadoCadetes.Remove(dB.Cadeteria.ListadoCadetes[id]);
-            //return View();
+            for(int i=0; i<dB.Cadeteria.ListadoCadetes.Count(); i++)
+            {
+                if (dB.Cadeteria.ListadoCadetes[i].Id == id)
+                {
+                    dB.Cadeteria.ListadoCadetes.Remove(dB.Cadeteria.ListadoCadetes[i]);
+                    break;
+                }
+            }
         }
         public void DeleteAll_Cadetes()
         {
             dB.Cadeteria.DeleteAllCadetes();   
-            //return View();
         }
 
         public void CargarCadete(string _Nombre, string _Direccion, string _Telefono)
