@@ -43,6 +43,49 @@ namespace TP3_HerreraLeonel.Controllers
                 return View(dB.Cadeteria.ListadoCadetes);
             }
         }
+
+        public IActionResult ModificarCadete(int id)
+        {
+            //Cadete nuevoCadete = new Cadete(_Nombre, _Direccion, _Telefono);
+            //dB.Cadeteria.ListadoCadetes.Add(nuevoCadete);
+            //return View(dB.Cadeteria.ListadoCadetes);
+            Cadete cadeteADevolver = null;
+            for (int i = 0; i < dB.Cadeteria.ListadoCadetes.Count(); i++)
+            {
+                if (dB.Cadeteria.ListadoCadetes[i].Id == id)
+                {
+                    cadeteADevolver = dB.Cadeteria.ListadoCadetes[i];
+                    break;
+                }
+            }
+            if (cadeteADevolver != null)
+                return View(cadeteADevolver);
+            else
+                return Redirect("Index");
+        }
+
+        public IActionResult ModificarUnCadete(int id, string _Nombre, string _Direccion, string _Telefono)
+        {
+            //Cadete nuevoCadete = new Cadete(_Nombre, _Direccion, _Telefono);
+            //dB.Cadeteria.ListadoCadetes.Add(nuevoCadete);
+            //return View(dB.Cadeteria.ListadoCadetes);
+            Cadete cadeteAModificar = null;
+            for (int i = 0; i < dB.Cadeteria.ListadoCadetes.Count(); i++)
+            {
+                if (dB.Cadeteria.ListadoCadetes[i].Id == id)
+                {
+                    cadeteAModificar = dB.Cadeteria.ListadoCadetes[i];
+                    break;
+                }
+            }
+            if (cadeteAModificar != null)
+            {
+                cadeteAModificar.Nombre = _Nombre;
+                cadeteAModificar.Direccion = _Direccion;
+                cadeteAModificar.Telefono = _Telefono;
+            }
+            return Redirect("Index");
+        }
         public void EliminarCadete(int id)
         {
             for(int i=0; i<dB.Cadeteria.ListadoCadetes.Count(); i++)
@@ -53,6 +96,7 @@ namespace TP3_HerreraLeonel.Controllers
                     break;
                 }
             }
+            //redirect! 
         }
         public void DeleteAll_Cadetes()
         {
