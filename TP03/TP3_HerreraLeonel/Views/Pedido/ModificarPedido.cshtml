@@ -1,0 +1,74 @@
+﻿
+@{
+    ViewData["Title"] = "Alta Pedidos";
+}
+@*
+    @model List<TP3_HerreraLeonel.Entities.Cadete>
+*@
+@model TP3_HerreraLeonel.Entities.Pedido;
+<div class="text-center">
+
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-controller="Pedido" asp-action="Index" title="Lista">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-card-list" viewBox="0 0 16 16">
+                    <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z" />
+                    <path d="M5 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 5 8zm0-2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm0 5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm-1-5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zM4 8a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zm0 2.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0z" />
+                </svg>
+                Listado
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
+                    <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                </svg>
+                Alta
+            </a>
+        </li>
+    </ul>
+    <br />
+    <h1 class="display-4">Alta de Pedidos</h1>
+
+    <div class="card">
+        <div class="card-body">
+            <form asp-action="ModificarUnPedido" method="post">
+                <fieldset>
+                    <legend>Ingrese los datos</legend>
+
+                    <div class="mb-3">
+                        <input hidden type="text" id="id" name="id" class="form-control" value="@Model.Nro" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="name" class="form-label">NOMBRE COMPLETO</label>
+                        <input type="text" class="form-control" id="_NombreClie" name="_NombreClie" value="@Model.Cliente.Nombre" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="address" class="form-label">DIRECCION</label>
+                        <input type="text" class="form-control" id="_DireccionClie" name="_DireccionClie" value="@Model.Cliente.Direccion" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phoneNumber" class="form-label">TELEFONO</label>
+                        <input type="text" class="form-control" id="_TelefonoClie" name="_TelefonoClie" value="@Model.Cliente.Telefono" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Observations" class="form-label">OBSERVACIONES</label>
+                        <textarea type="text" class="form-control" id="_Obs" name="_Obs" value="@Model.Observacion"></textarea>
+                    </div>
+                    <div>
+                        <label for="Estados" class="form-label">ESTADO</label>
+                        <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" name="_Estado" id="_Estado">
+                            <option value="0" selected> Recibido</option>
+                            <option value="1"> En camino </option>
+                            <option value="2"> Entregado </option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" title="Enviar">ENVIAR</button>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>

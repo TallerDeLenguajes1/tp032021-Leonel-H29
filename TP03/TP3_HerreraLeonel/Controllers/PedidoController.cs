@@ -56,44 +56,50 @@ namespace TP3_HerreraLeonel.Controllers
             }
         }
           
-        /*
-        public IActionResult ModificarCadete(int id)
+        
+        public IActionResult ModificarPedido(int id)
         {
-            Cadete cadeteADevolver = null;
-            for (int i = 0; i < dB.Cadeteria.ListadoCadetes.Count(); i++)
+            Pedido pedidoADevolver = null;
+            for (int i = 0; i < dB.Cadeteria.ListadoPedidos.Count(); i++)
             {
-                if (dB.Cadeteria.ListadoCadetes[i].Id == id)
+                if (dB.Cadeteria.ListadoPedidos[i].Nro == id)
                 {
-                    cadeteADevolver = dB.Cadeteria.ListadoCadetes[i];
+                    pedidoADevolver = dB.Cadeteria.ListadoPedidos[i];
                     break;
                 }
             }
-            if (cadeteADevolver != null)
-                return View(cadeteADevolver);
+            if (pedidoADevolver != null)
+                return View(pedidoADevolver);
             else
                 return Redirect("Index");
         }
 
-        public IActionResult ModificarUnCadete(int id, string _Nombre, string _Direccion, string _Telefono)
+        public IActionResult ModificarUnPedido(int id, string _NombreClie, string _DireccionClie, string _TelefonoClie, string _Obs, Pedido.Estados _Estado, int _IdCadete)
         {
-            Cadete cadeteAModificar = null;
-            for (int i = 0; i < dB.Cadeteria.ListadoCadetes.Count(); i++)
+            Pedido pedidoADevolver = null;
+            for (int i = 0; i < dB.Cadeteria.ListadoPedidos.Count(); i++)
             {
-                if (dB.Cadeteria.ListadoCadetes[i].Id == id)
+                if (dB.Cadeteria.ListadoPedidos[i].Nro == id)
                 {
-                    cadeteAModificar = dB.Cadeteria.ListadoCadetes[i];
+                    pedidoADevolver= dB.Cadeteria.ListadoPedidos[i];
                     break;
                 }
             }
-            if (cadeteAModificar != null)
+            if (pedidoADevolver != null)
             {
-                cadeteAModificar.Nombre = _Nombre;
-                cadeteAModificar.Direccion = _Direccion;
-                cadeteAModificar.Telefono = _Telefono;
+                pedidoADevolver.Cliente.Nombre = _NombreClie;
+                pedidoADevolver.Cliente.Direccion = _DireccionClie;
+                pedidoADevolver.Cliente.Telefono = _TelefonoClie;
+                pedidoADevolver.Observacion = _Obs;
+                pedidoADevolver.Estado = _Estado;
+
+                //cadeteAModificar.Nombre = _Nombre;
+                //cadeteAModificar.Direccion = _Direccion;
+                //cadeteAModificar.Telefono = _Telefono;
             }
             return Redirect("Index");
         }
-        */
+        
         public IActionResult EliminarPedido(int id)
         {
             Pedido pedidoAEliminar = null;
