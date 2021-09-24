@@ -55,11 +55,66 @@ namespace TP3_HerreraLeonel.Controllers
                 return View(dB.Cadeteria.ListadoCadetes);
             }
         }
+          
+        /*
+        public IActionResult ModificarCadete(int id)
+        {
+            Cadete cadeteADevolver = null;
+            for (int i = 0; i < dB.Cadeteria.ListadoCadetes.Count(); i++)
+            {
+                if (dB.Cadeteria.ListadoCadetes[i].Id == id)
+                {
+                    cadeteADevolver = dB.Cadeteria.ListadoCadetes[i];
+                    break;
+                }
+            }
+            if (cadeteADevolver != null)
+                return View(cadeteADevolver);
+            else
+                return Redirect("Index");
+        }
+
+        public IActionResult ModificarUnCadete(int id, string _Nombre, string _Direccion, string _Telefono)
+        {
+            Cadete cadeteAModificar = null;
+            for (int i = 0; i < dB.Cadeteria.ListadoCadetes.Count(); i++)
+            {
+                if (dB.Cadeteria.ListadoCadetes[i].Id == id)
+                {
+                    cadeteAModificar = dB.Cadeteria.ListadoCadetes[i];
+                    break;
+                }
+            }
+            if (cadeteAModificar != null)
+            {
+                cadeteAModificar.Nombre = _Nombre;
+                cadeteAModificar.Direccion = _Direccion;
+                cadeteAModificar.Telefono = _Telefono;
+            }
+            return Redirect("Index");
+        }
+        */
+        public IActionResult EliminarPedido(int id)
+        {
+            Pedido pedidoAEliminar = null;
+            for (int i = 0; i < dB.Cadeteria.ListadoPedidos.Count(); i++)
+            {
+                if (dB.Cadeteria.ListadoPedidos[i].Nro == id)
+                {
+                    pedidoAEliminar = dB.Cadeteria.ListadoPedidos[i];
+                    dB.Cadeteria.ListadoPedidos.Remove(pedidoAEliminar);
+                    break;
+                }
+            }
+            return Redirect("~/Pedido");
+        }
+
         public IActionResult DeleteAll_Pedidos()
         {
             dB.Cadeteria.DeleteAllPedidos();
-            return View(dB.Cadeteria.ListadoCadetes);
+            return Redirect("~/Pedido");
         }
+
 
 
 

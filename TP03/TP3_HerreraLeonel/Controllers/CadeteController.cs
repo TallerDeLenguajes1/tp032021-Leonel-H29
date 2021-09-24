@@ -43,18 +43,11 @@ namespace TP3_HerreraLeonel.Controllers
                 return View(dB.Cadeteria.ListadoCadetes);
             }
         }
-<<<<<<< HEAD
-        public void Eliminar_Cadetes(int id)
-        {
-            dB.Cadeteria.ListadoCadetes.Remove(dB.Cadeteria.ListadoCadetes[id]);
-            //return View();
-=======
+
+       
 
         public IActionResult ModificarCadete(int id)
         {
-            //Cadete nuevoCadete = new Cadete(_Nombre, _Direccion, _Telefono);
-            //dB.Cadeteria.ListadoCadetes.Add(nuevoCadete);
-            //return View(dB.Cadeteria.ListadoCadetes);
             Cadete cadeteADevolver = null;
             for (int i = 0; i < dB.Cadeteria.ListadoCadetes.Count(); i++)
             {
@@ -72,9 +65,6 @@ namespace TP3_HerreraLeonel.Controllers
 
         public IActionResult ModificarUnCadete(int id, string _Nombre, string _Direccion, string _Telefono)
         {
-            //Cadete nuevoCadete = new Cadete(_Nombre, _Direccion, _Telefono);
-            //dB.Cadeteria.ListadoCadetes.Add(nuevoCadete);
-            //return View(dB.Cadeteria.ListadoCadetes);
             Cadete cadeteAModificar = null;
             for (int i = 0; i < dB.Cadeteria.ListadoCadetes.Count(); i++)
             {
@@ -92,23 +82,26 @@ namespace TP3_HerreraLeonel.Controllers
             }
             return Redirect("Index");
         }
-        public void EliminarCadete(int id)
+        public IActionResult EliminarCadete(int id)
         {
-            for(int i=0; i<dB.Cadeteria.ListadoCadetes.Count(); i++)
+            Cadete cadeteAEliminar = null;
+            for (int i=0; i<dB.Cadeteria.ListadoCadetes.Count(); i++)
             {
                 if (dB.Cadeteria.ListadoCadetes[i].Id == id)
                 {
-                    dB.Cadeteria.ListadoCadetes.Remove(dB.Cadeteria.ListadoCadetes[i]);
+                    cadeteAEliminar = dB.Cadeteria.ListadoCadetes[i];
+                    dB.Cadeteria.ListadoCadetes.Remove(cadeteAEliminar);
                     break;
                 }
             }
-            //redirect! 
->>>>>>> 582a322... Modificaciones varias en cadetes
+            //redirect!
+            return Redirect("~/Cadete");
+
         }
-        public void DeleteAll_Cadetes()
+        public IActionResult DeleteAll_Cadetes()
         {
-            dB.Cadeteria.DeleteAllCadetes();   
-            //return View();
+            dB.Cadeteria.DeleteAllCadetes();
+            return Redirect("~/Cadete");
         }
 
         public void CargarCadete(string _Nombre, string _Direccion, string _Telefono)
