@@ -57,7 +57,7 @@ namespace TP3_HerreraLeonel.Controllers
         }
         public IActionResult DeleteAll_Pedidos()
         {
-            dB.Cadeteria.DeleteAllPedidos();
+            //dB.Cadeteria.DeleteAllPedidos();
             return View(dB.Cadeteria.ListadoCadetes);
         }
 

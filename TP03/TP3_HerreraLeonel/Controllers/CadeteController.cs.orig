@@ -39,15 +39,17 @@ namespace TP3_HerreraLeonel.Controllers
             else
             {
                 Cadete nuevoCadete = new Cadete(_Nombre, _Direccion, _Telefono);
-                //dB.Cadeteria.ListadoCadetes.Add(nuevoCadete);
-                dB.Cadeteria.ListadoCadetes = DBTemporal.guardarCadete(nuevoCadete);
+                dB.Cadeteria.ListadoCadetes.Add(nuevoCadete);
                 return View(dB.Cadeteria.ListadoCadetes);
             }
         }
 
+<<<<<<< HEAD
         public IActionResult ModificarCadete(int id)
         {
-
+            //Cadete nuevoCadete = new Cadete(_Nombre, _Direccion, _Telefono);
+            //dB.Cadeteria.ListadoCadetes.Add(nuevoCadete);
+            //return View(dB.Cadeteria.ListadoCadetes);
             Cadete cadeteADevolver = null;
             for (int i = 0; i < dB.Cadeteria.ListadoCadetes.Count(); i++)
             {
@@ -65,6 +67,32 @@ namespace TP3_HerreraLeonel.Controllers
 
         public IActionResult ModificarUnCadete(int id, string _Nombre, string _Direccion, string _Telefono)
         {
+            //Cadete nuevoCadete = new Cadete(_Nombre, _Direccion, _Telefono);
+            //dB.Cadeteria.ListadoCadetes.Add(nuevoCadete);
+            //return View(dB.Cadeteria.ListadoCadetes);
+=======
+       
+
+        public IActionResult ModificarCadete(int id)
+        {
+            Cadete cadeteADevolver = null;
+            for (int i = 0; i < dB.Cadeteria.ListadoCadetes.Count(); i++)
+            {
+                if (dB.Cadeteria.ListadoCadetes[i].Id == id)
+                {
+                    cadeteADevolver = dB.Cadeteria.ListadoCadetes[i];
+                    break;
+                }
+            }
+            if (cadeteADevolver != null)
+                return View(cadeteADevolver);
+            else
+                return Redirect("Index");
+        }
+
+        public IActionResult ModificarUnCadete(int id, string _Nombre, string _Direccion, string _Telefono)
+        {
+>>>>>>> master
             Cadete cadeteAModificar = null;
             for (int i = 0; i < dB.Cadeteria.ListadoCadetes.Count(); i++)
             {
@@ -82,29 +110,44 @@ namespace TP3_HerreraLeonel.Controllers
             }
             return Redirect("Index");
         }
-        
-        
-        public IActionResult EliminarCadete(int id)
+<<<<<<< HEAD
+        public void EliminarCadete(int id)
         {
             for(int i=0; i<dB.Cadeteria.ListadoCadetes.Count(); i++)
             {
                 if (dB.Cadeteria.ListadoCadetes[i].Id == id)
                 {
-                    //dB.Cadeteria.ListadoCadetes.Remove(dB.Cadeteria.ListadoCadetes[i]);
-                    dB.Cadeteria.ListadoCadetes = DBTemporal.borrarCadete(i);
+                    dB.Cadeteria.ListadoCadetes.Remove(dB.Cadeteria.ListadoCadetes[i]);
                     break;
                 }
             }
+            //redirect! 
+=======
+        public IActionResult EliminarCadete(int id)
+        {
+            Cadete cadeteAEliminar = null;
+            for (int i=0; i<dB.Cadeteria.ListadoCadetes.Count(); i++)
+            {
+                if (dB.Cadeteria.ListadoCadetes[i].Id == id)
+                {
+                    cadeteAEliminar = dB.Cadeteria.ListadoCadetes[i];
+                    dB.Cadeteria.ListadoCadetes.Remove(cadeteAEliminar);
+                    break;
+                }
+            }
+            //redirect!
             return Redirect("~/Cadete");
+
+>>>>>>> master
         }
         public IActionResult DeleteAll_Cadetes()
         {
-            for (int i = 0; i < dB.Cadeteria.ListadoCadetes.Count(); i++)
-            {
-                dB.Cadeteria.ListadoCadetes = DBTemporal.borrarCadete(i);   
-            }
-            //dB.Cadeteria.DeleteAllCadetes();
+<<<<<<< HEAD
+            dB.Cadeteria.DeleteAllCadetes();   
+=======
+            dB.Cadeteria.DeleteAllCadetes();
             return Redirect("~/Cadete");
+>>>>>>> master
         }
 
         public void CargarCadete(string _Nombre, string _Direccion, string _Telefono)
