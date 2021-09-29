@@ -40,6 +40,24 @@ namespace TP3_HerreraLeonel.Entities
             return listaCadetes;
         }
 
+        public static List<Cadete> ModificarCadete(int i, Cadete cadete)
+        {
+            List<Cadete> listaCadetes = leerArchivoCadetes();
+
+            //listaPedidos.Add(pedido);
+            listaCadetes[i] = cadete;
+
+            FileStream archivoPedidos = new FileStream("Cadetes.json", FileMode.Create);
+            StreamWriter escribirPedido = new StreamWriter(archivoPedidos);
+
+            string strJson = JsonSerializer.Serialize(listaCadetes);
+            escribirPedido.WriteLine("{0}", strJson);
+
+            escribirPedido.Close();
+
+            return listaCadetes;
+        }
+
         public static List<Cadete> guardarCadete(Cadete cadete)
         {
             List<Cadete> listaCadetes = leerArchivoCadetes();
@@ -93,6 +111,24 @@ namespace TP3_HerreraLeonel.Entities
             {
                 listaPedidos = new List<Pedido>();
             }
+
+            return listaPedidos;
+        }
+
+        public static List<Pedido> ModificarPedido(int i, Pedido pedido)
+        {
+            List<Pedido> listaPedidos = leerArchivoPedidos();
+
+            //listaPedidos.Add(pedido);
+            listaPedidos[i] = pedido;
+
+            FileStream archivoPedidos = new FileStream("Pedidos.json", FileMode.Create);
+            StreamWriter escribirPedido = new StreamWriter(archivoPedidos);
+
+            string strJson = JsonSerializer.Serialize(listaPedidos);
+            escribirPedido.WriteLine("{0}", strJson);
+
+            escribirPedido.Close();
 
             return listaPedidos;
         }

@@ -23,7 +23,14 @@ namespace TP3_HerreraLeonel.Controllers
 
         public IActionResult Index()
         {
-            return View(dB.Cadeteria.ListadoCadetes);
+            try {
+                return View(DBTemporal.leerArchivoCadetes());
+            }
+            catch (Exception ex){
+                Console.WriteLine(ex);
+                return Redirect("~/Cadete"); 
+            }
+                
         }
 
         public IActionResult Privacy()
@@ -60,7 +67,7 @@ namespace TP3_HerreraLeonel.Controllers
             if (cadeteADevolver != null)
                 return View(cadeteADevolver);
             else
-                return Redirect("Index");
+                return Redirect("~/Cadete");
         }
 
         public IActionResult ModificarUnCadete(int id, string _Nombre, string _Direccion, string _Telefono)
@@ -70,7 +77,8 @@ namespace TP3_HerreraLeonel.Controllers
             {
                 if (dB.Cadeteria.ListadoCadetes[i].Id == id)
                 {
-                    cadeteAModificar = dB.Cadeteria.ListadoCadetes[i];
+                    //cadeteAModificar = dB.Cadeteria.ListadoCadetes[i];
+                    dB.Cadeteria.ListadoCadetes = DBTemporal.ModificarCadete(i, cadeteAModificar);
                     break;
                 }
             }
@@ -80,7 +88,7 @@ namespace TP3_HerreraLeonel.Controllers
                 cadeteAModificar.Direccion = _Direccion;
                 cadeteAModificar.Telefono = _Telefono;
             }
-            return Redirect("Index");
+            return Redirect("~/Cadete");
         }
         
         

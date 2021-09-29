@@ -24,7 +24,15 @@ namespace TP3_HerreraLeonel.Controllers
 
         public IActionResult Index()
         {
-            return View(dB.Cadeteria.ListadoPedidos);
+            try
+            {
+                return View(DBTemporal.leerArchivoPedidos());
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+                return Redirect("~/Cadete");
+            }
         }
 
         public IActionResult Privacy()
