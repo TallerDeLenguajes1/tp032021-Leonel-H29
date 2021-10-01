@@ -12,6 +12,8 @@ namespace TP3_HerreraLeonel.Entities
     {
         public Cadeteria Cadeteria { get; set; }
 
+
+        static string rutaArchivo = @"Cadetes.json";
         public DBTemporal()
         {
             Cadeteria = new Cadeteria();
@@ -22,14 +24,21 @@ namespace TP3_HerreraLeonel.Entities
         public static List<Cadete> leerArchivoCadetes()
         {
             List<Cadete> listaCadetes;
-            string rutaArchivo = @"Cadetes.json";
+          //  string rutaArchivo = @"Cadetes.json";
 
             try
             {
                 using (StreamReader leerJason = File.OpenText(rutaArchivo))
                 {
                     var Json = leerJason.ReadToEnd();
-                    listaCadetes = JsonSerializer.Deserialize<List<Cadete>>(Json);
+                    if(Json != "")
+                        listaCadetes = JsonSerializer.Deserialize<List<Cadete>>(Json);
+                    else
+                    {
+                        listaCadetes = new List<Cadete>();
+                    }
+                    leerJason.Close();
+                    leerJason.Dispose();
                 }
             }
             catch (FileNotFoundException)
@@ -40,22 +49,24 @@ namespace TP3_HerreraLeonel.Entities
             return listaCadetes;
         }
 
-        public static List<Cadete> ModificarCadete(int i, Cadete cadete)
+        public static void ModificarCadete(Cadete cadete)
         {
             List<Cadete> listaCadetes = leerArchivoCadetes();
+            Cadete cadeteSeleccionado = listaCadetes.Where(cad => cad.Id == cadete.Id).Single();
+            if (cadeteSeleccionado != null)
+            {
+                cadeteSeleccionado.Nombre = cadete.Nombre;
+                cadeteSeleccionado.Telefono = cadete.Telefono;
+                //..
 
-            //listaPedidos.Add(pedido);
-            listaCadetes[i] = cadete;
+                FileStream archivoPedidos = new FileStream(rutaArchivo, FileMode.Create);
+                StreamWriter escribirPedido = new StreamWriter(archivoPedidos);
 
-            FileStream archivoPedidos = new FileStream("Cadetes.json", FileMode.Create);
-            StreamWriter escribirPedido = new StreamWriter(archivoPedidos);
+                string strJson = JsonSerializer.Serialize(listaCadetes);
+                escribirPedido.WriteLine("{0}", strJson);
 
-            string strJson = JsonSerializer.Serialize(listaCadetes);
-            escribirPedido.WriteLine("{0}", strJson);
-
-            escribirPedido.Close();
-
-            return listaCadetes;
+                escribirPedido.Close();
+            }
         }
 
         public static List<Cadete> guardarCadete(Cadete cadete)
@@ -64,7 +75,7 @@ namespace TP3_HerreraLeonel.Entities
 
             listaCadetes.Add(cadete);
 
-            FileStream archivoCadetes = new FileStream("Cadetes.json", FileMode.Create);
+            FileStream archivoCadetes = new FileStream(rutaArchivo, FileMode.Create);
             StreamWriter escribirCadete = new StreamWriter(archivoCadetes);
 
             string strJson = JsonSerializer.Serialize(listaCadetes);
@@ -75,21 +86,23 @@ namespace TP3_HerreraLeonel.Entities
             return listaCadetes;
         }
 
-        public static List<Cadete> borrarCadete(int id)
+        public static void BorrarCadete(int id)
         {
             List<Cadete> listaCadetes = leerArchivoCadetes();
 
-            listaCadetes.RemoveAt(id);
+            Cadete cadeteAEliminar = listaCadetes.Where(cadete => cadete.Id == id).Single();
+            listaCadetes.Remove(cadeteAEliminar);
 
-            FileStream archiboCadetes = new FileStream("Cadetes.json", FileMode.Create);
-            StreamWriter escribirCadete = new StreamWriter(archiboCadetes);
+            FileStream archivoCadetes = new FileStream(rutaArchivo, FileMode.Create);
+            StreamWriter escribirCadete = new StreamWriter(archivoCadetes);
 
-            string strJson = JsonSerializer.Serialize(listaCadetes);
-            escribirCadete.WriteLine("{0}", strJson);
+            string strJson = JsonSerializer.Serialize(listaCadetes.ToList());
+            escribirCadete.Write("{0}", strJson);
 
             escribirCadete.Close();
+            escribirCadete.Dispose();
 
-            return listaCadetes;
+            //return listaCadetes;
         }
 
         //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< PEDIDOS
@@ -131,6 +144,17 @@ namespace TP3_HerreraLeonel.Entities
             escribirPedido.Close();
 
             return listaPedidos;
+        }
+
+        internal static void BorrarTodosLosCadete()
+        {
+            
+            FileStream archivoPedidos = new FileStream("Pedidos.json", FileMode.Create);
+            StreamWriter escribirPedido = new StreamWriter(archivoPedidos);
+           
+            escribirPedido.WriteLine("");
+            escribirPedido.Close();
+            escribirPedido.Dispose();           
         }
 
         public static List<Pedido> guardarPedido(Pedido pedido)

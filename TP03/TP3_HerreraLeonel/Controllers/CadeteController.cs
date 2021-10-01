@@ -72,46 +72,28 @@ namespace TP3_HerreraLeonel.Controllers
 
         public IActionResult ModificarUnCadete(int id, string _Nombre, string _Direccion, string _Telefono)
         {
-            Cadete cadeteAModificar = null;
-            for (int i = 0; i < dB.Cadeteria.ListadoCadetes.Count(); i++)
+            if (id > 0)
             {
-                if (dB.Cadeteria.ListadoCadetes[i].Id == id)
-                {
-                    //cadeteAModificar = dB.Cadeteria.ListadoCadetes[i];
-                    dB.Cadeteria.ListadoCadetes = DBTemporal.ModificarCadete(i, cadeteAModificar);
-                    break;
-                }
-            }
-            if (cadeteAModificar != null)
-            {
+                Cadete cadeteAModificar = new Cadete();
+                cadeteAModificar.Id = id;
                 cadeteAModificar.Nombre = _Nombre;
                 cadeteAModificar.Direccion = _Direccion;
                 cadeteAModificar.Telefono = _Telefono;
+                DBTemporal.ModificarCadete(cadeteAModificar);
             }
+            
             return Redirect("~/Cadete");
         }
         
         
         public IActionResult EliminarCadete(int id)
         {
-            for(int i=0; i<dB.Cadeteria.ListadoCadetes.Count(); i++)
-            {
-                if (dB.Cadeteria.ListadoCadetes[i].Id == id)
-                {
-                    //dB.Cadeteria.ListadoCadetes.Remove(dB.Cadeteria.ListadoCadetes[i]);
-                    dB.Cadeteria.ListadoCadetes = DBTemporal.borrarCadete(i);
-                    break;
-                }
-            }
+            DBTemporal.BorrarCadete(id);
             return Redirect("~/Cadete");
         }
         public IActionResult DeleteAll_Cadetes()
         {
-            for (int i = 0; i < dB.Cadeteria.ListadoCadetes.Count(); i++)
-            {
-                dB.Cadeteria.ListadoCadetes = DBTemporal.borrarCadete(i);   
-            }
-            //dB.Cadeteria.DeleteAllCadetes();
+            DBTemporal.BorrarTodosLosCadete();
             return Redirect("~/Cadete");
         }
 
