@@ -83,6 +83,7 @@ namespace TP3_HerreraLeonel.Controllers
             if (id >0)
             {
                 Pedido pedidoADevolver = new Pedido();
+                pedidoADevolver.Nro = id;
                 pedidoADevolver.Cliente.Nombre = _NombreClie;
                 pedidoADevolver.Cliente.Direccion = _DireccionClie;
                 pedidoADevolver.Cliente.Telefono = _TelefonoClie;
@@ -94,9 +95,9 @@ namespace TP3_HerreraLeonel.Controllers
         }
 
         //Elimino un pedido
-        public IActionResult EliminarPedido(int nro)
+        public IActionResult EliminarPedido(int id)
         {
-            DBTemporal.BorrarPedido(nro);
+            DBTemporal.BorrarPedido(id);
             return Redirect("~/Pedido");
         }
         /*
