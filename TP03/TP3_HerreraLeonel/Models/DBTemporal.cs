@@ -49,23 +49,43 @@ namespace TP3_HerreraLeonel.Entities
             return listaCadetes;
         }
 
+
+
+        public static Cadete VerCadete(int id)
+        {
+            List<Cadete> listaCadetes = leerArchivoCadetes();
+            Cadete cadeteSeleccionado = listaCadetes.Where(cad => cad.Id == id).Single();
+            if (cadeteSeleccionado == null)
+            {
+                Console.WriteLine("CADETE NO ENCONTRADO");
+            }
+            return cadeteSeleccionado;
+        }
+
         public static void ModificarCadete(Cadete cadete)
         {
             List<Cadete> listaCadetes = leerArchivoCadetes();
             Cadete cadeteSeleccionado = listaCadetes.Where(cad => cad.Id == cadete.Id).Single();
-            if (cadeteSeleccionado != null)
+            try
             {
-                cadeteSeleccionado.Nombre = cadete.Nombre;
-                cadeteSeleccionado.Telefono = cadete.Telefono;
-                //..
+                if (cadeteSeleccionado != null)
+                {
+                    cadeteSeleccionado.Nombre = cadete.Nombre;
+                    cadeteSeleccionado.Direccion = cadete.Direccion;
+                    cadeteSeleccionado.Telefono = cadete.Telefono;
+                    //..
 
-                FileStream archivoPedidos = new FileStream(rutaArchivo, FileMode.Create);
-                StreamWriter escribirPedido = new StreamWriter(archivoPedidos);
+                    FileStream archivoPedidos = new FileStream(rutaArchivo, FileMode.Create);
+                    StreamWriter escribirPedido = new StreamWriter(archivoPedidos);
 
-                string strJson = JsonSerializer.Serialize(listaCadetes);
-                escribirPedido.WriteLine("{0}", strJson);
+                    string strJson = JsonSerializer.Serialize(listaCadetes);
+                    escribirPedido.WriteLine("{0}", strJson);
 
-                escribirPedido.Close();
+                    escribirPedido.Close();
+                }
+            }
+            catch (Exception ex) {
+                Console.WriteLine(ex);
             }
         }
 

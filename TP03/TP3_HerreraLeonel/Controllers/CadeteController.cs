@@ -37,6 +37,8 @@ namespace TP3_HerreraLeonel.Controllers
         {
             return View();
         }
+
+        //Alta de Cadete
         public IActionResult AltaCadete(string _Nombre, string _Direccion, string _Telefono)
         {
             if (_Nombre == null || _Direccion == null || _Telefono == null)
@@ -52,24 +54,17 @@ namespace TP3_HerreraLeonel.Controllers
             }
         }
 
+        //Muestro los datos del cadete en el form de edicion
         public IActionResult ModificarCadete(int id)
         {
-
-            Cadete cadeteADevolver = null;
-            for (int i = 0; i < dB.Cadeteria.ListadoCadetes.Count(); i++)
-            {
-                if (dB.Cadeteria.ListadoCadetes[i].Id == id)
-                {
-                    cadeteADevolver = dB.Cadeteria.ListadoCadetes[i];
-                    break;
-                }
-            }
+            Cadete cadeteADevolver = DBTemporal.VerCadete(id);
+            
             if (cadeteADevolver != null)
                 return View(cadeteADevolver);
             else
                 return Redirect("~/Cadete");
         }
-
+        //Modifico los datos del cadete
         public IActionResult ModificarUnCadete(int id, string _Nombre, string _Direccion, string _Telefono)
         {
             if (id > 0)
@@ -85,12 +80,13 @@ namespace TP3_HerreraLeonel.Controllers
             return Redirect("~/Cadete");
         }
         
-        
+        //Elimino el cadete
         public IActionResult EliminarCadete(int id)
         {
             DBTemporal.BorrarCadete(id);
             return Redirect("~/Cadete");
         }
+        //Elimino todos los cadetes
         public IActionResult DeleteAll_Cadetes()
         {
             DBTemporal.BorrarTodosLosCadete();
