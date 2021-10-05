@@ -40,7 +40,7 @@ namespace TP3_HerreraLeonel.Controllers
             return View();
         }
 
-
+        //Alta de pedidos
         public IActionResult AltaPedido(string _NombreClie, string _DireccionClie, string _TelefonoClie, string _Obs, Pedido.Estados _Estado, int _IdCadete)
         {
             if (_NombreClie == null || _DireccionClie == null || _TelefonoClie == null)
@@ -51,6 +51,10 @@ namespace TP3_HerreraLeonel.Controllers
             {
                 Pedido nuevoPedido = new Pedido(_Obs, _Estado, _NombreClie, _DireccionClie, _TelefonoClie);
 
+                List<Cadete> cadeteLista = DBTemporal.leerArchivoCadetes();
+                Cadete cadeteSeleccionado = cadeteLista.Find(x => x.Id == _IdCadete);
+                cadeteSeleccionado.AgregarPedido(nuevoPedido);
+                /*
                 foreach (var item in dB.Cadeteria.ListadoCadetes)
                 {
                     if (item.Id == _IdCadete)
@@ -59,10 +63,11 @@ namespace TP3_HerreraLeonel.Controllers
                         
                     }
                 }
+                */
                 //dB.Cadeteria.ListadoPedidos.Add(nuevoPedido);
                 dB.Cadeteria.ListadoPedidos = DBTemporal.guardarPedido(nuevoPedido);
 
-                return View(dB.Cadeteria.ListadoCadetes);
+                return View(DBTemporal.leerArchivoCadetes());
             }
         }
 
