@@ -66,62 +66,40 @@ namespace TP3_HerreraLeonel.Controllers
             }
         }
 
-
+        //Muestro el pedido a modificar en el form
         public IActionResult ModificarPedido(int id)
         {
-            Pedido pedidoADevolver = null;
-            for (int i = 0; i < dB.Cadeteria.ListadoPedidos.Count(); i++)
-            {
-                if (dB.Cadeteria.ListadoPedidos[i].Nro == id)
-                {
-                    pedidoADevolver = dB.Cadeteria.ListadoPedidos[i];
-                    break;
-                }
-            }
+            Pedido pedidoADevolver = DBTemporal.VerPedido(id);
+            
             if (pedidoADevolver != null)
                 return View(pedidoADevolver);
             else
-                return Redirect("Index");
+                return Redirect("~/Pedido");
         }
 
+        //Modifico los datos del pedido
         public IActionResult ModificarUnPedido(int id, string _NombreClie, string _DireccionClie, string _TelefonoClie, string _Obs, Pedido.Estados _Estado, int _IdCadete)
         {
-            Pedido pedidoADevolver = null;
-            for (int i = 0; i < dB.Cadeteria.ListadoPedidos.Count(); i++)
+            if (id >0)
             {
-                if (dB.Cadeteria.ListadoPedidos[i].Nro == id)
-                {
-                    pedidoADevolver = dB.Cadeteria.ListadoPedidos[i];
-                    break;
-                }
-            }
-            if (pedidoADevolver != null)
-            {
+                Pedido pedidoADevolver = new Pedido();
                 pedidoADevolver.Cliente.Nombre = _NombreClie;
                 pedidoADevolver.Cliente.Direccion = _DireccionClie;
                 pedidoADevolver.Cliente.Telefono = _TelefonoClie;
                 pedidoADevolver.Observacion = _Obs;
                 pedidoADevolver.Estado = _Estado;
-            }
-            return Redirect("Index");
-        }
-
-        public IActionResult EliminarPedido(int id)
-        {
-            //Pedido pedidoAEliminar = null;
-            for (int i = 0; i < dB.Cadeteria.ListadoPedidos.Count(); i++)
-            {
-                if (dB.Cadeteria.ListadoPedidos[i].Nro == id)
-                {
-                    dB.Cadeteria.ListadoPedidos = DBTemporal.borrarPedido(i);
-                    //pedidoAEliminar = dB.Cadeteria.ListadoPedidos[i];
-                    //dB.Cadeteria.ListadoPedidos.Remove(pedidoAEliminar);
-                    break;
-                }
+                DBTemporal.ModificarPedido(pedidoADevolver);
             }
             return Redirect("~/Pedido");
         }
-        
+
+        //Elimino un pedido
+        public IActionResult EliminarPedido(int nro)
+        {
+            DBTemporal.BorrarPedido(nro);
+            return Redirect("~/Pedido");
+        }
+        /*
         public IActionResult DeleteAll_Pedidos()
         {
             for (int i = 0; i < dB.Cadeteria.ListadoPedidos.Count(); i++)
@@ -130,6 +108,7 @@ namespace TP3_HerreraLeonel.Controllers
             }
             return Redirect("~/Pedido");
         }
+        */
         
 
 
