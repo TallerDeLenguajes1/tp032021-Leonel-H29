@@ -48,7 +48,6 @@ namespace TP3_HerreraLeonel.Controllers
             else
             {
                 Cadete nuevoCadete = new Cadete(_Nombre, _Direccion, _Telefono);
-                //dB.Cadeteria.ListadoCadetes.Add(nuevoCadete);
                 dB.Cadeteria.ListadoCadetes = DBTemporal.guardarCadete(nuevoCadete);
                 return View(dB.Cadeteria.ListadoCadetes);
             }
@@ -90,15 +89,10 @@ namespace TP3_HerreraLeonel.Controllers
         /*
         public IActionResult DeleteAll_Cadetes()
         {
-            DBTemporal.BorrarTodosLosCadete();
+            DBTemporal.BorrarTodosLosCadetes();
             return Redirect("~/Cadete");
         }
         */
-
-        public void CargarCadete(string _Nombre, string _Direccion, string _Telefono)
-        {
-            Cadete nuevoCadete = new Cadete(_Nombre, _Direccion, _Telefono);
-        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

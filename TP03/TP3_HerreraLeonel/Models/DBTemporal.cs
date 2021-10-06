@@ -125,6 +125,26 @@ namespace TP3_HerreraLeonel.Entities
             //return listaCadetes;
         }
 
+        
+        public static void BorrarTodosLosCadetes()
+        {
+
+            try
+            {
+                FileStream archivoCadete = new FileStream(rutaArchivo, FileMode.Create);
+                StreamWriter escribirCadete = new StreamWriter(archivoCadete);
+
+                escribirCadete.WriteLine("");
+                escribirCadete.Close();
+                escribirCadete.Dispose();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+        }
+        
+
         //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< PEDIDOS
 
         public static List<Pedido> leerArchivoPedidos()
