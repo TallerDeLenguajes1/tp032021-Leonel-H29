@@ -85,14 +85,15 @@ namespace TP3_HerreraLeonel.Controllers
             DBTemporal.BorrarCadete(id);
             return Redirect("~/Cadete");
         }
+
         //Elimino todos los cadetes
-        /*
+        
         public IActionResult DeleteAll_Cadetes()
         {
             DBTemporal.BorrarTodosLosCadetes();
             return Redirect("~/Cadete");
         }
-        */
+        
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

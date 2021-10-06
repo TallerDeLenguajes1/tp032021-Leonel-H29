@@ -1,1 +1,1 @@
-[]
+[{"Id":1,"Nombre":"RUBEN SILVA","Direccion":"AV. SAN LORENZO 512","Telefono":"4545655","ListadoPedidos":[]},{"Id":2,"Nombre":"KARINA PEREZ","Direccion":"AV. SAN LORENZO 512","Telefono":"45456545","ListadoPedidos":[{"Nro":2,"Observacion":"bbvyubuy","Cliente":{"Id":1,"Nombre":"ALDO","Direccion":"--","Telefono":"--"},"Estado":0},{"Nro":3,"Observacion":"hhbbub","Cliente":{"Id":2,"Nombre":"ALDO","Direccion":"--","Telefono":"--"},"Estado":0}]}]

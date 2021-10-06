@@ -73,8 +73,7 @@ namespace TP3_HerreraLeonel.Entities
                     cadeteSeleccionado.Nombre = cadete.Nombre;
                     cadeteSeleccionado.Direccion = cadete.Direccion;
                     cadeteSeleccionado.Telefono = cadete.Telefono;
-                    //..
-
+                  
                     FileStream archivoCadete = new FileStream(rutaArchivo, FileMode.Create);
                     StreamWriter escribirCadete = new StreamWriter(archivoCadete);
 
@@ -125,8 +124,31 @@ namespace TP3_HerreraLeonel.Entities
             //return listaCadetes;
         }
 
-        
-        public static void BorrarTodosLosCadetes()
+        public static void AsignarPedidoAlCadete(Cadete cadete)
+        {
+            List<Cadete> listaCadetes = leerArchivoCadetes();
+
+            try
+            {
+                Cadete cadeteSeleccionado = listaCadetes.Where(cad => cad.Id == cadete.Id).Single();
+                if (cadeteSeleccionado != null)
+                {
+                    cadeteSeleccionado.ListadoPedidos = cadete.ListadoPedidos;
+                    FileStream archivoCadete = new FileStream(rutaArchivo, FileMode.Create);
+                    StreamWriter escribirCadete = new StreamWriter(archivoCadete);
+
+                    string strJson = JsonSerializer.Serialize(listaCadetes);
+                    escribirCadete.WriteLine("{0}", strJson);
+
+                    escribirCadete.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+        }
+        internal static void BorrarTodosLosCadetes()
         {
 
             try
@@ -134,7 +156,7 @@ namespace TP3_HerreraLeonel.Entities
                 FileStream archivoCadete = new FileStream(rutaArchivo, FileMode.Create);
                 StreamWriter escribirCadete = new StreamWriter(archivoCadete);
 
-                escribirCadete.WriteLine("");
+                escribirCadete.WriteLine("[]");
                 escribirCadete.Close();
                 escribirCadete.Dispose();
             }
@@ -219,18 +241,18 @@ namespace TP3_HerreraLeonel.Entities
                 Console.WriteLine(ex);
             }
         }
-        /*
-        internal static void BorrarTodosLosCadete()
+        
+        internal static void BorrarTodosLosPedidos()
         {
             
-            FileStream archivoPedidos = new FileStream("Pedidos.json", FileMode.Create);
+            FileStream archivoPedidos = new FileStream(rutaArchivoPedidos, FileMode.Create);
             StreamWriter escribirPedido = new StreamWriter(archivoPedidos);
            
-            escribirPedido.WriteLine("");
+            escribirPedido.WriteLine("[]");
             escribirPedido.Close();
             escribirPedido.Dispose();           
         }
-        */
+        
 
         public static List<Pedido> guardarPedido(Pedido pedido)
         {
@@ -252,8 +274,18 @@ namespace TP3_HerreraLeonel.Entities
         public static void BorrarPedido(int nro)
         {
             List<Pedido> listaPedidos = leerArchivoPedidos();
+            List<Cadete> listaCadetes = leerArchivoCadetes();
 
             Pedido pedidoAEliminar = listaPedidos.Where(pedido => pedido.Nro == nro).Single();
+            
+            
+            for(int i=0; i<listaCadetes.Count(); i++)
+            {
+                BorrarPedidoAlCadete(listaCadetes[i].ListadoPedidos, pedidoAEliminar);
+                AsignarPedidoAlCadete(listaCadetes[i]);
+            }
+            
+
             listaPedidos.Remove(pedidoAEliminar);
 
             FileStream archivoPedidos = new FileStream(rutaArchivoPedidos, FileMode.Create);
@@ -264,6 +296,12 @@ namespace TP3_HerreraLeonel.Entities
 
             escribirPedido.Close();
             escribirPedido.Dispose();
+        }
+
+
+        public static void BorrarPedidoAlCadete(List<Pedido>ListP, Pedido pedido) {
+            Pedido pedidoAEliminar = ListP.Where(ped => ped.Nro == pedido.Nro).Single();
+            ListP.Remove(pedidoAEliminar);
         }
 
 

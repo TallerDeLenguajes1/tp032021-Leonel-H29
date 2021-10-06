@@ -45,7 +45,7 @@ namespace TP3_HerreraLeonel.Controllers
         {
             if (_NombreClie == null || _DireccionClie == null || _TelefonoClie == null)
             {
-                return View(dB.Cadeteria.ListadoCadetes);
+                return View(DBTemporal.leerArchivoCadetes());
             }
             else
             {
@@ -54,17 +54,8 @@ namespace TP3_HerreraLeonel.Controllers
                 List<Cadete> cadeteLista = DBTemporal.leerArchivoCadetes();
                 Cadete cadeteSeleccionado = cadeteLista.Find(x => x.Id == _IdCadete);
                 cadeteSeleccionado.AgregarPedido(nuevoPedido);
-                /*
-                foreach (var item in dB.Cadeteria.ListadoCadetes)
-                {
-                    if (item.Id == _IdCadete)
-                    {
-                        item.AgregarPedido(nuevoPedido);
-                        
-                    }
-                }
-                */
-                //dB.Cadeteria.ListadoPedidos.Add(nuevoPedido);
+
+                DBTemporal.AsignarPedidoAlCadete(cadeteSeleccionado);
                 dB.Cadeteria.ListadoPedidos = DBTemporal.guardarPedido(nuevoPedido);
 
                 return View(DBTemporal.leerArchivoCadetes());
@@ -105,21 +96,14 @@ namespace TP3_HerreraLeonel.Controllers
             DBTemporal.BorrarPedido(id);
             return Redirect("~/Pedido");
         }
-        /*
+
+        //Elimino todos los pedidos
         public IActionResult DeleteAll_Pedidos()
         {
-            for (int i = 0; i < dB.Cadeteria.ListadoPedidos.Count(); i++)
-            {
-                dB.Cadeteria.ListadoPedidos = DBTemporal.borrarPedido(i);    
-            }
+            DBTemporal.BorrarTodosLosPedidos();
             return Redirect("~/Pedido");
         }
-        */
         
-
-
-
-
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
