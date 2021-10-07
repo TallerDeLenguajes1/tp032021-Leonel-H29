@@ -8,7 +8,7 @@ namespace TP3_HerreraLeonel.Entities
 {
     public class Cadete
     {
-        private static int count = 0;
+        //private static int count = 0;
         private int id;
         private string nombre;
         private string direccion;
@@ -26,10 +26,11 @@ namespace TP3_HerreraLeonel.Entities
 
         }
 
-        public Cadete(string nombre, string direccion, string telefono)
+        public Cadete(int _id ,string nombre, string direccion, string telefono)
         {
-            count++;
-            id = count;
+            //count++;
+            //id = count;
+            id = _id;
             Nombre = nombre;
             Direccion = direccion;
             Telefono = telefono;
