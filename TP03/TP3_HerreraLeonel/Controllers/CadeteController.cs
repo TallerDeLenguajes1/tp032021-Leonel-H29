@@ -38,16 +38,13 @@ namespace TP3_HerreraLeonel.Controllers
             List<Cadete> ListCadetes = DBTemporal.leerArchivoCadetes();
             try
             {
-                return View(ListCadetes.Where(cad => cad.Id==id));
+                return View(ListCadetes.Where(cad => cad.Id==id).Single());
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
                 return Redirect("~/Cadete");
             }
-            
-            //return View();
-
         }
 
         public IActionResult Privacy()
