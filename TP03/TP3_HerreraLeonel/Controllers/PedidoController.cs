@@ -43,13 +43,20 @@ namespace TP3_HerreraLeonel.Controllers
         //Alta de pedidos
         public IActionResult AltaPedido(string _NombreClie, string _DireccionClie, string _TelefonoClie, string _Obs, Pedido.Estados _Estado, int _IdCadete)
         {
+            List<Pedido> ListPedidos = DBTemporal.leerArchivoPedidos();
+            int idMax = 0;
+            if (ListPedidos.Count()>0) {
+                idMax = ListPedidos.Max(x => x.Nro);
+            }
+           
+            
             if (_NombreClie == null || _DireccionClie == null || _TelefonoClie == null)
             {
                 return View(DBTemporal.leerArchivoCadetes());
             }
             else
             {
-                Pedido nuevoPedido = new Pedido(_Obs, _Estado, _NombreClie, _DireccionClie, _TelefonoClie);
+                Pedido nuevoPedido = new Pedido(idMax+1,_Obs, _Estado, _NombreClie, _DireccionClie, _TelefonoClie);
 
                 List<Cadete> cadeteLista = DBTemporal.leerArchivoCadetes();
                 Cadete cadeteSeleccionado = cadeteLista.Find(x => x.Id == _IdCadete);

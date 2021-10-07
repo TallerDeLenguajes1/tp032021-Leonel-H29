@@ -9,7 +9,7 @@ namespace TP3_HerreraLeonel.Entities
    
     public class Pedido
     {
-        private static int count = 0;
+        //private static int count = 0;
         public enum Estados { Recibido, En_Camino, Entregado };
         private int nro;
         private string observacion;
@@ -27,10 +27,11 @@ namespace TP3_HerreraLeonel.Entities
             this.Cliente = new Cliente();
         }
 
-        public Pedido(string observacion, Estados estado, string _Nombre, string _Direccion, string _Telefo)
+        public Pedido(int numero,string observacion, Estados estado, string _Nombre, string _Direccion, string _Telefo)
         {
-            count++;
-            this.Nro = count;
+            //count++;
+            //this.Nro = count;
+            this.Nro = numero;
             this.Observacion = observacion;
             this.Estado = estado;
             this.Cliente = new Cliente(_Nombre, _Direccion, _Telefo);

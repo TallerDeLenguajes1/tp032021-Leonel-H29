@@ -42,7 +42,11 @@ namespace TP3_HerreraLeonel.Controllers
         public IActionResult AltaCadete(string _Nombre, string _Direccion, string _Telefono)
         {
             List<Cadete> ListCadetes = DBTemporal.leerArchivoCadetes();
-            int idMax = ListCadetes.Max(x => x.Id);
+            int idMax = 0;
+            if (ListCadetes.Count() > 0)
+            {
+                idMax = ListCadetes.Max(x => x.Id);
+            }
             //int idMax = ListCadetes[ListCadetes.Count() - 1].Id;
             if (_Nombre == null || _Direccion == null || _Telefono == null)
             {
