@@ -107,12 +107,10 @@ namespace TP3_HerreraLeonel.Controllers
         //Elimino todos los pedidos
         public IActionResult DeleteAll_Pedidos()
         {
-            dB.Cadeteria.DeleteAllPedidos();
-            return View(dB.Cadeteria.ListadoCadetes);
+            DBTemporal.BorrarTodosLosPedidos();
+            return Redirect("~/Pedido");
         }
         
-
-
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
