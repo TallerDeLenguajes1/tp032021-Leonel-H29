@@ -46,12 +46,20 @@
 
                         <div class="mb-3">
                             <label class="form-label">DIRECCION</label>
+<<<<<<< HEAD
                             <input type="text" id="_Direccion" name="_Direccion" class="form-control" value="@Model.Direccion" placeholder="Ingrese su direccion" required>
+=======
+                            <input type="text" id="_Direccion" name="_Direccion" class="form-control" value="@Model.Direccion"  required>
+>>>>>>> master
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">TELEFONO</label>
+<<<<<<< HEAD
                             <input type="text" id="_Telefono" name="_Telefono" class="form-control" value="@Model.Telefono" placeholder="Ingrese su numero de telefono" required>
+=======
+                            <input type="text" id="_Telefono" name="_Telefono" class="form-control" value="@Model.Telefono" required>
+>>>>>>> master
                         </div>
 
                         <button type="submit" class="btn btn-primary" title="Enviar">ENVIAR</button>

@@ -24,104 +24,93 @@ namespace TP3_HerreraLeonel.Controllers
 
         public IActionResult Index()
         {
-            return View(dB.Cadeteria.ListadoPedidos);
+            try
+            {
+                return View(DBTemporal.leerArchivoPedidos());
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+                return Redirect("~/Cadete");
+            }
         }
 
         public IActionResult Privacy()
         {
             return View();
         }
-       
 
+        //Alta de pedidos
         public IActionResult AltaPedido(string _NombreClie, string _DireccionClie, string _TelefonoClie, string _Obs, Pedido.Estados _Estado, int _IdCadete)
         {
+            List<Pedido> ListPedidos = DBTemporal.leerArchivoPedidos();
+            int idMax = 0;
+            if (ListPedidos.Count()>0) {
+                idMax = ListPedidos.Max(x => x.Nro);
+            }
+           
+            
             if (_NombreClie == null || _DireccionClie == null || _TelefonoClie == null)
             {
-                return View(dB.Cadeteria.ListadoCadetes);
+                return View(DBTemporal.leerArchivoCadetes());
             }
             else
             {
-                Pedido nuevoPedido = new Pedido(_Obs, _Estado, _NombreClie, _DireccionClie, _TelefonoClie);
+                Pedido nuevoPedido = new Pedido(idMax+1,_Obs, _Estado, _NombreClie, _DireccionClie, _TelefonoClie);
 
-                foreach (var item in dB.Cadeteria.ListadoCadetes)
-                {
-                    if (item.Id == _IdCadete)
-                    {
-                        item.AgregarPedido(nuevoPedido);
-                    }
-                }
-                dB.Cadeteria.ListadoPedidos.Add(nuevoPedido);
+                List<Cadete> cadeteLista = DBTemporal.leerArchivoCadetes();
+                Cadete cadeteSeleccionado = cadeteLista.Find(x => x.Id == _IdCadete);
+                cadeteSeleccionado.AgregarPedido(nuevoPedido);
 
-                return View(dB.Cadeteria.ListadoCadetes);
+                DBTemporal.AsignarPedidoAlCadete(cadeteSeleccionado);
+                dB.Cadeteria.ListadoPedidos = DBTemporal.guardarPedido(nuevoPedido);
+
+                return View(DBTemporal.leerArchivoCadetes());
             }
         }
-          
-        
+
+        //Muestro el pedido a modificar en el form
         public IActionResult ModificarPedido(int id)
         {
-            Pedido pedidoADevolver = null;
-            for (int i = 0; i < dB.Cadeteria.ListadoPedidos.Count(); i++)
-            {
-                if (dB.Cadeteria.ListadoPedidos[i].Nro == id)
-                {
-                    pedidoADevolver = dB.Cadeteria.ListadoPedidos[i];
-                    break;
-                }
-            }
+            Pedido pedidoADevolver = DBTemporal.VerPedido(id);
+            
             if (pedidoADevolver != null)
                 return View(pedidoADevolver);
             else
-                return Redirect("Index");
+                return Redirect("~/Pedido");
         }
 
+        //Modifico los datos del pedido
         public IActionResult ModificarUnPedido(int id, string _NombreClie, string _DireccionClie, string _TelefonoClie, string _Obs, Pedido.Estados _Estado, int _IdCadete)
         {
-            Pedido pedidoADevolver = null;
-            for (int i = 0; i < dB.Cadeteria.ListadoPedidos.Count(); i++)
+            if (id >0)
             {
-                if (dB.Cadeteria.ListadoPedidos[i].Nro == id)
-                {
-                    pedidoADevolver= dB.Cadeteria.ListadoPedidos[i];
-                    break;
-                }
-            }
-            if (pedidoADevolver != null)
-            {
+                Pedido pedidoADevolver = new Pedido();
+                pedidoADevolver.Nro = id;
                 pedidoADevolver.Cliente.Nombre = _NombreClie;
                 pedidoADevolver.Cliente.Direccion = _DireccionClie;
                 pedidoADevolver.Cliente.Telefono = _TelefonoClie;
                 pedidoADevolver.Observacion = _Obs;
                 pedidoADevolver.Estado = _Estado;
-
-                //cadeteAModificar.Nombre = _Nombre;
-                //cadeteAModificar.Direccion = _Direccion;
-                //cadeteAModificar.Telefono = _Telefono;
-            }
-            return Redirect("Index");
-        }
-        
-        public IActionResult EliminarPedido(int id)
-        {
-            Pedido pedidoAEliminar = null;
-            for (int i = 0; i < dB.Cadeteria.ListadoPedidos.Count(); i++)
-            {
-                if (dB.Cadeteria.ListadoPedidos[i].Nro == id)
-                {
-                    pedidoAEliminar = dB.Cadeteria.ListadoPedidos[i];
-                    dB.Cadeteria.ListadoPedidos.Remove(pedidoAEliminar);
-                    break;
-                }
+                DBTemporal.ModificarPedido(pedidoADevolver);
             }
             return Redirect("~/Pedido");
         }
 
+        //Elimino un pedido
+        public IActionResult EliminarPedido(int id)
+        {
+            DBTemporal.BorrarPedido(id);
+            return Redirect("~/Pedido");
+        }
+
+        //Elimino todos los pedidos
         public IActionResult DeleteAll_Pedidos()
         {
             dB.Cadeteria.DeleteAllPedidos();
-            return Redirect("~/Pedido");
+            return View(dB.Cadeteria.ListadoCadetes);
         }
-
-
+        
 
 
 
