@@ -50,6 +50,7 @@ namespace TP3_HerreraLeonel.Entities
             return listaCadetes;
         }
 
+        //Funcion para ver un cadete dentro de la lista
         public static Cadete VerCadete(int id)
         {
             List<Cadete> listaCadetes = leerArchivoCadetes();
@@ -61,6 +62,7 @@ namespace TP3_HerreraLeonel.Entities
             return cadeteSeleccionado;
         }
 
+        //Funcion para modificar los datos del cadete
         public static void ModificarCadete(Cadete cadete)
         {
             List<Cadete> listaCadetes = leerArchivoCadetes();
@@ -88,6 +90,7 @@ namespace TP3_HerreraLeonel.Entities
             }
         }
 
+        //Funcion para guardar los datos del cadete en el archivo
         public static List<Cadete> guardarCadete(Cadete cadete)
         {
             List<Cadete> listaCadetes = leerArchivoCadetes();
@@ -105,6 +108,7 @@ namespace TP3_HerreraLeonel.Entities
             return listaCadetes;
         }
 
+        //Funcion para borrar los datos del cadete en el archivo
         public static void BorrarCadete(int id)
         {
             List<Cadete> listaCadetes = leerArchivoCadetes();
@@ -124,6 +128,7 @@ namespace TP3_HerreraLeonel.Entities
             //return listaCadetes;
         }
 
+        //Funcion para asignar un pedido al cadete en el archivo
         public static void AsignarPedidoAlCadete(Cadete cadete)
         {
             List<Cadete> listaCadetes = leerArchivoCadetes();
@@ -149,6 +154,7 @@ namespace TP3_HerreraLeonel.Entities
             }
         }
 
+        //Funcion para borrar todos los datos de los cadetes en el archivo
         internal static void BorrarTodosLosCadetes()
         {
 
@@ -201,6 +207,7 @@ namespace TP3_HerreraLeonel.Entities
             return listaPedidos;
         }
 
+        //Funcion para ver un pedido dentro de la lista
         public static Pedido VerPedido(int nro)
         {
             List<Pedido> listaPedidos = leerArchivoPedidos();
@@ -212,10 +219,10 @@ namespace TP3_HerreraLeonel.Entities
             return pedidoSeleccionado;
         }
 
+        //Funcion para modificar los datos del pedido
         public static void ModificarPedido(Pedido pedido)
         {
             List<Pedido> listaPedidos = leerArchivoPedidos();
-            //List<Cadete> listaCadetes = leerArchivoCadetes();
             try
             {
                 Pedido pedidoSeleccionado = listaPedidos.Where(ped => ped.Nro == pedido.Nro).Single();
@@ -244,6 +251,7 @@ namespace TP3_HerreraLeonel.Entities
             }
         }
 
+        //Funcion para modificar del listado de los pedidos del cadete
         public static void ActualizarPedidoAlCadete(Pedido pedido)
         {
             List<Cadete> listaCadetes = leerArchivoCadetes();
@@ -277,6 +285,43 @@ namespace TP3_HerreraLeonel.Entities
             }
         }
 
+        /*Funcion para cambiarle el cadete al pedido u agregarle uno en 
+          caso de que se halla eliminado otro anteriormente*/
+        public static void CambiarDeCadeteAlPedido(Pedido pedido, int id_cadete) {
+            List<Cadete> listaCadetes = leerArchivoCadetes();
+            List<Pedido> listaPedidos = leerArchivoPedidos();
+            Cadete cadeteSeleccionado = listaCadetes.Find(x => x.Id == id_cadete);
+            Pedido pedidoAmodificar = new Pedido();
+            foreach (Cadete cadete in listaCadetes)
+            {
+                pedidoAmodificar = cadete.ListadoPedidos.Where(cad => cad.Nro == pedido.Nro).SingleOrDefault();
+                if(pedidoAmodificar!=null && cadete.ListadoPedidos.Contains(pedidoAmodificar)) {
+                    if (cadete.Id != id_cadete)
+                    {
+                        BorrarPedidoAlCadete(cadete.ListadoPedidos, pedido);
+                        FileStream archivoCadete = new FileStream(rutaArchivo, FileMode.Create);
+                        StreamWriter escribiCadete= new StreamWriter(archivoCadete);
+
+                        string strJson = JsonSerializer.Serialize(listaCadetes.ToList());
+                        escribiCadete.Write("{0}", strJson);
+
+                        escribiCadete.Close();
+                        escribiCadete.Dispose();
+
+                        cadeteSeleccionado.AgregarPedido(pedidoAmodificar);
+                        AsignarPedidoAlCadete(cadeteSeleccionado);
+                        break;
+                    }   
+                }
+            }
+            if (pedidoAmodificar == null)
+            {
+                cadeteSeleccionado.AgregarPedido(pedido);
+                AsignarPedidoAlCadete(cadeteSeleccionado);
+            }
+        }
+        
+        //Funcion para borrar todos los datos de los pedidos en el archivo
         internal static void BorrarTodosLosPedidos()
         {
             //Elimino todos los pedidos del archivo los pedidos
@@ -313,6 +358,7 @@ namespace TP3_HerreraLeonel.Entities
             }
         }
 
+        //Funcion para guardar los datos del pedido en el archivo
         public static List<Pedido> guardarPedido(Pedido pedido)
         {
             List<Pedido> listaPedidos = leerArchivoPedidos();
@@ -330,14 +376,14 @@ namespace TP3_HerreraLeonel.Entities
             return listaPedidos;
         }
 
+        //Funcion para borrar los datos del pedido en el archivo
         public static void BorrarPedido(int nro)
         {
             List<Pedido> listaPedidos = leerArchivoPedidos();
             List<Cadete> listaCadetes = leerArchivoCadetes();
 
             Pedido pedidoAEliminar = listaPedidos.Where(pedido => pedido.Nro == nro).Single();
-            
-            
+               
             for(int i=0; i<listaCadetes.Count(); i++)
             {
                 BorrarPedidoAlCadete(listaCadetes[i].ListadoPedidos, pedidoAEliminar);
@@ -357,6 +403,7 @@ namespace TP3_HerreraLeonel.Entities
             escribirPedido.Dispose();
         }
 
+        //Funcion para borrar los datos del pedido asignado al cadete en el archivo
         public static void BorrarPedidoAlCadete(List<Pedido>ListP, Pedido pedido) {
             Pedido pedidoAEliminar = ListP.Where(ped => ped.Nro == pedido.Nro).SingleOrDefault();
             if(pedidoAEliminar!=null)
