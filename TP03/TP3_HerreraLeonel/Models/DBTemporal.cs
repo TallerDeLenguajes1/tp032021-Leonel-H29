@@ -219,10 +219,7 @@ namespace TP3_HerreraLeonel.Entities
             try
             {
                 Pedido pedidoSeleccionado = listaPedidos.Where(ped => ped.Nro == pedido.Nro).Single();
-                //Cadete cadeteSeleccionado = listaCadetes.Where(cad => cad.ListadoPedidos.Where(list => list.Nro == pedidoSeleccionado.Nro).Single() > 0).Single();
                 
-                
-
                 if (pedidoSeleccionado != null)
                 {
                     pedidoSeleccionado.Cliente.Nombre = pedido.Cliente.Nombre;
@@ -231,13 +228,7 @@ namespace TP3_HerreraLeonel.Entities
                     pedidoSeleccionado.Observacion = pedido.Observacion;
                     pedidoSeleccionado.Estado = pedido.Estado;
 
-                    //cadeteSeleccionado.ListadoPedidos = cadete.ListadoPedidos;
-                    //FileStream archivoCadete = new FileStream(rutaArchivo, FileMode.Create);
-                    //StreamWriter escribirCadete = new StreamWriter(archivoCadete);
-
-                    //string strJson = JsonSerializer.Serialize(listaCadetes);
-                    //escribirCadete.WriteLine("{0}", strJson);
-                    //escribirCadete.Close();
+                    ActualizarPedidoAlCadete(pedidoSeleccionado);
 
                     FileStream archivoPedidos = new FileStream(rutaArchivoPedidos, FileMode.Create);
                     StreamWriter escribirPedido = new StreamWriter(archivoPedidos);
@@ -252,16 +243,74 @@ namespace TP3_HerreraLeonel.Entities
                 Console.WriteLine(ex);
             }
         }
-        
+
+        public static void ActualizarPedidoAlCadete(Pedido pedido)
+        {
+            List<Cadete> listaCadetes = leerArchivoCadetes();
+
+            try
+            {
+                foreach (Cadete cadete in listaCadetes)
+                {
+                    Pedido pedidoAmodificar = cadete.ListadoPedidos.Where(cad => cad.Nro == pedido.Nro).SingleOrDefault();
+                    if (pedidoAmodificar != null)
+                    {
+                        pedidoAmodificar.Cliente.Nombre = pedido.Cliente.Nombre;
+                        pedidoAmodificar.Cliente.Direccion = pedido.Cliente.Direccion;
+                        pedidoAmodificar.Cliente.Telefono = pedido.Cliente.Telefono;
+                        pedidoAmodificar.Observacion = pedido.Observacion;
+                        pedidoAmodificar.Estado = pedido.Estado;
+                    }
+                }
+
+                FileStream archivoCadete = new FileStream(rutaArchivo, FileMode.Create);
+                StreamWriter escribirCadete = new StreamWriter(archivoCadete);
+
+                string strJson = JsonSerializer.Serialize(listaCadetes);
+                escribirCadete.WriteLine("{0}", strJson);
+
+                escribirCadete.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+        }
+
         internal static void BorrarTodosLosPedidos()
         {
-            
+            //Elimino todos los pedidos del archivo los pedidos
             FileStream archivoPedidos = new FileStream(rutaArchivoPedidos, FileMode.Create);
             StreamWriter escribirPedido = new StreamWriter(archivoPedidos);
            
             escribirPedido.WriteLine("[]");
             escribirPedido.Close();
-            escribirPedido.Dispose();           
+            escribirPedido.Dispose();
+
+            try
+            {
+                //Elimino todos los listados de pedidos del archivo los cadetes
+                List<Cadete> listaCadetes = leerArchivoCadetes();
+
+                if (listaCadetes != null)
+                {
+                    foreach (Cadete cadete in listaCadetes)
+                    {
+                        cadete.ListadoPedidos.RemoveRange(0, cadete.ListadoPedidos.Count());
+                    }
+                    FileStream archivoCadete = new FileStream(rutaArchivo, FileMode.Create);
+                    StreamWriter escribirCadete = new StreamWriter(archivoCadete);
+
+                    string strJson = JsonSerializer.Serialize(listaCadetes);
+                    escribirCadete.WriteLine("{0}", strJson);
+
+                    escribirCadete.Close();
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
         }
 
         public static List<Pedido> guardarPedido(Pedido pedido)
