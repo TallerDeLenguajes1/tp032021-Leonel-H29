@@ -72,10 +72,12 @@ namespace TP3_HerreraLeonel.Controllers
         //Muestro el pedido a modificar en el form
         public IActionResult ModificarPedido(int id)
         {
+            List <Cadete> ListCadetes = DBTemporal.leerArchivoCadetes();
             Pedido pedidoADevolver = DBTemporal.VerPedido(id);
-            
+
             if (pedidoADevolver != null)
-                return View(pedidoADevolver);
+                //return View(pedidoADevolver);
+                return View(new Tuple<Pedido, List<Cadete>>(pedidoADevolver, ListCadetes));
             else
                 return Redirect("~/Pedido");
         }
@@ -83,7 +85,7 @@ namespace TP3_HerreraLeonel.Controllers
         //Modifico los datos del pedido
         public IActionResult ModificarUnPedido(int id, string _NombreClie, string _DireccionClie, string _TelefonoClie, string _Obs, Pedido.Estados _Estado, int _IdCadete)
         {
-            if (id >0)
+            if (id >0 && _IdCadete>0)
             {
                 Pedido pedidoADevolver = new Pedido();
                 pedidoADevolver.Nro = id;
@@ -93,6 +95,7 @@ namespace TP3_HerreraLeonel.Controllers
                 pedidoADevolver.Observacion = _Obs;
                 pedidoADevolver.Estado = _Estado;
                 DBTemporal.ModificarPedido(pedidoADevolver);
+                DBTemporal.CambiarDeCadeteAlPedido(pedidoADevolver, _IdCadete);
             }
             return Redirect("~/Pedido");
         }

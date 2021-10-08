@@ -3,9 +3,10 @@
     ViewData["Title"] = "Alta Pedidos";
 }
 @*
-    @model List<TP3_HerreraLeonel.Entities.Cadete>
+    item 1: @model List<TP3_HerreraLeonel.Entities.Cadete>
+    item 2: @model TP3_HerreraLeonel.Entities.Pedido;
 *@
-@model TP3_HerreraLeonel.Entities.Pedido;
+@model Tuple<TP3_HerreraLeonel.Entities.Pedido, List<TP3_HerreraLeonel.Entities.Cadete>>;
 <div class="text-center">
 
     <ul class="nav nav-tabs">
@@ -38,31 +39,42 @@
                     <legend>Ingrese los datos</legend>
 
                     <div class="mb-3">
-                        <input hidden type="text" id="id" name="id" class="form-control" value="@Model.Nro" required>
+                        <input hidden type="text" id="id" name="id" class="form-control" value="@Model.Item1.Nro" required>
                     </div>
 
                     <div class="mb-3">
                         <label for="name" class="form-label">NOMBRE COMPLETO</label>
-                        <input type="text" class="form-control" id="_NombreClie" name="_NombreClie" value="@Model.Cliente.Nombre" required>
+                        <input type="text" class="form-control" id="_NombreClie" name="_NombreClie" value="@Model.Item1.Cliente.Nombre" required>
                     </div>
                     <div class="mb-3">
                         <label for="address" class="form-label">DIRECCION</label>
-                        <input type="text" class="form-control" id="_DireccionClie" name="_DireccionClie" value="@Model.Cliente.Direccion" required>
+                        <input type="text" class="form-control" id="_DireccionClie" name="_DireccionClie" value="@Model.Item1.Cliente.Direccion" required>
                     </div>
                     <div class="mb-3">
                         <label for="phoneNumber" class="form-label">TELEFONO</label>
-                        <input type="text" class="form-control" id="_TelefonoClie" name="_TelefonoClie" value="@Model.Cliente.Telefono" required>
+                        <input type="text" class="form-control" id="_TelefonoClie" name="_TelefonoClie" value="@Model.Item1.Cliente.Telefono" required>
                     </div>
                     <div class="mb-3">
                         <label for="Observations" class="form-label">OBSERVACIONES</label>
-                        <textarea type="text" class="form-control" id="_Obs" name="_Obs" value="@Model.Observacion" required></textarea>
+                        <textarea type="text" class="form-control" id="_Obs" name="_Obs" value="@Model.Item1.Observacion" required></textarea>
                     </div>
                     <div>
                         <label for="Estados" class="form-label">ESTADO</label>
-                        <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" name="_Estado" id="_Estado">
+                        <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" name="_Estado" id="_Estado" required>
                             <option value="0" selected> Recibido</option>
                             <option value="1"> En camino </option>
                             <option value="2"> Entregado </option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Cadete" class="form-label">CADETE</label>
+                        <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" name="_IdCadete" id="_IdCadete" required>
+                            <option selected disabled>--SELECCIONE UN CADETE--</option>
+                            @foreach (var item in Model.Item2)
+                            {
+                                <option value="@item.Id">@item.Id- @item.Nombre</option>
+                            }
+
                         </select>
                     </div>
 
