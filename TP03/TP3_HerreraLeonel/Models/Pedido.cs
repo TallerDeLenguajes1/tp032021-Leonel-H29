@@ -37,5 +37,26 @@ namespace TP3_HerreraLeonel.Entities
             this.Cliente = new Cliente(_Nombre, _Direccion, _Telefo);
         }
 
+        public string EstadoPedido()
+        {
+            string _Estado = "";
+            switch (this.Estado)
+            {
+                case Estados.Recibido:
+                    _Estado = "Recibido";
+                    break;
+                case Estados.En_Camino:
+                    _Estado = "En Camino";
+                    break;
+                case Estados.Entregado:
+                    _Estado = "Entregado";
+                    break;
+                default:
+                    _Estado = "";
+                    break;
+            }
+            return _Estado;
+        }
+
     }
 }

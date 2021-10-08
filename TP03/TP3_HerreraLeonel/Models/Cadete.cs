@@ -46,7 +46,7 @@ namespace TP3_HerreraLeonel.Entities
             int aux = 0;
             foreach (var item in listadoPedidos)
             {
-                if (item.Estado == Pedido.Estados.Entregado)
+                if (item.EstadoPedido() == "Entregado")
                 {
                     aux += 100;
                 }

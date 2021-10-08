@@ -59,7 +59,7 @@
                     <td>@item.Cliente.Nombre</td>
                     <td>@item.Cliente.Direccion</td>
                     <td>@item.Cliente.Telefono</td>
-                    <td>@item.Estado</td>
+                    <td>@item.EstadoPedido()</td>
                     <td>
                         <a class="nav-link" asp-route-id="@item.Nro" asp-action="ModificarPedido">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
