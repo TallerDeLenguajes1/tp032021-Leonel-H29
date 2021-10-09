@@ -5,18 +5,21 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Text.Json;
+using NLog;
 
 namespace TP3_HerreraLeonel.Entities
 {
     public class DBTemporal
     {
+        private static ILogger _logger;
         public Cadeteria Cadeteria { get; set; }
 
-
+        
         static string rutaArchivo = @"Cadetes.json";
         static string rutaArchivoPedidos = @"Pedidos.json";
-        public DBTemporal()
+        public DBTemporal(ILogger logger)
         {
+            _logger = logger;
             Cadeteria = new Cadeteria();
         }
 
@@ -40,6 +43,8 @@ namespace TP3_HerreraLeonel.Entities
                     }
                     leerJason.Close();
                     leerJason.Dispose();
+                    string mensaje = "ARCHIVO "+ rutaArchivo + "ABIERTO CORRECTAMENTE";
+                    _logger.Info(mensaje);
                 }
             }
             catch (FileNotFoundException)
@@ -57,7 +62,13 @@ namespace TP3_HerreraLeonel.Entities
             Cadete cadeteSeleccionado = listaCadetes.Where(cad => cad.Id == id).Single();
             if (cadeteSeleccionado == null)
             {
-                Console.WriteLine("CADETE NO ENCONTRADO");
+                //Console.WriteLine("CADETE NO ENCONTRADO");
+                _logger.Error("CADETE NO ENCONTRADO");
+            }
+            else
+            {
+                string mensaje = "CADETE CON ID " + id + "ENCONTRADO";
+                _logger.Info(mensaje);
             }
             return cadeteSeleccionado;
         }
@@ -83,10 +94,15 @@ namespace TP3_HerreraLeonel.Entities
                     escribirCadete.WriteLine("{0}", strJson);
 
                     escribirCadete.Close();
+
+                    string mensaje = "LOS DATOS DEL CADETE " +cadeteSeleccionado.Id+" SE MODIFICARON CORRECTAMENTE" ;
+                    _logger.Info(mensaje);
                 }
             }
             catch (Exception ex) {
-                Console.WriteLine(ex);
+                //Console.WriteLine(ex);
+                string mensaje = "Error Message: " + ex.Message + " Stack trace: " + ex.StackTrace;
+                _logger.Error(mensaje);
             }
         }
 
@@ -104,6 +120,9 @@ namespace TP3_HerreraLeonel.Entities
             escribirCadete.WriteLine("{0}", strJson);
 
             escribirCadete.Close();
+
+            string mensaje = "LOS DATOS DEL CADETE " + cadete.Id + " SE GUARDARON CORRECTAMENTE";
+            _logger.Info(mensaje);
 
             return listaCadetes;
         }
@@ -125,7 +144,8 @@ namespace TP3_HerreraLeonel.Entities
             escribirCadete.Close();
             escribirCadete.Dispose();
 
-            //return listaCadetes;
+            string mensaje = "LOS DATOS DEL CADETE " + id + " SE ELIMINARON CORRECTAMENTE";
+            _logger.Info(mensaje);
         }
 
         //Funcion para asignar un pedido al cadete en el archivo
@@ -147,10 +167,14 @@ namespace TP3_HerreraLeonel.Entities
 
                     escribirCadete.Close();
                 }
+                string mensaje = "AL CADETE " + cadete.Id + " SE LE ASIGNO UN PEDIDO CORRECTAMENTE";
+                _logger.Info(mensaje);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                //Console.WriteLine(ex);
+                string mensaje = "Error Message: " + ex.Message + " Stack trace: " + ex.StackTrace;
+                _logger.Error(mensaje);
             }
         }
 
@@ -166,10 +190,14 @@ namespace TP3_HerreraLeonel.Entities
                 escribirCadete.WriteLine("[]");
                 escribirCadete.Close();
                 escribirCadete.Dispose();
+                string mensaje = "TODOS LOS DATOS DE LOS CADETES SE ELIMINARON CORRECTAMENTE";
+                _logger.Info(mensaje);
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex);
+                //Console.WriteLine(ex);
+                string mensaje = "Error Message: " + ex.Message + " Stack trace: " + ex.StackTrace;
+                _logger.Error(mensaje);
             }
         }
         
@@ -197,6 +225,8 @@ namespace TP3_HerreraLeonel.Entities
                     }
                     leerJason.Close();
                     leerJason.Dispose();
+                    string mensaje = "ARCHIVO " + rutaArchivoPedidos + "ABIERTO CORRECTAMENTE";
+                    _logger.Info(mensaje);
                 }
             }
             catch (FileNotFoundException)
@@ -214,10 +244,18 @@ namespace TP3_HerreraLeonel.Entities
             Pedido pedidoSeleccionado = listaPedidos.Where(ped => ped.Nro == nro).Single();
             if (pedidoSeleccionado == null)
             {
-                Console.WriteLine("PEDIDO NO ENCONTRADO");
+                //Console.WriteLine("PEDIDO NO ENCONTRADO");
+                _logger.Error("PEDIDO NO ENCONTRADO");
+            }
+            else
+            {
+                string mensaje = "PEDIDO NRO " + nro + "ENCONTRADO";
+                _logger.Info(mensaje);
             }
             return pedidoSeleccionado;
         }
+            
+           
 
         //Funcion para modificar los datos del pedido
         public static void ModificarPedido(Pedido pedido)
@@ -243,11 +281,16 @@ namespace TP3_HerreraLeonel.Entities
                     string strJsonPedidos = JsonSerializer.Serialize(listaPedidos);
                     escribirPedido.WriteLine("{0}", strJsonPedidos);
                     escribirPedido.Close();
+
+                    string mensaje = "LOS DATOS DEL PEDIDO " + pedidoSeleccionado.Nro + " SE MODIFICARON CORRECTAMENTE";
+                    _logger.Info(mensaje);
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                //Console.WriteLine(ex);
+                string mensaje = "Error Message: " + ex.Message + " Stack trace: " + ex.StackTrace;
+                _logger.Error(mensaje);
             }
         }
 
@@ -278,10 +321,14 @@ namespace TP3_HerreraLeonel.Entities
                 escribirCadete.WriteLine("{0}", strJson);
 
                 escribirCadete.Close();
+                string mensaje = "SE ACTUALIZO EL PEDIDO EN LISTADO DE LOS PEDIDOS DEL CADETE CORRECTAMENTE";
+                _logger.Info(mensaje);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                //Console.WriteLine(ex);
+                string mensaje = "Error Message: " + ex.Message + " Stack trace: " + ex.StackTrace;
+                _logger.Error(mensaje);
             }
         }
 
@@ -313,6 +360,8 @@ namespace TP3_HerreraLeonel.Entities
                         break;
                     }   
                 }
+                string mensaje = "SE CAMBIO EL CADETE AL PEDIDO CORRECTAMENTE";
+                _logger.Info(mensaje);
             }
             if (pedidoAmodificar == null)
             {
@@ -351,10 +400,14 @@ namespace TP3_HerreraLeonel.Entities
 
                     escribirCadete.Close();
                 }
+                string mensaje = "TODOS LOS DATOS DE LOS PEDIDOS SE ELIMINARON CORRECTAMENTE";
+                _logger.Info(mensaje);
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex);
+                //Console.WriteLine(ex);
+                string mensaje = "Error Message: " + ex.Message + " Stack trace: " + ex.StackTrace;
+                _logger.Error(mensaje);
             }
         }
 
@@ -372,6 +425,9 @@ namespace TP3_HerreraLeonel.Entities
             escribirPedido.WriteLine("{0}", strJson);
 
             escribirPedido.Close();
+
+            string mensaje = "LOS DATOS DEL PEDIDO " + pedido.Nro + " SE GUARDARON CORRECTAMENTE";
+            _logger.Info(mensaje);
 
             return listaPedidos;
         }
@@ -401,6 +457,8 @@ namespace TP3_HerreraLeonel.Entities
 
             escribirPedido.Close();
             escribirPedido.Dispose();
+            string mensaje = "LOS DATOS DEL PEDIDO " + nro + " SE ELIMINARON CORRECTAMENTE";
+            _logger.Info(mensaje);
         }
 
         //Funcion para borrar los datos del pedido asignado al cadete en el archivo

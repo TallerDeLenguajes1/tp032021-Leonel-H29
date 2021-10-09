@@ -38,9 +38,11 @@
 
     <h1 class="display-4">Lista de Cadetes</h1>
 
-    @if (Model.Count()>0)
+    @if (Model.Count() > 0)
     {
-        <table class="table table-striped">
+        <input class="form-control col-md-3 light-table-filter" data-table="order-table" type="text" placeholder="Busque un registro">
+        <br />
+        <table class="table table-striped order-table">
 
             <tr>
                 <th scope="col">ID</th>
@@ -58,7 +60,7 @@
                     <td>@item.Direccion</td>
                     <td>@item.Telefono</td>
                     <td>
-                        
+
                         <a class="nav-link" asp-route-id="@item.Id" asp-action="ListPedidos">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-in-right" viewBox="0 0 16 16">
                                 <path fill-rule="evenodd" d="M6 3.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 0-1 0v2A1.5 1.5 0 0 0 6.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-8A1.5 1.5 0 0 0 5 3.5v2a.5.5 0 0 0 1 0v-2z" />
@@ -101,4 +103,44 @@
         </div>
     }
 </div>
+<script type="text/javascript">
+    (function (document) {
+        'use strict';
 
+        var LightTableFilter = (function (Arr) {
+
+            var _input;
+
+            function _onInputEvent(e) {
+                _input = e.target;
+                var tables = document.getElementsByClassName(_input.getAttribute('data-table'));
+                Arr.forEach.call(tables, function (table) {
+                    Arr.forEach.call(table.tBodies, function (tbody) {
+                        Arr.forEach.call(tbody.rows, _filter);
+                    });
+                });
+            }
+
+            function _filter(row) {
+                var text = row.textContent.toLowerCase(), val = _input.value.toLowerCase();
+                row.style.display = text.indexOf(val) === -1 ? 'none' : 'table-row';
+            }
+
+            return {
+                init: function () {
+                    var inputs = document.getElementsByClassName('light-table-filter');
+                    Arr.forEach.call(inputs, function (input) {
+                        input.oninput = _onInputEvent;
+                    });
+                }
+            };
+        })(Array.prototype);
+
+        document.addEventListener('readystatechange', function () {
+            if (document.readyState === 'complete') {
+                LightTableFilter.init();
+            }
+        });
+
+    })(document);
+</script>
