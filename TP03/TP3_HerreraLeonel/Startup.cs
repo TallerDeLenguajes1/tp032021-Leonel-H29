@@ -9,13 +9,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TP3_HerreraLeonel.Entities;
+using NLog.Web;
 
 namespace TP3_HerreraLeonel
 {
     public class Startup
     {
         //static List<Cadete> listaCadetes = new List<Cadete>();
-        static DBTemporal DB = new DBTemporal();
+        static DBTemporal DB = new DBTemporal(NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger());
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
