@@ -1,0 +1,9 @@
+-- Pedidos que tiene cada cadete
+SELECT nombre, COUNT(id_pedido) AS cantidad
+FROM Cadetes INNER JOIN ListadoPedidos USING (id_cadete)
+GROUP BY nombre;
+
+-- Pedidos que tiene cada cliente
+SELECT  nombre, COUNT(nro_pedido) AS cantidad FROM
+Clientes INNER JOIN Pedidos USING(id_cliente)
+GROUP BY nombre;
