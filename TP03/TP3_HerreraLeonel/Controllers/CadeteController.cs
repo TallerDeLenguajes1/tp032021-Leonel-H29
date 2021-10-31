@@ -75,6 +75,7 @@ namespace TP3_HerreraLeonel.Controllers
                 Cadete nuevoCadete = new Cadete(idMax+1,_Nombre, _Direccion, _Telefono);
                 //dB.Cadeteria.ListadoCadetes = DBTemporal.guardarCadete(nuevoCadete);
                 //return View(dB.Cadeteria.ListadoCadetes);
+                repoCadete.InsertCadetes(nuevoCadete);
                 return View(repoCadete.getAll());
             }
         }

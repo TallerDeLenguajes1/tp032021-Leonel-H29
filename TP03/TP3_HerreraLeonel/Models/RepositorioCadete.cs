@@ -18,7 +18,7 @@ namespace TP3_HerreraLeonel.Models
             //this.conexion = new SQLiteConnection(connectionString);
         }
 
-        
+        //Obtengo todos los datos de la tabla Cadetes en la DB
         public List<Cadete> getAll()
         {
             List<Cadete> ListadoDeCadetes = new List<Cadete>();
@@ -55,6 +55,34 @@ namespace TP3_HerreraLeonel.Models
 
             }
             return ListadoDeCadetes;
-        }    
+        }
+
+        //Inserto datos a la tabla
+        public void InsertCadetes(Cadete cadete)
+        {
+            string SQLQuery = "INSERT INTO Cadetes (cadeteNombre, cadeteDireccion, cadeteTelefono)" +
+                "VALUES (@nombre, @direccion, @telefono);";
+            try
+            {
+                using (SQLiteConnection conexion = new SQLiteConnection(connectionString))
+                {
+                    
+                    using (SQLiteCommand command = new SQLiteCommand(SQLQuery, conexion))
+                    {
+                        conexion.Open();
+                        command.Parameters.AddWithValue("@nombre", cadete.Nombre);
+                        command.Parameters.AddWithValue("@direccion", cadete.Direccion);
+                        command.Parameters.AddWithValue("@telefono", cadete.Telefono);
+                        command.ExecuteNonQuery();
+                        conexion.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+
+            }
+        }
     }
 }
