@@ -15,6 +15,7 @@ namespace TP3_HerreraLeonel.Controllers
         private readonly ILogger<PedidoController> _logger;
         private readonly DBTemporal dB;
 
+
         public PedidoController(ILogger<PedidoController> logger, DBTemporal dataBase)
         {
             _logger = logger;
@@ -39,7 +40,7 @@ namespace TP3_HerreraLeonel.Controllers
         {
             return View();
         }
-
+        /*
         //Alta de pedidos
         public IActionResult AltaPedido(string _NombreClie, string _DireccionClie, string _TelefonoClie, string _Obs, Pedido.Estados _Estado, int _IdCadete)
         {
@@ -113,7 +114,7 @@ namespace TP3_HerreraLeonel.Controllers
             DBTemporal.BorrarTodosLosPedidos();
             return Redirect("~/Pedido");
         }
-        
+        */
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TP3_HerreraLeonel.Entities;
 using NLog.Web;
+using TP3_HerreraLeonel.Models;
 
 namespace TP3_HerreraLeonel
 {
@@ -28,7 +29,9 @@ namespace TP3_HerreraLeonel
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
-            services.AddSingleton(DB);
+            RepositorioCadete RepoCadetes = new RepositorioCadete (Configuration.GetConnectionString("Default"));
+            //services.AddSingleton(DB);
+            services.AddSingleton(RepoCadetes);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

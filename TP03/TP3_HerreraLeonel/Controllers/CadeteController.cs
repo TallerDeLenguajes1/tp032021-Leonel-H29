@@ -13,18 +13,20 @@ namespace TP3_HerreraLeonel.Controllers
     public class CadeteController : Controller
     {
         private readonly ILogger<CadeteController> _logger;
-        private readonly DBTemporal dB;
+        //private readonly DBTemporal dB;
+        private readonly RepositorioCadete repoCadete;
 
-        public CadeteController(ILogger<CadeteController> logger, DBTemporal dataBase)
+        public CadeteController(ILogger<CadeteController> logger, RepositorioCadete RepoCadetes)
         {
             _logger = logger;
-            dB = dataBase;
+            //dB = dataBase;
+            repoCadete = RepoCadetes;
         }
 
         public IActionResult Index()
         {
             try {
-                return View(DBTemporal.leerArchivoCadetes());
+                return View(repoCadete.getAll());
             }
             catch (Exception ex){
                 Console.WriteLine(ex);
@@ -32,7 +34,7 @@ namespace TP3_HerreraLeonel.Controllers
             }
                 
         }
-
+        /*
         public IActionResult ListPedidos(int id)
         {
             List<Cadete> ListCadetes = DBTemporal.leerArchivoCadetes();
@@ -45,7 +47,7 @@ namespace TP3_HerreraLeonel.Controllers
                 Console.WriteLine(ex);
                 return Redirect("~/Cadete");
             }
-        }
+        }*/
 
         public IActionResult Privacy()
         {
@@ -55,7 +57,8 @@ namespace TP3_HerreraLeonel.Controllers
         //Alta de Cadete
         public IActionResult AltaCadete(string _Nombre, string _Direccion, string _Telefono)
         {
-            List<Cadete> ListCadetes = DBTemporal.leerArchivoCadetes();
+            //List<Cadete> ListCadetes = DBTemporal.leerArchivoCadetes();
+            List<Cadete> ListCadetes = repoCadete.getAll();
             int idMax = 0;
             if (ListCadetes.Count() > 0)
             {
@@ -64,16 +67,18 @@ namespace TP3_HerreraLeonel.Controllers
             //int idMax = ListCadetes[ListCadetes.Count() - 1].Id;
             if (_Nombre == null || _Direccion == null || _Telefono == null)
             {
-                return View(dB.Cadeteria.ListadoCadetes);
+                //return View(dB.Cadeteria.ListadoCadetes);
+                return View(repoCadete.getAll());
             }
             else
             {
                 Cadete nuevoCadete = new Cadete(idMax+1,_Nombre, _Direccion, _Telefono);
-                dB.Cadeteria.ListadoCadetes = DBTemporal.guardarCadete(nuevoCadete);
-                return View(dB.Cadeteria.ListadoCadetes);
+                //dB.Cadeteria.ListadoCadetes = DBTemporal.guardarCadete(nuevoCadete);
+                //return View(dB.Cadeteria.ListadoCadetes);
+                return View(repoCadete.getAll());
             }
         }
-
+        /*
         //Muestro los datos del cadete en el form de edicion
         public IActionResult ModificarCadete(int id)
         {
@@ -114,7 +119,7 @@ namespace TP3_HerreraLeonel.Controllers
             DBTemporal.BorrarTodosLosCadetes();
             return Redirect("~/Cadete");
         }
-        
+        */
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
