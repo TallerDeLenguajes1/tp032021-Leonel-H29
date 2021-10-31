@@ -84,5 +84,76 @@ namespace TP3_HerreraLeonel.Models
 
             }
         }
+
+        //Obtengo todos los datos del  Cadete a modificar en la tabla de la DB
+        public Cadete getCadeteAModificar(int id)
+        {
+            Cadete cadeteAModificar = new Cadete();
+            string SQLQuery = "SELECT * FROM Cadetes WHERE cadeteID="+Convert.ToString(id)+";";
+            try
+            {
+                using (SQLiteConnection conexion = new SQLiteConnection(connectionString))
+                {
+                    conexion.Open();
+                    SQLiteCommand command = new SQLiteCommand(SQLQuery, conexion);
+                    using (SQLiteDataReader DataReader = command.ExecuteReader())
+                    {
+                        if (DataReader.HasRows)
+                        {
+                            while (DataReader.Read())
+                            {
+                                Cadete cadete = new Cadete()
+                                {
+                                    Id = Convert.ToInt32(DataReader["cadeteID"]),
+                                    Nombre = DataReader["cadeteNombre"].ToString(),
+                                    Direccion = DataReader["cadeteDireccion"].ToString(),
+                                    Telefono = DataReader["cadeteTelefono"].ToString()
+                                };
+                                cadeteAModificar = cadete;
+                            }
+                        }
+                    }
+                    conexion.Close();
+                }
+               
+            }
+            catch (Exception ex)
+            {
+                cadeteAModificar = new Cadete();
+                Console.WriteLine(ex.Message);
+
+            }
+            return cadeteAModificar;
+        }
+
+        //Modifico datos a la tabla
+        public void UpdateCadetes(Cadete cadete)
+        {
+            string SQLQuery = "UPDATE Cadetes SET cadeteNombre=@nombre, cadeteDireccion=@direccion," +
+                "cadeteTelefono=@telefono WHERE cadeteID=@id_cad";
+
+            try
+            {
+                using (SQLiteConnection conexion = new SQLiteConnection(connectionString))
+                {
+
+                    using (SQLiteCommand command = new SQLiteCommand(SQLQuery, conexion))
+                    {
+                        conexion.Open();
+                        command.Parameters.AddWithValue("@id_cad", cadete.Id);
+                        command.Parameters.AddWithValue("@nombre", cadete.Nombre);
+                        command.Parameters.AddWithValue("@direccion", cadete.Direccion);
+                        command.Parameters.AddWithValue("@telefono", cadete.Telefono);
+                        command.ExecuteNonQuery();
+                        conexion.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+
+            }
+        }
     }
 }

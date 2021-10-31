@@ -79,12 +79,13 @@ namespace TP3_HerreraLeonel.Controllers
                 return View(repoCadete.getAll());
             }
         }
-        /*
+        
         //Muestro los datos del cadete en el form de edicion
         public IActionResult ModificarCadete(int id)
         {
-            Cadete cadeteADevolver = DBTemporal.VerCadete(id);
-            
+            //Cadete cadeteADevolver = DBTemporal.VerCadete(id);
+            Cadete cadeteADevolver = repoCadete.getCadeteAModificar(id);
+
             if (cadeteADevolver != null)
                 return View(cadeteADevolver);
             else
@@ -100,12 +101,13 @@ namespace TP3_HerreraLeonel.Controllers
                 cadeteAModificar.Nombre = _Nombre;
                 cadeteAModificar.Direccion = _Direccion;
                 cadeteAModificar.Telefono = _Telefono;
-                DBTemporal.ModificarCadete(cadeteAModificar);
+                //DBTemporal.ModificarCadete(cadeteAModificar);
+                repoCadete.UpdateCadetes(cadeteAModificar);
             }
             
             return Redirect("~/Cadete");
         }
-        
+        /*
         //Elimino el cadete
         public IActionResult EliminarCadete(int id)
         {
