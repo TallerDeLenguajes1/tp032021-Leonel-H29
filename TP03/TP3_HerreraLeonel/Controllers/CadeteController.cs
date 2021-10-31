@@ -107,11 +107,12 @@ namespace TP3_HerreraLeonel.Controllers
             
             return Redirect("~/Cadete");
         }
-        /*
+        
         //Elimino el cadete
         public IActionResult EliminarCadete(int id)
         {
-            DBTemporal.BorrarCadete(id);
+            //DBTemporal.BorrarCadete(id);
+            repoCadete.DeleteCadetes(id);
             return Redirect("~/Cadete");
         }
 
@@ -119,10 +120,11 @@ namespace TP3_HerreraLeonel.Controllers
         
         public IActionResult DeleteAll_Cadetes()
         {
-            DBTemporal.BorrarTodosLosCadetes();
+            //DBTemporal.BorrarTodosLosCadetes();
+            repoCadete.DeleteAllCadetes();
             return Redirect("~/Cadete");
         }
-        */
+        
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

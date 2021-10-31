@@ -155,5 +155,55 @@ namespace TP3_HerreraLeonel.Models
 
             }
         }
+
+        //Modifico datos a la tabla
+        public void DeleteCadetes(int id)
+        {
+            string SQLQuery = "DELETE FROM Cadetes WHERE cadeteID=" + Convert.ToString(id) + ";"; 
+
+            try
+            {
+                using (SQLiteConnection conexion = new SQLiteConnection(connectionString))
+                {
+
+                    using (SQLiteCommand command = new SQLiteCommand(SQLQuery, conexion))
+                    {
+                        conexion.Open();
+                        command.ExecuteNonQuery();
+                        conexion.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+
+            }
+        }
+
+        //Modifico datos a la tabla
+        public void DeleteAllCadetes()
+        {
+            string SQLQuery = "DELETE FROM Cadetes";
+
+            try
+            {
+                using (SQLiteConnection conexion = new SQLiteConnection(connectionString))
+                {
+
+                    using (SQLiteCommand command = new SQLiteCommand(SQLQuery, conexion))
+                    {
+                        conexion.Open();
+                        command.ExecuteNonQuery();
+                        conexion.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+
+            }
+        }
     }
 }
