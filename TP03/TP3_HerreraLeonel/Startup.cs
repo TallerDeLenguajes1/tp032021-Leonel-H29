@@ -30,8 +30,10 @@ namespace TP3_HerreraLeonel
         {
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
             RepositorioCadete RepoCadetes = new RepositorioCadete (Configuration.GetConnectionString("Default"));
+            RepositorioPedido RepoPedidos = new RepositorioPedido(Configuration.GetConnectionString("Default"));
             //services.AddSingleton(DB);
             services.AddSingleton(RepoCadetes);
+            services.AddSingleton(RepoPedidos);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

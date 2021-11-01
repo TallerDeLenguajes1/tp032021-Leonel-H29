@@ -13,21 +13,21 @@ namespace TP3_HerreraLeonel.Controllers
     public class PedidoController : Controller
     {
         private readonly ILogger<PedidoController> _logger;
-        private readonly DBTemporal dB;
+        //private readonly DBTemporal dB;
+        private readonly RepositorioPedido repoPedido;
 
-
-        public PedidoController(ILogger<PedidoController> logger, DBTemporal dataBase)
+        public PedidoController(ILogger<PedidoController> logger, RepositorioPedido repo)
         {
             _logger = logger;
-            dB = dataBase;
-            //_listaCadete = listaCadete;
+            repoPedido = repo;
         }
 
         public IActionResult Index()
         {
             try
             {
-                return View(DBTemporal.leerArchivoPedidos());
+                return View(repoPedido.getAllPedidos());
+                //return View(DBTemporal.leerArchivoPedidos());
             }
             catch(Exception ex)
             {
