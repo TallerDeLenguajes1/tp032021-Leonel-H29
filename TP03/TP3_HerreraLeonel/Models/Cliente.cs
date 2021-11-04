@@ -8,7 +8,7 @@ namespace TP3_HerreraLeonel.Entities
 {
     public class Cliente
     {
-        private static int count = 0;
+        //private static int count = 0;
         private int id;
         private string nombre;
         private string direccion;
@@ -24,9 +24,10 @@ namespace TP3_HerreraLeonel.Entities
 
         }
 
-        public Cliente(string nombre, string direccion, string telefono)
+        public Cliente(int id ,string nombre, string direccion, string telefono)
         {
-            Id = count++;
+            //Id = count++;
+            Id = id;
             Nombre = nombre;
             Direccion = direccion;
             Telefono = telefono;
