@@ -146,8 +146,8 @@ namespace TP3_HerreraLeonel.Models
             try
             {
                 pedido.Cliente=InsertClientes(pedido.Cliente);
-                string QueryClientes = "(SELECT clienteID FROM Clientes WHERE clienteID = "+pedido.Cliente.Id+")";
-                string QueryCadetes = "(SELECT cadeteID FROM Cadetes WHERE cadeteID = " + id_cadete + ")";
+                string QueryClientes = "(SELECT clienteID FROM Clientes WHERE clienteID = @id_cliente)";
+                string QueryCadetes = "(SELECT cadeteID FROM Cadetes WHERE cadeteID = @id_cadete)";
 
                 string SQLQuery = "INSERT INTO Pedidos (pedidoObs, clienteId, cadeteId, pedidoEstado)" +
                 "VALUES (@obs, " + QueryClientes + " , " + QueryCadetes +" , @estado);";
@@ -158,6 +158,8 @@ namespace TP3_HerreraLeonel.Models
                     using (SQLiteCommand command = new SQLiteCommand(SQLQuery, conexion))
                     {
                         conexion.Open();
+                        command.Parameters.AddWithValue("@id_cliente", pedido.Cliente.Id.ToString());
+                        command.Parameters.AddWithValue("@id_cadete", id_cadete.ToString());
                         command.Parameters.AddWithValue("@obs", pedido.Observacion);
                         command.Parameters.AddWithValue("@estado", pedido.Estado);
                         command.ExecuteNonQuery();
