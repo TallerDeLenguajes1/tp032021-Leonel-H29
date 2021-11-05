@@ -99,13 +99,13 @@ namespace TP3_HerreraLeonel.Models
         }
 
         //Inserto datos a la tabla de los Clientes
-        public void InsertClientes(Cliente cliente)
+        public Cliente InsertClientes(Cliente cliente)
         {
             List<Cliente> ListCliente = getAllClientes();
             try
             {
                 
-                if(ListCliente.Find(x=> x.Id == cliente.Id)==null)
+                if(ListCliente.Find(x=> x.Nombre == cliente.Nombre && x.Direccion == cliente.Direccion && x.Telefono == cliente.Telefono)==null)
                 {
                     string SQLQuery = "INSERT INTO Clientes (clienteNombre, clienteDireccion, clienteTelefono)" +
                     "VALUES (@nombre, @direccion, @telefono);";
@@ -127,14 +127,17 @@ namespace TP3_HerreraLeonel.Models
                 }
                 else
                 {
+                    cliente = ListCliente.Where(x=> x.Nombre == cliente.Nombre && x.Direccion == cliente.Direccion && x.Telefono == cliente.Telefono).Single();
                     _logger.Info("EL CLIENTE "+cliente.Id+" YA SE ENCUENTRA REGISTRADO");
 
                 }
             }
             catch (Exception ex)
             {
+                cliente = new Cliente();
                 _logger.Error("SE INSERTARON LOS DATOS DE LOS CLIENTES DE FORMA ERRONEA: ", ex.Message);
             }
+            return cliente;
         }
 
         //Inserto datos a la tabla
@@ -142,7 +145,7 @@ namespace TP3_HerreraLeonel.Models
         {
             try
             {
-                InsertClientes(pedido.Cliente);
+                pedido.Cliente=InsertClientes(pedido.Cliente);
                 string QueryClientes = "(SELECT clienteID FROM Clientes WHERE clienteID = "+pedido.Cliente.Id+")";
                 string QueryCadetes = "(SELECT cadeteID FROM Cadetes WHERE cadeteID = " + id_cadete + ")";
 
@@ -249,7 +252,7 @@ namespace TP3_HerreraLeonel.Models
 
             try
             {
-                InsertClientes(pedido.Cliente);
+                pedido.Cliente=InsertClientes(pedido.Cliente);
                 using (SQLiteConnection conexion = new SQLiteConnection(connectionString))
                 {
 
