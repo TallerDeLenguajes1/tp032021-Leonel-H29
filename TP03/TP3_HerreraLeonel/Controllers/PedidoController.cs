@@ -44,11 +44,13 @@ namespace TP3_HerreraLeonel.Controllers
         //Alta de pedidos
         public IActionResult AltaPedido(string _NombreClie, string _DireccionClie, string _TelefonoClie, string _Obs, Pedido.Estados _Estado, int _IdCadete)
         {
+            /*
             List<Pedido> ListPedidos = repoPedido.getAllPedidos();
             int idMax = 0;
             if (ListPedidos.Count()>0) {
                 idMax = ListPedidos.Max(x => x.Nro);
             }
+            */
            
             
             if (_NombreClie == null || _DireccionClie == null || _TelefonoClie == null)
@@ -66,7 +68,7 @@ namespace TP3_HerreraLeonel.Controllers
                     idMaxCliente= ListClienteDB.Max(x => x.Id);
                 }
                 
-                Pedido nuevoPedido = new Pedido(idMax+1,_Obs, _Estado, idMaxCliente+1,_NombreClie, _DireccionClie, _TelefonoClie);
+                Pedido nuevoPedido = new Pedido(_Obs, _Estado, idMaxCliente+1,_NombreClie, _DireccionClie, _TelefonoClie);
                 List<Cadete> cadeteLista = repoCadete.getAll();
                 Cadete cadeteSeleccionado = repoCadete.getCadeteAModificar(_IdCadete);
                 cadeteSeleccionado.AgregarPedido(nuevoPedido);
