@@ -173,7 +173,7 @@ namespace TP3_HerreraLeonel.Models
         public Pedido getPedidoAModificar(int id)
         {
             Pedido pedidoAModificar = new Pedido();
-            string SQLQuery = "SELECT * FROM Pedidos INNER JOIN Clientes WHERE pedidoID=" + Convert.ToString(id)+";";
+            string SQLQuery = "SELECT * FROM Pedidos INNER JOIN Clientes ON Clientes.clienteID=Pedidos.clienteId WHERE pedidoID=" + Convert.ToString(id)+";";
             try
             {
                 using (SQLiteConnection conexion = new SQLiteConnection(connectionString))
