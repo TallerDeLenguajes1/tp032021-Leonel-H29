@@ -4,18 +4,20 @@ using System.Data.SQLite;
 using System.Linq;
 using System.Threading.Tasks;
 using TP3_HerreraLeonel.Entities;
-
+using NLog;
 
 namespace TP3_HerreraLeonel.Models
 {
     public class RepositorioCadete
     {
         private readonly string connectionString;
+        private static ILogger _logger;
         //private readonly SQLiteConnection conexion;
 
-        public RepositorioCadete(string connectionString){
+        public RepositorioCadete(string connectionString, ILogger logger)
+        {
             this.connectionString = connectionString;
-            //this.conexion = new SQLiteConnection(connectionString);
+            _logger = logger;
         }
 
         //Obtengo todos los datos de la tabla Cadetes en la DB
@@ -40,21 +42,63 @@ namespace TP3_HerreraLeonel.Models
                                 Direccion = DataReader["cadeteDireccion"].ToString(),
                                 Telefono = DataReader["cadeteTelefono"].ToString()
                             };
+                            cadete.ListadoPedidos = getPedidos_delCadete(cadete.Id);
                             ListadoDeCadetes.Add(cadete);
                         }
                     }
                     
                     conexion.Close();
                 }
-                Console.WriteLine(ListadoDeCadetes);
+                _logger.Info("SE OBTUVO LOS DATOS DE LOS CADETES DE FORMA EXITOSA");
             }
             catch(Exception ex)
             {
                 ListadoDeCadetes = new List<Cadete>();
-                Console.WriteLine(ex.Message);
-
+                _logger.Error("ERROR AL OBTENER LOS DATOS DE LOS CADETES: ", ex.Message);
             }
             return ListadoDeCadetes;
+        }
+
+        //Obtengo todos los datos de la tabla Cadetes en la DB
+        public List<Pedido> getPedidos_delCadete(int id)
+        {
+            List<Pedido> ListadoDePedidos = new List<Pedido>();
+            string SQLQuery = "SELECT * FROM Pedidos INNER JOIN Cadetes " +
+            "ON Pedidos.cadeteId=Cadetes.cadeteID" +
+            " INNER JOIN Clientes ON Pedidos.clienteId=Clientes.clienteID" +
+            " WHERE Cadetes.cadeteID=" + id + "; ";
+            try
+            {
+                using (SQLiteConnection conexion = new SQLiteConnection(connectionString))
+                {
+                    conexion.Open();
+                    SQLiteCommand command = new SQLiteCommand(SQLQuery, conexion);
+                    using (SQLiteDataReader DataReader = command.ExecuteReader())
+                    {
+                        while (DataReader.Read())
+                        {
+                            Pedido pedido = new Pedido();
+                            pedido.Nro = Convert.ToInt32(DataReader["pedidoID"]);
+                            pedido.Observacion = DataReader["pedidoObs"].ToString();
+                            pedido.Cliente.Id = Convert.ToInt32(DataReader["clienteId"]);
+                            pedido.Cliente.Nombre = DataReader["clienteNombre"].ToString();
+                            pedido.Cliente.Direccion = DataReader["clienteDireccion"].ToString();
+                            pedido.Cliente.Telefono = DataReader["clienteTelefono"].ToString();
+                            pedido.Estado = (Pedido.Estados)Enum.Parse(typeof(Pedido.Estados), DataReader["pedidoEstado"].ToString());
+                            ListadoDePedidos.Add(pedido);
+                        }
+                    }
+
+                    conexion.Close();
+                }
+                _logger.Info("SE OBTUVO LOS DATOS DE PEDIDOS LOS CADETES DE FORMA EXITOSA");
+            }
+            catch (Exception ex)
+            {
+                ListadoDePedidos = new List<Pedido>();
+                _logger.Error("ERROR AL OBTENER LOS DATOS DE LOS CADETES: ", ex.Message);
+            }
+            return ListadoDePedidos;
         }
 
         //Inserto datos a la tabla
@@ -77,11 +121,11 @@ namespace TP3_HerreraLeonel.Models
                         conexion.Close();
                     }
                 }
+                _logger.Info("SE INSERTARON LOS DATOS DE LOS CADETES DE FORMA EXITOSA");
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-
+                _logger.Error("SE INSERTARON LOS DATOS DE LOS CADETES DE FORMA ERRONEA: ", ex.Message);
             }
         }
 
@@ -115,12 +159,12 @@ namespace TP3_HerreraLeonel.Models
                     }
                     conexion.Close();
                 }
-               
+                _logger.Info("SE OBTUVO LOS DATOS DEL CADETE "+id+ " DE FORMA EXITOSA");
             }
             catch (Exception ex)
             {
                 cadeteAModificar = new Cadete();
-                Console.WriteLine(ex.Message);
+                _logger.Error("SE OBTUVO LOS DATOS DEL CADETE " + id + " DE FORMA ERRONEA:", ex.Message);
 
             }
             return cadeteAModificar;
@@ -148,11 +192,11 @@ namespace TP3_HerreraLeonel.Models
                         conexion.Close();
                     }
                 }
+                _logger.Info("SE MODIFICARON LOS DATOS DEL CADETE " + cadete.Id + " DE FORMA EXITOSA");
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-
+                _logger.Error("SE MODIFICARON LOS DATOS DEL CADETE " + cadete.Id + " DE FORMA ERRONEA", ex.Message);
             }
         }
 
@@ -173,11 +217,11 @@ namespace TP3_HerreraLeonel.Models
                         conexion.Close();
                     }
                 }
+                _logger.Info("SE ELIMINARON LOS DATOS DEL CADETE " + id + " DE FORMA EXITOSA");
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-
+                _logger.Error("SE ELIMINARON LOS DATOS DEL CADETE " + id + " DE FORMA ERRONEA: ",ex.Message);
             }
         }
 
@@ -198,10 +242,11 @@ namespace TP3_HerreraLeonel.Models
                         conexion.Close();
                     }
                 }
+                _logger.Info("SE ELIMINARON LOS DATOS DE LOS CADETES DE FORMA EXITOSA");
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                _logger.Error("SE ELIMINARON LOS DATOS DE LOS CADETES DE FORMA ERRONEA", ex.Message);
 
             }
         }

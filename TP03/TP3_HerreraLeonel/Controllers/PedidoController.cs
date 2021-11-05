@@ -13,7 +13,6 @@ namespace TP3_HerreraLeonel.Controllers
     public class PedidoController : Controller
     {
         private readonly ILogger<PedidoController> _logger;
-        //private readonly DBTemporal dB;
         private readonly RepositorioCadete repoCadete;
         private readonly RepositorioPedido repoPedido;
 
@@ -29,7 +28,6 @@ namespace TP3_HerreraLeonel.Controllers
             try
             {
                 return View(repoPedido.getAllPedidos());
-                //return View(DBTemporal.leerArchivoPedidos());
             }
             catch(Exception ex)
             {
@@ -68,7 +66,7 @@ namespace TP3_HerreraLeonel.Controllers
                     idMaxCliente= ListClienteDB.Max(x => x.Id);
                 }
                 
-                Pedido nuevoPedido = new Pedido(idMax+1,_Obs, _Estado, idMaxCliente,_NombreClie, _DireccionClie, _TelefonoClie);
+                Pedido nuevoPedido = new Pedido(idMax+1,_Obs, _Estado, idMaxCliente+1,_NombreClie, _DireccionClie, _TelefonoClie);
                 List<Cadete> cadeteLista = repoCadete.getAll();
                 Cadete cadeteSeleccionado = repoCadete.getCadeteAModificar(_IdCadete);
                 cadeteSeleccionado.AgregarPedido(nuevoPedido);
@@ -94,7 +92,6 @@ namespace TP3_HerreraLeonel.Controllers
         }
 
         //Modifico los datos del pedido
-        
         public IActionResult ModificarUnPedido(int id, int id_cli ,string _NombreClie, string _DireccionClie, string _TelefonoClie, string _Obs, Pedido.Estados _Estado, int _IdCadete)
         {
             if (id >0 && _IdCadete>0)
@@ -116,14 +113,12 @@ namespace TP3_HerreraLeonel.Controllers
         public IActionResult EliminarPedido(int id)
         {
             repoPedido.DeletePedido(id);
-            //DBTemporal.BorrarPedido(id);
             return Redirect("~/Pedido");
         }
 
         //Elimino todos los pedidos
         public IActionResult DeleteAll_Pedidos()
         {
-            //DBTemporal.BorrarTodosLosPedidos();
             repoPedido.DeleteAllPedidos();
             return Redirect("~/Pedido");
         }

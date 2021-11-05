@@ -4,6 +4,7 @@ using System.Data.SQLite;
 using System.Linq;
 using System.Threading.Tasks;
 using TP3_HerreraLeonel.Entities;
+using NLog;
 
 
 namespace TP3_HerreraLeonel.Models
@@ -11,11 +12,12 @@ namespace TP3_HerreraLeonel.Models
     public class RepositorioPedido
     {
         private readonly string connectionString;
-        //private readonly SQLiteConnection conexion;
+        private static ILogger _logger;
 
-        public RepositorioPedido(string connectionString){
+        public RepositorioPedido(string connectionString, ILogger logger)
+        {
             this.connectionString = connectionString;
-            //this.conexion = new SQLiteConnection(connectionString);
+            _logger = logger;
         }
 
 
@@ -45,13 +47,12 @@ namespace TP3_HerreraLeonel.Models
 
                     conexion.Close();
                 }
-
+                _logger.Info("SE OBTUVIERON LOS DATOS DE LOS CLIENTES DE FORMA EXITOSA");
             }
             catch (Exception ex)
             {
                 ListadoDeCliente = new List<Cliente>();
-                Console.WriteLine(ex.Message);
-
+                _logger.Error("SE OBTUVIERON LOS DATOS DE LOS CLIENTES DE FORMA ERRONEA: ", ex.Message);
             }
             return ListadoDeCliente;
         }
@@ -61,14 +62,14 @@ namespace TP3_HerreraLeonel.Models
         {
             List<Pedido> ListadoDePedidos = new List<Pedido>();
             string SQLQuery = "SELECT * FROM Pedidos " +
-                "INNER JOIN Clientes WHERE Pedidos.clienteId=Clientes.clienteID;";
+                "INNER JOIN Clientes ON Pedidos.clienteId=Clientes.clienteID;";
             try
             {
                 using (SQLiteConnection conexion = new SQLiteConnection(connectionString))
                 {
                     conexion.Open();
                     SQLiteCommand command = new SQLiteCommand(SQLQuery, conexion);
-                    using(SQLiteDataReader DataReader = command.ExecuteReader())
+                    using (SQLiteDataReader DataReader = command.ExecuteReader())
                     {
                         while (DataReader.Read())
                         {
@@ -79,20 +80,20 @@ namespace TP3_HerreraLeonel.Models
                             pedido.Cliente.Nombre = DataReader["clienteNombre"].ToString();
                             pedido.Cliente.Direccion = DataReader["clienteDireccion"].ToString();
                             pedido.Cliente.Telefono = DataReader["clienteTelefono"].ToString();
+                            pedido.Estado = (Pedido.Estados)Enum.Parse(typeof(Pedido.Estados), DataReader["pedidoEstado"].ToString());
 
                             ListadoDePedidos.Add(pedido);
                         }
                     }
-                    
+
                     conexion.Close();
                 }
-                
+                _logger.Info("SE OBTUVIERON LOS DATOS DE LOS PEDIDOS DE FORMA EXITOSA");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ListadoDePedidos = new List<Pedido>();
-                Console.WriteLine(ex.Message);
-
+                _logger.Error("SE OBTUVIERON LOS DATOS DE LOS CLIENTES DE FORMA ERRONEA: ", ex.Message);
             }
             return ListadoDePedidos;
         }
@@ -100,29 +101,39 @@ namespace TP3_HerreraLeonel.Models
         //Inserto datos a la tabla de los Clientes
         public void InsertClientes(Cliente cliente)
         {
-            string SQLQuery = "IF NOT EXISTS (SELECT * FROM Clientes WHERE clienteID="+cliente.Id+" OR clienteNombre="+cliente.Nombre+")" +
-                "THEN INSERT INTO Clientes (clienteNombre, clienteDireccion, clienteTelefono)" +
-                "VALUES (@nombre, @direccion, @telefono);";
+            List<Cliente> ListCliente = getAllClientes();
             try
             {
-                using (SQLiteConnection conexion = new SQLiteConnection(connectionString))
+                
+                if(ListCliente.Find(x=> x.Id == cliente.Id)==null)
                 {
+                    string SQLQuery = "INSERT INTO Clientes (clienteNombre, clienteDireccion, clienteTelefono)" +
+                    "VALUES (@nombre, @direccion, @telefono);";
 
-                    using (SQLiteCommand command = new SQLiteCommand(SQLQuery, conexion))
+                    using (SQLiteConnection conexion = new SQLiteConnection(connectionString))
                     {
-                        conexion.Open();
-                        command.Parameters.AddWithValue("@nombre", cliente.Nombre);
-                        command.Parameters.AddWithValue("@direccion", cliente.Direccion);
-                        command.Parameters.AddWithValue("@telefono", cliente.Telefono);
-                        command.ExecuteNonQuery();
-                        conexion.Close();
+
+                        using (SQLiteCommand command = new SQLiteCommand(SQLQuery, conexion))
+                        {
+                            conexion.Open();
+                            command.Parameters.AddWithValue("@nombre", cliente.Nombre);
+                            command.Parameters.AddWithValue("@direccion", cliente.Direccion);
+                            command.Parameters.AddWithValue("@telefono", cliente.Telefono);
+                            command.ExecuteNonQuery();
+                            conexion.Close();
+                        }
                     }
+                    _logger.Info("SE INSERTARON LOS DATOS DEL CLIENTE DE FORMA EXITOSA");
+                }
+                else
+                {
+                    _logger.Info("EL CLIENTE "+cliente.Id+" YA SE ENCUENTRA REGISTRADO");
+
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-
+                _logger.Error("SE INSERTARON LOS DATOS DE LOS CLIENTES DE FORMA ERRONEA: ", ex.Message);
             }
         }
 
@@ -132,11 +143,11 @@ namespace TP3_HerreraLeonel.Models
             try
             {
                 InsertClientes(pedido.Cliente);
-                string QueryClientes = "(SELECT clienteID FROM Clientes WHERE clienteID = @id_cli)";
+                string QueryClientes = "(SELECT clienteID FROM Clientes WHERE clienteID = "+pedido.Cliente.Id+")";
                 string QueryCadetes = "(SELECT cadeteID FROM Cadetes WHERE cadeteID = " + id_cadete + ")";
 
-                string SQLQuery = "INSERT INTO Pedidos (pedidoObs, clienteId, cadeteId)" +
-                "VALUES (@obs, " + QueryClientes + " , " + QueryCadetes +" );";
+                string SQLQuery = "INSERT INTO Pedidos (pedidoObs, clienteId, cadeteId, pedidoEstado)" +
+                "VALUES (@obs, " + QueryClientes + " , " + QueryCadetes +" , @estado);";
 
                 using (SQLiteConnection conexion = new SQLiteConnection(connectionString))
                 {
@@ -145,16 +156,16 @@ namespace TP3_HerreraLeonel.Models
                     {
                         conexion.Open();
                         command.Parameters.AddWithValue("@obs", pedido.Observacion);
-                        command.Parameters.AddWithValue("@id_cli", pedido.Cliente.Id);
+                        command.Parameters.AddWithValue("@estado", pedido.Estado);
                         command.ExecuteNonQuery();
                         conexion.Close();
                     }
                 }
+                _logger.Info("SE INSERTARON LOS DATOS DE PEDIDO DE FORMA EXITOSA");
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-
+                _logger.Error("SE INSERTARON LOS DATOS DEL PEDIDO DE FORMA ERRONEA", ex.Message);
             }
         }
         
@@ -189,13 +200,12 @@ namespace TP3_HerreraLeonel.Models
                     }
                     conexion.Close();
                 }
-               
+                _logger.Info("SE OBTUVO LOS DATOS DEL  PEDIDO "+ id+" DE FORMA EXITOSA");
             }
             catch (Exception ex)
             {
                 pedidoAModificar= new Pedido();
-                Console.WriteLine(ex.Message);
-
+                _logger.Error("SE OBTUVO LOS DATOS DEL  PEDIDO " + id + " DE FORMA ERRONEA", ex.Message);
             }
             return pedidoAModificar;
         }
@@ -222,11 +232,12 @@ namespace TP3_HerreraLeonel.Models
                         conexion.Close();
                     }
                 }
+                _logger.Info("SE MODIFICARON LOS DATOS DEL CLIENTE "+cliente.Id+" DE FORMA EXITOSA");
+
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-
+                _logger.Error("SE INSERTARON LOS DATOS DEL CLIENTE " + cliente.Id + " DE FORMA ERRONEA: ", ex.Message);
             }
         }
 
@@ -255,11 +266,11 @@ namespace TP3_HerreraLeonel.Models
                     }
                 }
                 UpdateCliente(pedido.Cliente);
+                _logger.Info("SE MODIFICARON LOS DATOS DEL PEDIDO " + pedido.Nro + " DE FORMA EXITOSA");
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-
+                _logger.Error("SE MODIFICARON LOS DATOS DEL PEDIDO " + pedido.Nro + " DE FORMA ERRONEA: ", ex.Message);
             }
         }
         
@@ -280,11 +291,12 @@ namespace TP3_HerreraLeonel.Models
                         conexion.Close();
                     }
                 }
+                _logger.Info("SE ELIMINARON LOS DATOS DEL PEDIDO " + id + " DE FORMA EXITOSA");
+
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-
+                _logger.Error("SE ELIMINARON LOS DATOS DEL PEDIDO" + id + " DE FORMA ERRONEA: ", ex.Message);
             }
         }
 
@@ -305,11 +317,12 @@ namespace TP3_HerreraLeonel.Models
                         conexion.Close();
                     }
                 }
+                _logger.Info("SE ELIMINARON LOS DATOS DE LOS PEDIDOS DE FORMA EXITOSA");
+
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-
+                _logger.Error("SE ELIMINARON LOS DATOS DE LOS PEDIDOS DE FORMA ERRONEA: ", ex.Message);
             }
         }
     }
