@@ -16,10 +16,12 @@ namespace TP3_HerreraLeonel.Controllers
         //private readonly DBTemporal dB;
         //private readonly RepositorioCadete repoCadete;
         private readonly IDBSQLite DB;
+        private readonly IDBJSON fileDB;
 
-        public CadeteController(IDBSQLite dBSQ)
+        public CadeteController(IDBSQLite dBSQ, IDBJSON file)
         {
             DB = dBSQ;
+            fileDB = file;
         }
 
         public IActionResult Index()
@@ -65,7 +67,8 @@ namespace TP3_HerreraLeonel.Controllers
             else
             {
                 Cadete nuevoCadete = new Cadete(_Nombre, _Direccion, _Telefono);
-                DB.RepositorioCadete.InsertCadetes(nuevoCadete);
+                DB.RepositorioCadete.InsertCadetes(nuevoCadete);//Inserto en la DB
+                fileDB.RepositorioCadete.InsertCadetes(nuevoCadete);//Inserto en el Archivo Json
                 return View(DB.RepositorioCadete.getAll());
             }
         }
@@ -92,6 +95,7 @@ namespace TP3_HerreraLeonel.Controllers
                 cadeteAModificar.Direccion = _Direccion;
                 cadeteAModificar.Telefono = _Telefono;
                 DB.RepositorioCadete.UpdateCadetes(cadeteAModificar);
+                fileDB.RepositorioCadete.UpdateCadetes(cadeteAModificar);
             }
             
             return Redirect("~/Cadete");
@@ -101,6 +105,7 @@ namespace TP3_HerreraLeonel.Controllers
         public IActionResult EliminarCadete(int id)
         {
             DB.RepositorioCadete.DeleteCadetes(id);
+            fileDB.RepositorioCadete.DeleteCadetes(id);
             return Redirect("~/Cadete");
         }
 
@@ -108,6 +113,7 @@ namespace TP3_HerreraLeonel.Controllers
         public IActionResult DeleteAll_Cadetes()
         {
             DB.RepositorioCadete.DeleteAllCadetes();
+            fileDB.RepositorioCadete.DeleteAllCadetes();
             return Redirect("~/Cadete");
         }
         

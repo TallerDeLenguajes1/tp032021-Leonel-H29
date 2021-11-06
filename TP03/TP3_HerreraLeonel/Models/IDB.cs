@@ -28,5 +28,23 @@ namespace TP3_HerreraLeonel.Entities
         }
     }
 
+    public interface IDBJSON
+    {
+        JSONRepositorioCadete RepositorioCadete { get; set; }
+        JSONRepositorioPedido RepositorioPedido { get; set; }
+    }
 
+    public class DBJSON : IDBJSON
+    {
+        public JSONRepositorioCadete RepositorioCadete { get; set; }
+        public JSONRepositorioPedido RepositorioPedido { get; set; }
+
+        public DBJSON(ILogger logger)
+        {
+            RepositorioCadete = new JSONRepositorioCadete(logger);
+            //RepositorioCliente = new SQLiteCliente(_ConnectionString, logger);
+            RepositorioPedido = new JSONRepositorioPedido(logger);
+
+        }
+    }
 }
