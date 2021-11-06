@@ -263,4 +263,53 @@ namespace TP3_HerreraLeonel.Models
             }
         }
     }
+
+    public class JSONRepositorioCadete : IRepositorioCadete
+    {
+
+        private static ILogger _logger;
+        //public Cadeteria Cadeteria { get; set; }
+
+
+        static string rutaArchivoCadetes = @"Cadetes.json";
+        static string rutaArchivoPedidos = @"Pedidos.json";
+
+        public JSONRepositorioCadete(ILogger logger) {
+            _logger = logger;
+        }
+        void IRepositorioCadete.DeleteAllCadetes()
+        {
+            throw new NotImplementedException();
+        }
+
+        void IRepositorioCadete.DeleteCadetes(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        List<Cadete> IRepositorioCadete.getAll()
+        {
+            throw new NotImplementedException();
+        }
+
+        Cadete IRepositorioCadete.getCadeteAModificar(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        List<Pedido> IRepositorioCadete.getPedidos_delCadete(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        void IRepositorioCadete.InsertCadetes(Cadete cadete)
+        {
+            throw new NotImplementedException();
+        }
+
+        void IRepositorioCadete.UpdateCadetes(Cadete cadete)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
