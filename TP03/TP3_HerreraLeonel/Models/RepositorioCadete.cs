@@ -8,13 +8,24 @@ using NLog;
 
 namespace TP3_HerreraLeonel.Models
 {
-    public class RepositorioCadete
+    public interface IRepositorioCadete
+    {
+        void DeleteAllCadetes();
+        void DeleteCadetes(int id);
+        List<Cadete> getAll();
+        Cadete getCadeteAModificar(int id);
+        List<Pedido> getPedidos_delCadete(int id);
+        void InsertCadetes(Cadete cadete);
+        void UpdateCadetes(Cadete cadete);
+    }
+
+    public class SQLiteRepositorioCadete : IRepositorioCadete
     {
         private readonly string connectionString;
         private static ILogger _logger;
         //private readonly SQLiteConnection conexion;
 
-        public RepositorioCadete(string connectionString, ILogger logger)
+        public SQLiteRepositorioCadete(string connectionString, ILogger logger)
         {
             this.connectionString = connectionString;
             _logger = logger;
@@ -31,7 +42,7 @@ namespace TP3_HerreraLeonel.Models
                 {
                     conexion.Open();
                     SQLiteCommand command = new SQLiteCommand(SQLQuery, conexion);
-                    using(SQLiteDataReader DataReader = command.ExecuteReader())
+                    using (SQLiteDataReader DataReader = command.ExecuteReader())
                     {
                         while (DataReader.Read())
                         {
@@ -46,12 +57,12 @@ namespace TP3_HerreraLeonel.Models
                             ListadoDeCadetes.Add(cadete);
                         }
                     }
-                    
+
                     conexion.Close();
                 }
                 _logger.Info("SE OBTUVO LOS DATOS DE LOS CADETES DE FORMA EXITOSA");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ListadoDeCadetes = new List<Cadete>();
                 _logger.Error("ERROR AL OBTENER LOS DATOS DE LOS CADETES: ", ex.Message);
@@ -110,7 +121,7 @@ namespace TP3_HerreraLeonel.Models
             {
                 using (SQLiteConnection conexion = new SQLiteConnection(connectionString))
                 {
-                    
+
                     using (SQLiteCommand command = new SQLiteCommand(SQLQuery, conexion))
                     {
                         conexion.Open();
@@ -133,7 +144,7 @@ namespace TP3_HerreraLeonel.Models
         public Cadete getCadeteAModificar(int id)
         {
             Cadete cadeteAModificar = new Cadete();
-            string SQLQuery = "SELECT * FROM Cadetes WHERE cadeteID="+Convert.ToString(id)+";";
+            string SQLQuery = "SELECT * FROM Cadetes WHERE cadeteID=" + Convert.ToString(id) + ";";
             try
             {
                 using (SQLiteConnection conexion = new SQLiteConnection(connectionString))
@@ -159,7 +170,7 @@ namespace TP3_HerreraLeonel.Models
                     }
                     conexion.Close();
                 }
-                _logger.Info("SE OBTUVO LOS DATOS DEL CADETE "+id+ " DE FORMA EXITOSA");
+                _logger.Info("SE OBTUVO LOS DATOS DEL CADETE " + id + " DE FORMA EXITOSA");
             }
             catch (Exception ex)
             {
@@ -203,7 +214,7 @@ namespace TP3_HerreraLeonel.Models
         //Modifico datos a la tabla
         public void DeleteCadetes(int id)
         {
-            string SQLQuery = "DELETE FROM Cadetes WHERE cadeteID=" + Convert.ToString(id) + ";"; 
+            string SQLQuery = "DELETE FROM Cadetes WHERE cadeteID=@id_cad;";
 
             try
             {
@@ -213,6 +224,7 @@ namespace TP3_HerreraLeonel.Models
                     using (SQLiteCommand command = new SQLiteCommand(SQLQuery, conexion))
                     {
                         conexion.Open();
+                        command.Parameters.AddWithValue("@id_cad", id.ToString());
                         command.ExecuteNonQuery();
                         conexion.Close();
                     }
@@ -221,7 +233,7 @@ namespace TP3_HerreraLeonel.Models
             }
             catch (Exception ex)
             {
-                _logger.Error("SE ELIMINARON LOS DATOS DEL CADETE " + id + " DE FORMA ERRONEA: ",ex.Message);
+                _logger.Error("SE ELIMINARON LOS DATOS DEL CADETE " + id + " DE FORMA ERRONEA: ", ex.Message);
             }
         }
 

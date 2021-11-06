@@ -29,11 +29,14 @@ namespace TP3_HerreraLeonel
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
-            RepositorioCadete RepoCadetes = new RepositorioCadete (Configuration.GetConnectionString("Default"), NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger());
-            RepositorioPedido RepoPedidos = new RepositorioPedido(Configuration.GetConnectionString("Default"), NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger());
-            //services.AddSingleton(DB);
-            services.AddSingleton(RepoCadetes);
-            services.AddSingleton(RepoPedidos);
+            //RepositorioCadete RepoCadetes = new RepositorioCadete (Configuration.GetConnectionString("Default"), NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger());
+            //RepositorioPedido RepoPedidos = new RepositorioPedido(Configuration.GetConnectionString("Default"), NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger());
+
+            IDBSQLite DB = new DBSQLite(Configuration.GetConnectionString("Default"), NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger());
+
+            services.AddSingleton(DB);
+            //services.AddSingleton(RepoCadetes);
+            //services.AddSingleton(RepoPedidos);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -12,21 +12,20 @@ namespace TP3_HerreraLeonel.Controllers
 {
     public class CadeteController : Controller
     {
-        private readonly ILogger<CadeteController> _logger;
+        //private readonly ILogger<CadeteController> _logger;
         //private readonly DBTemporal dB;
-        private readonly RepositorioCadete repoCadete;
+        //private readonly RepositorioCadete repoCadete;
+        private readonly IDBSQLite DB;
 
-        public CadeteController(ILogger<CadeteController> logger, RepositorioCadete RepoCadetes)
+        public CadeteController(IDBSQLite dBSQ)
         {
-            _logger = logger;
-            //dB = dataBase;
-            repoCadete = RepoCadetes;
+            DB = dBSQ;
         }
 
         public IActionResult Index()
         {
             try {
-                return View(repoCadete.getAll());
+                return View(DB.RepositorioCadete.getAll());
             }
             catch (Exception ex){
                 Console.WriteLine(ex);
@@ -38,7 +37,7 @@ namespace TP3_HerreraLeonel.Controllers
         //Vista de los pedidos asignados a cada cadete
         public IActionResult ListPedidos(int id)
         {
-            List<Cadete> ListCadetes = repoCadete.getAll();
+            List<Cadete> ListCadetes = DB.RepositorioCadete.getAll();
             
             try
             {
@@ -61,20 +60,20 @@ namespace TP3_HerreraLeonel.Controllers
         {
             if (_Nombre == null || _Direccion == null || _Telefono == null)
             {
-                return View(repoCadete.getAll());
+                return View(DB.RepositorioCadete.getAll());
             }
             else
             {
                 Cadete nuevoCadete = new Cadete(_Nombre, _Direccion, _Telefono);
-                repoCadete.InsertCadetes(nuevoCadete);
-                return View(repoCadete.getAll());
+                DB.RepositorioCadete.InsertCadetes(nuevoCadete);
+                return View(DB.RepositorioCadete.getAll());
             }
         }
         
         //Muestro los datos del cadete en el form de edicion
         public IActionResult ModificarCadete(int id)
         {
-            Cadete cadeteADevolver = repoCadete.getCadeteAModificar(id);
+            Cadete cadeteADevolver = DB.RepositorioCadete.getCadeteAModificar(id);
 
             if (cadeteADevolver != null)
                 return View(cadeteADevolver);
@@ -92,7 +91,7 @@ namespace TP3_HerreraLeonel.Controllers
                 cadeteAModificar.Nombre = _Nombre;
                 cadeteAModificar.Direccion = _Direccion;
                 cadeteAModificar.Telefono = _Telefono;
-                repoCadete.UpdateCadetes(cadeteAModificar);
+                DB.RepositorioCadete.UpdateCadetes(cadeteAModificar);
             }
             
             return Redirect("~/Cadete");
@@ -101,14 +100,14 @@ namespace TP3_HerreraLeonel.Controllers
         //Elimino el cadete
         public IActionResult EliminarCadete(int id)
         {
-            repoCadete.DeleteCadetes(id);
+            DB.RepositorioCadete.DeleteCadetes(id);
             return Redirect("~/Cadete");
         }
 
         //Elimino todos los cadetes
         public IActionResult DeleteAll_Cadetes()
         {
-            repoCadete.DeleteAllCadetes();
+            DB.RepositorioCadete.DeleteAllCadetes();
             return Redirect("~/Cadete");
         }
         
