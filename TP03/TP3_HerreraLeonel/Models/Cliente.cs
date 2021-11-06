@@ -27,6 +27,7 @@ namespace TP3_HerreraLeonel.Entities
         public Cliente(string nombre, string direccion, string telefono)
         {
             Id = count++;
+            //Id = id;
             Nombre = nombre;
             Direccion = direccion;
             Telefono = telefono;

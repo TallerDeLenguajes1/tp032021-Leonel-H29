@@ -12,19 +12,20 @@ namespace TP3_HerreraLeonel.Controllers
 {
     public class CadeteController : Controller
     {
-        private readonly ILogger<CadeteController> _logger;
-        private readonly DBTemporal dB;
+        //private readonly ILogger<CadeteController> _logger;
+        //private readonly DBTemporal dB;
+        //private readonly RepositorioCadete repoCadete;
+        private readonly IDBSQLite DB;
 
-        public CadeteController(ILogger<CadeteController> logger, DBTemporal dataBase)
+        public CadeteController(IDBSQLite dBSQ)
         {
-            _logger = logger;
-            dB = dataBase;
+            DB = dBSQ;
         }
 
         public IActionResult Index()
         {
             try {
-                return View(DBTemporal.leerArchivoCadetes());
+                return View(DB.RepositorioCadete.getAll());
             }
             catch (Exception ex){
                 Console.WriteLine(ex);
@@ -32,13 +33,15 @@ namespace TP3_HerreraLeonel.Controllers
             }
                 
         }
-
+        
+        //Vista de los pedidos asignados a cada cadete
         public IActionResult ListPedidos(int id)
         {
-            List<Cadete> ListCadetes = DBTemporal.leerArchivoCadetes();
+            List<Cadete> ListCadetes = DB.RepositorioCadete.getAll();
+            
             try
             {
-                return View(ListCadetes.Where(cad => cad.Id==id).Single());
+                return View(ListCadetes.Where(cad => cad.Id == id).Single());
             }
             catch (Exception ex)
             {
@@ -55,35 +58,29 @@ namespace TP3_HerreraLeonel.Controllers
         //Alta de Cadete
         public IActionResult AltaCadete(string _Nombre, string _Direccion, string _Telefono)
         {
-            List<Cadete> ListCadetes = DBTemporal.leerArchivoCadetes();
-            int idMax = 0;
-            if (ListCadetes.Count() > 0)
-            {
-                idMax = ListCadetes.Max(x => x.Id);
-            }
-            //int idMax = ListCadetes[ListCadetes.Count() - 1].Id;
             if (_Nombre == null || _Direccion == null || _Telefono == null)
             {
-                return View(dB.Cadeteria.ListadoCadetes);
+                return View(DB.RepositorioCadete.getAll());
             }
             else
             {
-                Cadete nuevoCadete = new Cadete(idMax+1,_Nombre, _Direccion, _Telefono);
-                dB.Cadeteria.ListadoCadetes = DBTemporal.guardarCadete(nuevoCadete);
-                return View(dB.Cadeteria.ListadoCadetes);
+                Cadete nuevoCadete = new Cadete(_Nombre, _Direccion, _Telefono);
+                DB.RepositorioCadete.InsertCadetes(nuevoCadete);
+                return View(DB.RepositorioCadete.getAll());
             }
         }
-
+        
         //Muestro los datos del cadete en el form de edicion
         public IActionResult ModificarCadete(int id)
         {
-            Cadete cadeteADevolver = DBTemporal.VerCadete(id);
-            
+            Cadete cadeteADevolver = DB.RepositorioCadete.getCadeteAModificar(id);
+
             if (cadeteADevolver != null)
                 return View(cadeteADevolver);
             else
                 return Redirect("~/Cadete");
         }
+
         //Modifico los datos del cadete
         public IActionResult ModificarUnCadete(int id, string _Nombre, string _Direccion, string _Telefono)
         {
@@ -94,7 +91,7 @@ namespace TP3_HerreraLeonel.Controllers
                 cadeteAModificar.Nombre = _Nombre;
                 cadeteAModificar.Direccion = _Direccion;
                 cadeteAModificar.Telefono = _Telefono;
-                DBTemporal.ModificarCadete(cadeteAModificar);
+                DB.RepositorioCadete.UpdateCadetes(cadeteAModificar);
             }
             
             return Redirect("~/Cadete");
@@ -103,15 +100,14 @@ namespace TP3_HerreraLeonel.Controllers
         //Elimino el cadete
         public IActionResult EliminarCadete(int id)
         {
-            DBTemporal.BorrarCadete(id);
+            DB.RepositorioCadete.DeleteCadetes(id);
             return Redirect("~/Cadete");
         }
 
         //Elimino todos los cadetes
-        
         public IActionResult DeleteAll_Cadetes()
         {
-            DBTemporal.BorrarTodosLosCadetes();
+            DB.RepositorioCadete.DeleteAllCadetes();
             return Redirect("~/Cadete");
         }
         
