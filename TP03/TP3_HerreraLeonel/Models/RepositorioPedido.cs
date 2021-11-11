@@ -193,13 +193,16 @@ namespace TP3_HerreraLeonel.Models
         public Pedido getPedidoAModificar(int id)
         {
             Pedido pedidoAModificar = new Pedido();
-            string SQLQuery = "SELECT * FROM Pedidos INNER JOIN Clientes ON Clientes.clienteID=Pedidos.clienteId WHERE pedidoID=" + Convert.ToString(id) + ";";
+            //string SQLQuery = "SELECT * FROM Pedidos INNER JOIN Clientes ON Clientes.clienteID=Pedidos.clienteId WHERE pedidoID=" + Convert.ToString(id) + ";";
+            string SQLQuery = "SELECT * FROM Pedidos INNER JOIN Clientes ON Clientes.clienteID=Pedidos.clienteId WHERE pedidoID=@id_ped;";
             try
             {
                 using (SQLiteConnection conexion = new SQLiteConnection(connectionString))
                 {
                     conexion.Open();
                     SQLiteCommand command = new SQLiteCommand(SQLQuery, conexion);
+                    command.Parameters.AddWithValue("@id_ped", id);
+                    command.ExecuteNonQuery();
                     using (SQLiteDataReader DataReader = command.ExecuteReader())
                     {
                         if (DataReader.HasRows)

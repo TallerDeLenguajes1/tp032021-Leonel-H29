@@ -76,16 +76,24 @@ namespace TP3_HerreraLeonel.Models
         public List<Pedido> getPedidos_delCadete(int id)
         {
             List<Pedido> ListadoDePedidos = new List<Pedido>();
+            /*
             string SQLQuery = "SELECT * FROM Pedidos INNER JOIN Cadetes " +
             "ON Pedidos.cadeteId=Cadetes.cadeteID" +
             " INNER JOIN Clientes ON Pedidos.clienteId=Clientes.clienteID" +
             " WHERE Cadetes.cadeteID=" + id + "; ";
+            */
+            string SQLQuery = "SELECT * FROM Pedidos INNER JOIN Cadetes " +
+            "ON Pedidos.cadeteId=Cadetes.cadeteID" +
+            " INNER JOIN Clientes ON Pedidos.clienteId=Clientes.clienteID" +
+            " WHERE Cadetes.cadeteID=@id_cad; ";
             try
             {
                 using (SQLiteConnection conexion = new SQLiteConnection(connectionString))
-                {
+                {        
                     conexion.Open();
                     SQLiteCommand command = new SQLiteCommand(SQLQuery, conexion);
+                    command.Parameters.AddWithValue("@id_cad", id);
+                    command.ExecuteNonQuery();
                     using (SQLiteDataReader DataReader = command.ExecuteReader())
                     {
                         while (DataReader.Read())
@@ -146,13 +154,17 @@ namespace TP3_HerreraLeonel.Models
         public Cadete getCadeteAModificar(int id)
         {
             Cadete cadeteAModificar = new Cadete();
-            string SQLQuery = "SELECT * FROM Cadetes WHERE cadeteID=" + Convert.ToString(id) + ";";
+            //string SQLQuery = "SELECT * FROM Cadetes WHERE cadeteID=" + Convert.ToString(id) + ";";
+            string SQLQuery = "SELECT * FROM Cadetes WHERE cadeteID=@id_cad;";
+
             try
             {
                 using (SQLiteConnection conexion = new SQLiteConnection(connectionString))
                 {
                     conexion.Open();
                     SQLiteCommand command = new SQLiteCommand(SQLQuery, conexion);
+                    command.Parameters.AddWithValue("@id_cad", id.ToString());
+                    command.ExecuteNonQuery();
                     using (SQLiteDataReader DataReader = command.ExecuteReader())
                     {
                         if (DataReader.HasRows)

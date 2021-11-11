@@ -61,8 +61,8 @@ namespace TP3_HerreraLeonel.Models
         {
             bool result = false;
             Usuario usuarioALog = new Usuario();
-            //string SQLQuery = "SELECT * FROM Usuarios WHERE Username=@_user AND Password=@_pass;";
-            string SQLQuery = "SELECT * FROM Usuarios WHERE Username='"+user+"' AND Password='"+pass+"';";
+            string SQLQuery = "SELECT * FROM Usuarios WHERE Username=@_user AND Password=@_pass;";
+            //string SQLQuery = "SELECT * FROM Usuarios WHERE Username='"+user+"' AND Password='"+pass+"';";
 
             try
             {
@@ -70,6 +70,10 @@ namespace TP3_HerreraLeonel.Models
                 {
                     conexion.Open();
                     SQLiteCommand command = new SQLiteCommand(SQLQuery, conexion);
+                    command.Parameters.AddWithValue("@_user", user);
+                    command.Parameters.AddWithValue("@_pass", pass);
+
+                    command.ExecuteNonQuery();
                     using (SQLiteDataReader DataReader = command.ExecuteReader())
                     {
                         if (DataReader.HasRows)
