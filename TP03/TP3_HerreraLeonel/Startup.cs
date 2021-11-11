@@ -32,8 +32,21 @@ namespace TP3_HerreraLeonel
 
             IDBSQLite DB_SQLITE = new DBSQLite(Configuration.GetConnectionString("Default"), NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger());
             IDBJSON DB_JSON = new DBJSON(NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger());
+
+            /*
+             Conecto al RepositorioSql de usuario como prueba
+            */
+            SQLiteRepositorioUsuario UserLogged = new SQLiteRepositorioUsuario(Configuration.GetConnectionString("Default"), NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger());
+            services.AddSingleton(UserLogged);
             services.AddSingleton(DB_SQLITE);
             services.AddSingleton(DB_JSON);
+            services.AddSession(options =>
+               {
+                   options.IdleTimeout = TimeSpan.FromSeconds(3600);
+                   options.Cookie.HttpOnly = true;
+                   options.Cookie.IsEssential = true;
+               } 
+            ); 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -53,6 +66,8 @@ namespace TP3_HerreraLeonel
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseSession();
 
             app.UseAuthorization();
 
