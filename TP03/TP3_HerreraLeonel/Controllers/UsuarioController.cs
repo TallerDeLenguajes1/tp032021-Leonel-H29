@@ -14,13 +14,12 @@ namespace TP3_HerreraLeonel.Controllers
     public class UsuarioController : Controller
     {
         //private readonly ILogger<HomeController> _logger;
-        private readonly SQLiteRepositorioUsuario repoUsuario;
+        private readonly IDataBase DB;
 
 
-        public UsuarioController(ILogger<UsuarioController> logger, SQLiteRepositorioUsuario usuario)
+        public UsuarioController(IDataBase dataBase)
         {
-            //_logger = logger;
-            repoUsuario = usuario;
+            DB = dataBase;
         }
 
         public IActionResult Index()
@@ -41,7 +40,7 @@ namespace TP3_HerreraLeonel.Controllers
         [HttpPost]
         public IActionResult Login(string username, string password)
         {
-            if (repoUsuario.LoginUser(username, password))
+            if (DB.RepoUsuario_Sqlite.LoginUser(username, password))
             {
                 HttpContext.Session.SetString("username", username);
                 return Redirect("~/Home");
@@ -61,7 +60,7 @@ namespace TP3_HerreraLeonel.Controllers
             else
             {
                 Usuario New_usuario = new Usuario(username, password);
-                repoUsuario.InsertUsuarios(New_usuario);
+                DB.RepoUsuario_Sqlite.InsertUsuarios(New_usuario);
                 //return View(DB.RepositorioCadete.getAll());
                 return View(new Usuario());
             }
