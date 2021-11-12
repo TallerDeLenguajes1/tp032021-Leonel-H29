@@ -34,19 +34,19 @@ namespace TP3_HerreraLeonel.Controllers
 
         public IActionResult Login()
         {
-            return View();
+            return View(true);
         }
 
         [HttpPost]
         public IActionResult Login(string username, string password)
         {
+            
             if (DB.RepoUsuario_Sqlite.LoginUser(username, password))
             {
                 HttpContext.Session.SetString("username", username);
                 return Redirect("~/Home");
             }
-            ///string ErrorMessage = "Compruebe que el usuario y la contraseña sea correctos";
-            return View();
+            return View(false);
         }
 
         //Alta de Usuario
