@@ -7,44 +7,34 @@ using TP3_HerreraLeonel.Models;
 
 namespace TP3_HerreraLeonel.Entities
 {
-    public interface IDBSQLite
+    public interface IDataBase
     {
-        SQLiteRepositorioCadete RepositorioCadete { get; set; }
-        SQLiteRepositorioPedido RepositorioPedido { get; set; }
+        JSONRepositorioCadete RepoCadete_Json { get; set; }
+        SQLiteRepositorioCadete RepoCadete_Sqlite { get; set; }
+        JSONRepositorioPedido RepoPedido_Json { get; set; }
+        SQLiteRepositorioPedido RepoPedido_Sqlite { get; set; }
+        SQLiteRepositorioUsuario RepoUsuario_Sqlite { get; set; }
     }
 
-    public class DBSQLite : IDBSQLite
+    public class DataBase : IDataBase
     {
-        public SQLiteRepositorioCadete RepositorioCadete { get; set; }
+        public SQLiteRepositorioCadete RepoCadete_Sqlite { get; set; }
+        public SQLiteRepositorioUsuario RepoUsuario_Sqlite { get; set; }
         //public IRepositorioCliente RepositorioCliente { get; set; }
-        public SQLiteRepositorioPedido RepositorioPedido { get; set; }
+        public SQLiteRepositorioPedido RepoPedido_Sqlite { get; set; }
+        public JSONRepositorioCadete RepoCadete_Json { get; set; }
+        public JSONRepositorioPedido RepoPedido_Json { get; set; }
 
-        public DBSQLite(string _ConnectionString, ILogger logger)
+        public DataBase(string _ConnectionString, ILogger logger)
         {
-            RepositorioCadete = new SQLiteRepositorioCadete(_ConnectionString, logger);
+            RepoCadete_Sqlite = new SQLiteRepositorioCadete(_ConnectionString, logger);
             //RepositorioCliente = new SQLiteCliente(_ConnectionString, logger);
-            RepositorioPedido = new SQLiteRepositorioPedido(_ConnectionString, logger);
-
+            RepoPedido_Sqlite = new SQLiteRepositorioPedido(_ConnectionString, logger);
+            RepoUsuario_Sqlite = new SQLiteRepositorioUsuario(_ConnectionString, logger);
+            RepoCadete_Json = new JSONRepositorioCadete(logger);
+            //RepositorioCliente = new SQLiteCliente(_ConnectionString, logger);
+            RepoPedido_Json = new JSONRepositorioPedido(logger);
         }
     }
 
-    public interface IDBJSON
-    {
-        JSONRepositorioCadete RepositorioCadete { get; set; }
-        JSONRepositorioPedido RepositorioPedido { get; set; }
-    }
-
-    public class DBJSON : IDBJSON
-    {
-        public JSONRepositorioCadete RepositorioCadete { get; set; }
-        public JSONRepositorioPedido RepositorioPedido { get; set; }
-
-        public DBJSON(ILogger logger)
-        {
-            RepositorioCadete = new JSONRepositorioCadete(logger);
-            //RepositorioCliente = new SQLiteCliente(_ConnectionString, logger);
-            RepositorioPedido = new JSONRepositorioPedido(logger);
-
-        }
-    }
 }

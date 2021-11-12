@@ -46,7 +46,25 @@ namespace TP3_HerreraLeonel.Controllers
                 HttpContext.Session.SetString("username", username);
                 return Redirect("~/Home");
             }
+            ///string ErrorMessage = "Compruebe que el usuario y la contraseña sea correctos";
             return View();
+        }
+
+        //Alta de Usuario
+        public IActionResult AltaUsuario(string username, string password)
+        {
+            if (username == null || password == null)
+            {
+                //return View(DB.RepositorioCadete.getAll());
+                return View(new Usuario());
+            }
+            else
+            {
+                Usuario New_usuario = new Usuario(username, password);
+                repoUsuario.InsertUsuarios(New_usuario);
+                //return View(DB.RepositorioCadete.getAll());
+                return View(new Usuario());
+            }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

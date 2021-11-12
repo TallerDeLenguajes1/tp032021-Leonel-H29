@@ -30,16 +30,9 @@ namespace TP3_HerreraLeonel
         {
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
-            IDBSQLite DB_SQLITE = new DBSQLite(Configuration.GetConnectionString("Default"), NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger());
-            IDBJSON DB_JSON = new DBJSON(NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger());
-
-            /*
-             Conecto al RepositorioSql de usuario como prueba
-            */
-            SQLiteRepositorioUsuario UserLogged = new SQLiteRepositorioUsuario(Configuration.GetConnectionString("Default"), NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger());
-            services.AddSingleton(UserLogged);
-            services.AddSingleton(DB_SQLITE);
-            services.AddSingleton(DB_JSON);
+            IDataBase DB_ = new DataBase(Configuration.GetConnectionString("Default"), NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger());           
+            services.AddSingleton(DB_);
+            
             services.AddSession(options =>
                {
                    options.IdleTimeout = TimeSpan.FromSeconds(3600);

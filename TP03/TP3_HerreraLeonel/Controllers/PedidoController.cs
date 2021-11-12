@@ -15,18 +15,18 @@ namespace TP3_HerreraLeonel.Controllers
         //private readonly ILogger<PedidoController> _logger;
         //private readonly RepositorioCadete repoCadete;
         //private readonly RepositorioPedido repoPedido;
-        private readonly IDBSQLite DB;
+        private readonly IDataBase DB;
 
-        public PedidoController(IDBSQLite dBSQ)
+        public PedidoController(IDataBase dataBase)
         {
-            DB = dBSQ;
+            DB = dataBase;
         }
 
         public IActionResult Index()
         {
             try
             {
-                return View(DB.RepositorioPedido.getAllPedidos());
+                return View(DB.RepoPedido_Sqlite.getAllPedidos());
             }
             catch(Exception ex)
             {
@@ -45,18 +45,18 @@ namespace TP3_HerreraLeonel.Controllers
         {
             if (_NombreClie == null || _DireccionClie == null || _TelefonoClie == null)
             {
-                return View(DB.RepositorioCadete.getAll());
+                return View(DB.RepoCadete_Sqlite.getAll());
             }
             else
             {
                 Pedido nuevoPedido = new Pedido(_Obs, _Estado,_NombreClie, _DireccionClie, _TelefonoClie);
                 //List<Cadete> cadeteLista = DB.RepositorioCadete.getAll();
-                Cadete cadeteSeleccionado = DB.RepositorioCadete.getCadeteAModificar(_IdCadete);
+                Cadete cadeteSeleccionado = DB.RepoCadete_Sqlite.getCadeteAModificar(_IdCadete);
                 //cadeteSeleccionado.AgregarPedido(nuevoPedido);
 
-                DB.RepositorioPedido.InsertPedidos(nuevoPedido, cadeteSeleccionado.Id);
+                DB.RepoPedido_Sqlite.InsertPedidos(nuevoPedido, cadeteSeleccionado.Id);
 
-                return View(DB.RepositorioCadete.getAll());
+                return View(DB.RepoCadete_Sqlite.getAll());
             }
         }
 
@@ -64,8 +64,8 @@ namespace TP3_HerreraLeonel.Controllers
         //Muestro el pedido a modificar en el form
         public IActionResult ModificarPedido(int id)
         {
-            List<Cadete> ListCadetes = DB.RepositorioCadete.getAll();
-            Pedido pedidoADevolver = DB.RepositorioPedido.getPedidoAModificar(id);
+            List<Cadete> ListCadetes = DB.RepoCadete_Sqlite.getAll();
+            Pedido pedidoADevolver = DB.RepoPedido_Sqlite.getPedidoAModificar(id);
 
             if (pedidoADevolver != null)
                 return View(new Tuple<Pedido, List<Cadete>>(pedidoADevolver, ListCadetes));
@@ -86,7 +86,7 @@ namespace TP3_HerreraLeonel.Controllers
                 pedidoADevolver.Cliente.Telefono = _TelefonoClie;
                 pedidoADevolver.Observacion = _Obs;
                 pedidoADevolver.Estado = _Estado;
-                DB.RepositorioPedido.UpdatePedidos(pedidoADevolver, _IdCadete);
+                DB.RepoPedido_Sqlite.UpdatePedidos(pedidoADevolver, _IdCadete);
             }
             return Redirect("~/Pedido");
         }
@@ -94,14 +94,14 @@ namespace TP3_HerreraLeonel.Controllers
         //Elimino un pedido
         public IActionResult EliminarPedido(int id)
         {
-            DB.RepositorioPedido.DeletePedido(id);
+            DB.RepoPedido_Sqlite.DeletePedido(id);
             return Redirect("~/Pedido");
         }
 
         //Elimino todos los pedidos
         public IActionResult DeleteAll_Pedidos()
         {
-            DB.RepositorioPedido.DeleteAllPedidos();
+            DB.RepoPedido_Sqlite.DeleteAllPedidos();
             return Redirect("~/Pedido");
         }
         

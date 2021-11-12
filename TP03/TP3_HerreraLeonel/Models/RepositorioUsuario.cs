@@ -10,7 +10,14 @@ using NLog;
 
 namespace TP3_HerreraLeonel.Models
 {
-    public class SQLiteRepositorioUsuario 
+    public interface ISQLiteRepositorioUsuario
+    {
+        List<Usuario> getAll();
+        void InsertUsuarios(Usuario user);
+        bool LoginUser(string user, string pass);
+    }
+
+    public class SQLiteRepositorioUsuario : ISQLiteRepositorioUsuario
     {
         private readonly string connectionString;
         private static ILogger _logger;
@@ -21,7 +28,7 @@ namespace TP3_HerreraLeonel.Models
             this.connectionString = connectionString;
             _logger = logger;
         }
-        
+
         //Obtengo todos los datos de la tabla Usuarios en la DB
         public List<Usuario> getAll()
         {
@@ -42,7 +49,7 @@ namespace TP3_HerreraLeonel.Models
                                 Username = DataReader["Username"].ToString(),
                                 Password = DataReader["Password"].ToString(),
                             };
-                            
+
                         }
                     }
                     conexion.Close();
@@ -101,6 +108,33 @@ namespace TP3_HerreraLeonel.Models
             }
             return result;
         }
+
+        //Inserto datos a la tabla
+        public void InsertUsuarios(Usuario user)
+        {
+            string SQLQuery = "INSERT INTO Usuarios (Username, Password)" +
+                "VALUES (@user, @pass);";
+            try
+            {
+                using (SQLiteConnection conexion = new SQLiteConnection(connectionString))
+                {
+
+                    using (SQLiteCommand command = new SQLiteCommand(SQLQuery, conexion))
+                    {
+                        conexion.Open();
+                        command.Parameters.AddWithValue("@user", user.Username);
+                        command.Parameters.AddWithValue("@pass", user.Password);
+                        command.ExecuteNonQuery();
+                        conexion.Close();
+                    }
+                }
+                _logger.Info("SE INSERTARON LOS DATOS DE LOS USUARIOS DE FORMA EXITOSA");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("SE INSERTARON LOS DATOS DE LOS USUARIOS DE FORMA ERRONEA: ", ex.Message);
+            }
+        }
         /*
         //Obtengo todos los datos de la tabla Cadetes en la DB
         public List<Pedido> getPedidos_delCadete(int id)
@@ -144,33 +178,7 @@ namespace TP3_HerreraLeonel.Models
             return ListadoDePedidos;
         }
 
-        //Inserto datos a la tabla
-        public void InsertCadetes(Cadete cadete)
-        {
-            string SQLQuery = "INSERT INTO Cadetes (cadeteNombre, cadeteDireccion, cadeteTelefono)" +
-                "VALUES (@nombre, @direccion, @telefono);";
-            try
-            {
-                using (SQLiteConnection conexion = new SQLiteConnection(connectionString))
-                {
-
-                    using (SQLiteCommand command = new SQLiteCommand(SQLQuery, conexion))
-                    {
-                        conexion.Open();
-                        command.Parameters.AddWithValue("@nombre", cadete.Nombre);
-                        command.Parameters.AddWithValue("@direccion", cadete.Direccion);
-                        command.Parameters.AddWithValue("@telefono", cadete.Telefono);
-                        command.ExecuteNonQuery();
-                        conexion.Close();
-                    }
-                }
-                _logger.Info("SE INSERTARON LOS DATOS DE LOS CADETES DE FORMA EXITOSA");
-            }
-            catch (Exception ex)
-            {
-                _logger.Error("SE INSERTARON LOS DATOS DE LOS CADETES DE FORMA ERRONEA: ", ex.Message);
-            }
-        }
+        
 
         //Obtengo todos los datos del  Cadete a modificar en la tabla de la DB
         public Cadete getCadeteAModificar(int id)
@@ -294,5 +302,5 @@ namespace TP3_HerreraLeonel.Models
 
             }
         }*/
-    }      
+    }
 }
