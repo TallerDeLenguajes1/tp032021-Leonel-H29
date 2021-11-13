@@ -14,7 +14,8 @@ namespace TP3_HerreraLeonel.Models
     {
         List<Usuario> getAll();
         void InsertUsuarios(Usuario user);
-        bool LoginUser(string user, string pass);
+        bool IsResgisterUser(string user, string pass);
+        Usuario LoginUser(string user);
     }
 
     public class SQLiteRepositorioUsuario : ISQLiteRepositorioUsuario
@@ -64,7 +65,8 @@ namespace TP3_HerreraLeonel.Models
             return ListadoDeUsuarios;
         }
 
-        public bool LoginUser(string user, string pass)
+        //Controlo si el usuario ya se encuentra registrado
+        public bool IsResgisterUser(string user, string pass)
         {
             bool result = false;
             Usuario usuarioALog = new Usuario();
@@ -108,6 +110,50 @@ namespace TP3_HerreraLeonel.Models
             }
             return result;
         }
+
+
+        public Usuario LoginUser(string user) {
+            
+
+            Usuario usuarioALog = new Usuario();
+            string SQLQuery = "SELECT * FROM Usuarios WHERE Username=@_user;";
+            try
+            {
+                using (SQLiteConnection conexion = new SQLiteConnection(connectionString))
+                {
+                    conexion.Open();
+                    SQLiteCommand command = new SQLiteCommand(SQLQuery, conexion);
+                    command.Parameters.AddWithValue("@_user", user);
+                    //command.Parameters.AddWithValue("@_pass", pass);
+
+                    command.ExecuteNonQuery();
+                    using (SQLiteDataReader DataReader = command.ExecuteReader())
+                    {
+                        if (DataReader.HasRows)
+                        {
+                            while (DataReader.Read())
+                            {
+                                Usuario usuario = new Usuario()
+                                {
+                                    Username = DataReader["Username"].ToString(),
+                                    Password = DataReader["Password"].ToString(),
+                                };
+                                usuarioALog = usuario;
+                            }
+                        }
+                    }
+                    conexion.Close();
+                }
+                _logger.Info("EL USUARIO '{0}' SE HA LOGUEADO CORRECTAMENTE", user);
+            }
+            catch (Exception ex)
+            {
+                //usuarioALog = new Usuario();
+                _logger.Error("EL USUARIO '{0}' SE HA LOGUEADO INCORRECTAMENTE: {1}", user, ex.Message);
+            }
+            return usuarioALog;
+        }
+
 
         //Inserto datos a la tabla
         public void InsertUsuarios(Usuario user)

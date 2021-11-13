@@ -7,23 +7,41 @@ using System.Linq;
 using System.Threading.Tasks;
 using TP3_HerreraLeonel.Models;
 using TP3_HerreraLeonel.Entities;
+using TP3_HerreraLeonel.ViewModels;
+using Microsoft.AspNetCore.Http;
+
 
 namespace TP3_HerreraLeonel.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-        
 
-        public HomeController(ILogger<HomeController> logger)
+        private readonly IDataBase DB;        
+
+        public HomeController(IDataBase dataBase)
         {
-            _logger = logger;
-            
+            DB = dataBase;
         }
 
         public IActionResult Index()
         {
-            return View();
+            try
+            {
+                Usuario user = DB.RepoUsuario_Sqlite.LoginUser(HttpContext.Session.GetString("username"));
+                IndexViewModel UserLog = new IndexViewModel {  
+                    usuario = user
+                };
+                if (UserLog.usuario.Username != null) {
+                    return View(UserLog);
+                }
+                else {
+                    return Redirect("~/Usuario/Login");
+                }
+                
+            }
+            catch (Exception) {
+                return Redirect("~/Usuario/Login");
+            }
         }
 
         public IActionResult Privacy()

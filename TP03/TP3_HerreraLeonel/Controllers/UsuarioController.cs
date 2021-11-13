@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TP3_HerreraLeonel.Models;
 using TP3_HerreraLeonel.Entities;
+using TP3_HerreraLeonel.ViewModels;
 using Microsoft.AspNetCore.Http;
 
 namespace TP3_HerreraLeonel.Controllers
@@ -41,13 +42,27 @@ namespace TP3_HerreraLeonel.Controllers
         public IActionResult Login(string username, string password)
         {
             
-            if (DB.RepoUsuario_Sqlite.LoginUser(username, password))
+            if (DB.RepoUsuario_Sqlite.IsResgisterUser(username, password))
             {
                 HttpContext.Session.SetString("username", username);
                 return Redirect("~/Home");
             }
             return View(false);
         }
+        
+        public IActionResult Logout()
+        {
+
+            if (HttpContext.Session.GetString("username")!=null)
+            {
+                
+                HttpContext.Session.Clear();
+                return Redirect("~/Usuario/Login");
+            }
+            return View(false);
+        }
+        
+
 
         //Alta de Usuario
         public IActionResult AltaUsuario(string username, string password)
