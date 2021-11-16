@@ -6,10 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="bootstrap" Version="5.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="5.0.11" />
     <PackageReference Include="Microsoft.AspNetCore.Session" Version="2.2.0" />
     <PackageReference Include="NLog" Version="4.7.12" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="4.14.0" />
+    <PackageReference Include="popper.js" Version="1.16.1" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.115" />
   </ItemGroup>
 

@@ -31,7 +31,7 @@ namespace TP3_HerreraLeonel.Controllers
                 IndexViewModel UserLog = new IndexViewModel {  
                     usuario = user
                 };
-                if (UserLog.usuario.Username != null) {
+                if (UserLog.usuario.Username != null && HttpContext.Session.GetString("username")!=null) {
                     return View(UserLog);
                 }
                 else {
