@@ -2,8 +2,9 @@
 @{
     ViewData["Title"] = "Alta Pedidos";
 }
-@model List<TP3_HerreraLeonel.Entities.Cadete>
-@Html.Partial("_NavAdminPartial")
+@model Tuple<List<TP3_HerreraLeonel.Entities.Cadete>, TP3_HerreraLeonel.ViewModels.IndexViewModel>
+
+@await Html.PartialAsync("_NavAdminPartial", Model.Item2)
 
 <div class="text-center">
 
@@ -32,7 +33,7 @@
 
     <div class="card">
         <div class="card-body">
-            @if (Model.Count() > 0)
+            @if (Model.Item1.Count() > 0)
             {
                 <form asp-action="AltaPedido" method="post">
                     <fieldset>
@@ -58,7 +59,7 @@
                             <label for="Cadete" class="form-label">CADETE</label>
                             <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" name="_IdCadete" id="_IdCadete" required>
                                 <option selected disabled>--SELECCIONE UN CADETE--</option>
-                                @foreach (var item in Model)
+                                @foreach (var item in Model.Item1)
                                 {
                                     <option value="@item.Id">@item.Id- @item.Nombre</option>
                                 }

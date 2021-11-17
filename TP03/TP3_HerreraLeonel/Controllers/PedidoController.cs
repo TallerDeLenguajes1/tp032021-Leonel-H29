@@ -42,51 +42,94 @@ namespace TP3_HerreraLeonel.Controllers
                 {
                     return Redirect("~/Usuario/Login");
                 }
-                //return View(DB.RepoPedido_Sqlite.getAllPedidos());
             }
             catch(Exception ex)
             {
                 Console.WriteLine(ex);
-                return Redirect("~/Cadete");
+                return Redirect("~/Usuario/Login");
             }
         }
 
-        public IActionResult Privacy()
+        /*public IActionResult Privacy()
         {
             return View();
-        }
+        }*/
         
         //Alta de pedidos
         public IActionResult AltaPedido(string _NombreClie, string _DireccionClie, string _TelefonoClie, string _Obs, Pedido.Estados _Estado, int _IdCadete)
         {
-            if (_NombreClie == null || _DireccionClie == null || _TelefonoClie == null)
+            try
             {
-                return View(DB.RepoCadete_Sqlite.getAll());
-            }
-            else
-            {
-                Pedido nuevoPedido = new Pedido(_Obs, _Estado,_NombreClie, _DireccionClie, _TelefonoClie);
-                //List<Cadete> cadeteLista = DB.RepositorioCadete.getAll();
-                Cadete cadeteSeleccionado = DB.RepoCadete_Sqlite.getCadeteAModificar(_IdCadete);
-                //cadeteSeleccionado.AgregarPedido(nuevoPedido);
+                Usuario user = DB.RepoUsuario_Sqlite.LoginUser(HttpContext.Session.GetString("username"));
+                IndexViewModel UserLog = new IndexViewModel
+                {
+                    usuario = user
+                };
+                if (UserLog.usuario.Username != null)
+                {
+                    if (_NombreClie == null || _DireccionClie == null || _TelefonoClie == null)
+                    {
+                        return View(new Tuple<List<Cadete>, IndexViewModel>(DB.RepoCadete_Sqlite.getAll(), UserLog));
+                    }
+                    else
+                    {
+                        Pedido nuevoPedido = new Pedido(_Obs, _Estado, _NombreClie, _DireccionClie, _TelefonoClie);
+                        Cadete cadeteSeleccionado = DB.RepoCadete_Sqlite.getCadeteAModificar(_IdCadete);
 
-                DB.RepoPedido_Sqlite.InsertPedidos(nuevoPedido, cadeteSeleccionado.Id);
+                        DB.RepoPedido_Sqlite.InsertPedidos(nuevoPedido, cadeteSeleccionado.Id);
 
-                return View(DB.RepoCadete_Sqlite.getAll());
+                        return View(new Tuple<List<Cadete>, IndexViewModel>(DB.RepoCadete_Sqlite.getAll(), UserLog));
+                    }
+                }
+                else
+                {
+                    return Redirect("~/Usuario/Login");
+                }    
+            }catch(Exception) {
+                return Redirect("~/Usuario/Login");
             }
         }
-
+        
         
         //Muestro el pedido a modificar en el form
         public IActionResult ModificarPedido(int id)
         {
-            List<Cadete> ListCadetes = DB.RepoCadete_Sqlite.getAll();
-            Pedido pedidoADevolver = DB.RepoPedido_Sqlite.getPedidoAModificar(id);
+            try
+            {
+                Usuario user = DB.RepoUsuario_Sqlite.LoginUser(HttpContext.Session.GetString("username"));
+                IndexViewModel UserLog = new IndexViewModel
+                {
+                    usuario = user
+                };
+                if (UserLog.usuario.Username != null)
+                {
+                    List<Cadete> ListCadetes = DB.RepoCadete_Sqlite.getAll();
+                    Pedido pedidoADevolver = DB.RepoPedido_Sqlite.getPedidoAModificar(id);
+                    
 
-            if (pedidoADevolver != null)
-                return View(new Tuple<Pedido, List<Cadete>>(pedidoADevolver, ListCadetes));
-            else
-                return Redirect("~/Pedido");
+                    if (pedidoADevolver != null)
+                    {
+                        ModificarPedidoViewModel modificar = new ModificarPedidoViewModel
+                        {
+                            UsuarioLog = UserLog,
+                            listCadetes = ListCadetes,
+                            pedido = pedidoADevolver
+                        };
+                        return View(modificar);
+                    }
+
+                    else
+                        return Redirect("~/Pedido");
+                }
+                else
+                {
+                    return Redirect("~/Usuario/Login");
+                }
+                
+            }
+            catch (Exception) {
+                return Redirect("~/Usuario/Login");
+            }
         }
 
         //Modifico los datos del pedido

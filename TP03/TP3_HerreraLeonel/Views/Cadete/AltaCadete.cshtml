@@ -2,11 +2,11 @@
 @{
     ViewData["Title"] = "Alta Cadetes";
 }
-
+@model TP3_HerreraLeonel.ViewModels.IndexViewModel
 <!--
 <h1>Cadetes</h1>
 -->
-@Html.Partial("_NavAdminPartial")
+@await Html.PartialAsync("_NavAdminPartial", Model)
 
 <div class="text-center">
 

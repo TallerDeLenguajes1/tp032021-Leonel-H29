@@ -53,7 +53,21 @@ namespace TP3_HerreraLeonel.Controllers
             
             try
             {
-                return View(ListCadetes.Where(cad => cad.Id == id).Single());
+                Usuario user = DB.RepoUsuario_Sqlite.LoginUser(HttpContext.Session.GetString("username"));
+                IndexViewModel UserLog = new IndexViewModel
+                {
+                    usuario = user
+                };
+                if (UserLog.usuario.Username != null)
+                {
+                    //return View(ListCadetes.Where(cad => cad.Id == id).Single());
+                    return View(new Tuple<Cadete, IndexViewModel>(ListCadetes.Where(cad => cad.Id == id).Single(), UserLog));
+                }
+                else
+                {
+                    return Redirect("~/Usuario/Login");
+                }
+                
             }
             catch (Exception ex)
             {
@@ -61,37 +75,73 @@ namespace TP3_HerreraLeonel.Controllers
                 return Redirect("~/Cadete");
             }
         }
-
+        /*
         public IActionResult Privacy()
         {
             return View();
-        }
+        }*/
 
         //Alta de Cadete
         public IActionResult AltaCadete(string _Nombre, string _Direccion, string _Telefono)
         {
-            if (_Nombre == null || _Direccion == null || _Telefono == null)
+            try
             {
-                return View(DB.RepoCadete_Sqlite.getAll());
+                Usuario user = DB.RepoUsuario_Sqlite.LoginUser(HttpContext.Session.GetString("username"));
+                IndexViewModel UserLog = new IndexViewModel
+                {
+                    usuario = user
+                };
+                if (UserLog.usuario.Username != null)
+                {
+                    if (_Nombre == null || _Direccion == null || _Telefono == null)
+                    {
+                        return View(UserLog);
+                    }
+                    else
+                    {
+                        Cadete nuevoCadete = new Cadete(_Nombre, _Direccion, _Telefono);
+                        DB.RepoCadete_Sqlite.InsertCadetes(nuevoCadete);//Inserto en la DB
+                        DB.RepoCadete_Json.InsertCadetes(nuevoCadete);//Inserto en el Archivo Json
+                        return View(UserLog);
+                    }
+                    //return View(new Tuple<List<Pedido>, IndexViewModel>(DB.RepoPedido_Sqlite.getAllPedidos(), UserLog));
+                }
+                else
+                {
+                    return Redirect("~/Usuario/Login");
+                }
+                
             }
-            else
-            {
-                Cadete nuevoCadete = new Cadete(_Nombre, _Direccion, _Telefono);
-                DB.RepoCadete_Sqlite.InsertCadetes(nuevoCadete);//Inserto en la DB
-                DB.RepoCadete_Json.InsertCadetes(nuevoCadete);//Inserto en el Archivo Json
-                return View(DB.RepoCadete_Sqlite.getAll());
+            catch (Exception) {
+                return Redirect("~/Usuario/Login");
             }
         }
         
         //Muestro los datos del cadete en el form de edicion
         public IActionResult ModificarCadete(int id)
         {
-            Cadete cadeteADevolver = DB.RepoCadete_Sqlite.getCadeteAModificar(id);
+            try
+            {
+                Usuario user = DB.RepoUsuario_Sqlite.LoginUser(HttpContext.Session.GetString("username"));
+                IndexViewModel UserLog = new IndexViewModel
+                {
+                    usuario = user
+                };
+                if (UserLog.usuario.Username != null)
+                {
+                    Cadete cadeteADevolver = DB.RepoCadete_Sqlite.getCadeteAModificar(id);
 
-            if (cadeteADevolver != null)
-                return View(cadeteADevolver);
-            else
-                return Redirect("~/Cadete");
+                    if (cadeteADevolver != null)
+                        return View(new Tuple<Cadete, IndexViewModel>(cadeteADevolver, UserLog));
+                    else
+                        return Redirect("~/Cadete");
+                }
+                else
+                {
+                    return Redirect("~/Usuario/Login");
+                }
+            }
+            catch (Exception) { return Redirect("~/Usuario/Login"); }       
         }
 
         //Modifico los datos del cadete
