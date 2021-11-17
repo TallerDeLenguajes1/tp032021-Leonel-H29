@@ -7,6 +7,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using TP3_HerreraLeonel.Models;
 using TP3_HerreraLeonel.Entities;
+using TP3_HerreraLeonel.ViewModels;
+using Microsoft.AspNetCore.Http;
+
 
 namespace TP3_HerreraLeonel.Controllers
 {
@@ -26,7 +29,20 @@ namespace TP3_HerreraLeonel.Controllers
         {
             try
             {
-                return View(DB.RepoPedido_Sqlite.getAllPedidos());
+                Usuario user = DB.RepoUsuario_Sqlite.LoginUser(HttpContext.Session.GetString("username"));
+                IndexViewModel UserLog = new IndexViewModel
+                {
+                    usuario = user
+                };
+                if (UserLog.usuario.Username != null)
+                {
+                    return View(new Tuple<List<Pedido>, IndexViewModel>(DB.RepoPedido_Sqlite.getAllPedidos(), UserLog));
+                }
+                else
+                {
+                    return Redirect("~/Usuario/Login");
+                }
+                //return View(DB.RepoPedido_Sqlite.getAllPedidos());
             }
             catch(Exception ex)
             {

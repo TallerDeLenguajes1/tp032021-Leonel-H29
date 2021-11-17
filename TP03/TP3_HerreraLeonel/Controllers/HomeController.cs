@@ -31,8 +31,29 @@ namespace TP3_HerreraLeonel.Controllers
                 IndexViewModel UserLog = new IndexViewModel {  
                     usuario = user
                 };
-                if (UserLog.usuario.Username != null && HttpContext.Session.GetString("username")!=null) {
+                if (UserLog.usuario.Username != null) {
                     return View(UserLog);
+                }
+                else {
+                    return Redirect("~/Usuario/Login");
+                }
+                
+            }
+            catch (Exception) {
+                return Redirect("~/Usuario/Login");
+            }
+        }
+
+        public IActionResult _NavAdminPartial()
+        {
+            try
+            {
+                Usuario user = DB.RepoUsuario_Sqlite.LoginUser(HttpContext.Session.GetString("username"));
+                IndexViewModel UserLog = new IndexViewModel {  
+                    usuario = user
+                };
+                if (UserLog.usuario.Username != null) {
+                    return PartialView(UserLog);
                 }
                 else {
                     return Redirect("~/Usuario/Login");

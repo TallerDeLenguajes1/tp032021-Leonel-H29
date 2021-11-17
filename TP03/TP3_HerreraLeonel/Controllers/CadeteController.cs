@@ -7,17 +7,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using TP3_HerreraLeonel.Models;
 using TP3_HerreraLeonel.Entities;
+using TP3_HerreraLeonel.ViewModels;
+using Microsoft.AspNetCore.Http;
 
 namespace TP3_HerreraLeonel.Controllers
 {
     public class CadeteController : Controller
     {
-        //private readonly ILogger<CadeteController> _logger;
-        //private readonly DBTemporal dB;
-        //private readonly RepositorioCadete repoCadete;
         private readonly IDataBase DB;
        
-
         public CadeteController(IDataBase dataBase)
         {
             DB = dataBase;
@@ -26,7 +24,20 @@ namespace TP3_HerreraLeonel.Controllers
         public IActionResult Index()
         {
             try {
-                return View(DB.RepoCadete_Sqlite.getAll());
+                Usuario user = DB.RepoUsuario_Sqlite.LoginUser(HttpContext.Session.GetString("username"));
+                IndexViewModel UserLog = new IndexViewModel
+                {
+                    usuario = user
+                };
+                if (UserLog.usuario.Username != null)
+                {
+                    return View(new Tuple<List<Cadete>,IndexViewModel>(DB.RepoCadete_Sqlite.getAll(), UserLog));
+                }
+                else
+                {
+                    return Redirect("~/Usuario/Login");
+                }
+                //return View(DB.RepoCadete_Sqlite.getAll());
             }
             catch (Exception ex){
                 Console.WriteLine(ex);
@@ -34,7 +45,7 @@ namespace TP3_HerreraLeonel.Controllers
             }
                 
         }
-        
+
         //Vista de los pedidos asignados a cada cadete
         public IActionResult ListPedidos(int id)
         {
