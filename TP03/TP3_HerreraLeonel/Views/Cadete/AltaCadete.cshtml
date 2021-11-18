@@ -1,12 +1,9 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Alta Cadetes";
 }
-@model TP3_HerreraLeonel.ViewModels.IndexViewModel
-<!--
-<h1>Cadetes</h1>
--->
-@await Html.PartialAsync("_NavAdminPartial", Model)
+@model Tuple<TP3_HerreraLeonel.ViewModels.IndexViewModel, TP3_HerreraLeonel.ViewModels.CadeteAltaViewModel>
+
+@await Html.PartialAsync("_NavAdminPartial", Model.Item1)
 
 <div class="text-center">
 
@@ -38,25 +35,45 @@
             <form asp-action="AltaCadete" method="post">
                 <fieldset>
                     <legend>Ingrese los datos</legend>
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                     <div class="mb-3">
+                        <!--
                         <label class="form-label">NOMBRE/S</label>
                         <input type="text" id="_Nombre" name="_Nombre" class="form-control" placeholder="Ingrese sus nombre completo" required>
+                        -->
+                        <label asp-for="Item2.Nombre" class="control-label"></label>
+                        <input asp-for="Item2.Nombre" class="form-control" placeholder="Ingrese sus nombre completo"/>
+                        <span asp-validation-for="Item2.Nombre" class="text-danger"></span>
                     </div>
 
                     <div class="mb-3">
+                        <!--
                         <label class="form-label">DIRECCION</label>
                         <input type="text" id="_Direccion" name="_Direccion" class="form-control" placeholder="Ingrese su direccion" required>
+                        -->
+                         <label asp-for="Item2.Direccion" class="control-label"></label>
+                         <input asp-for="Item2.Direccion" class="form-control"  placeholder="Ingrese su direccion"/>
+                         <span asp-validation-for="Item2.Direccion" class="text-danger"></span>
                     </div>
 
                     <div class="mb-3">
+                        <!--
                         <label class="form-label">TELEFONO</label>
                         <input type="text" id="_Telefono" name="_Telefono" class="form-control" placeholder="Ingrese su numero de telefono" required>
+                        -->
+                         <label asp-for="Item2.Telefono" class="control-label"></label>
+                         <input asp-for="Item2.Telefono" class="form-control" placeholder="Ingrese su numero de telefono" />
+                         <span asp-validation-for="Item2.Telefono" class="text-danger"></span>
                     </div>
 
-                    <button type="submit" class="btn btn-primary" title="Enviar">ENVIAR</button>
+                    <button type="submit" value="Create" class="btn btn-primary" title="Enviar">ENVIAR</button>
                 </fieldset>
             </form>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

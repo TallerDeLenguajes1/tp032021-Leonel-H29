@@ -76,12 +76,7 @@ namespace TP3_HerreraLeonel.Models
         public List<Pedido> getPedidos_delCadete(int id)
         {
             List<Pedido> ListadoDePedidos = new List<Pedido>();
-            /*
-            string SQLQuery = "SELECT * FROM Pedidos INNER JOIN Cadetes " +
-            "ON Pedidos.cadeteId=Cadetes.cadeteID" +
-            " INNER JOIN Clientes ON Pedidos.clienteId=Clientes.clienteID" +
-            " WHERE Cadetes.cadeteID=" + id + "; ";
-            */
+            
             string SQLQuery = "SELECT * FROM Pedidos INNER JOIN Cadetes " +
             "ON Pedidos.cadeteId=Cadetes.cadeteID" +
             " INNER JOIN Clientes ON Pedidos.clienteId=Clientes.clienteID" +

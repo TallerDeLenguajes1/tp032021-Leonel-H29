@@ -16,15 +16,5 @@ namespace TP3_HerreraLeonel.Entities
             ListadoCadetes = new List<Cadete>();
             ListadoPedidos = new List<Pedido>();
         }
-        /*
-        public void DeleteAllCadetes() {
-            ListadoCadetes.RemoveRange(0, ListadoCadetes.Count());
-        }
-
-        public void DeleteAllPedidos()
-        {
-            ListadoPedidos.RemoveRange(0, ListadoPedidos.Count());
-        }
-        */
     }
 }

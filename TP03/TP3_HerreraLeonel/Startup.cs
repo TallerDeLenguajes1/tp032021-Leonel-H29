@@ -1,9 +1,3 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,13 +5,19 @@ using System.Threading.Tasks;
 using TP3_HerreraLeonel.Entities;
 using NLog.Web;
 using TP3_HerreraLeonel.Models;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using AutoMapper;
 
 namespace TP3_HerreraLeonel
 {
     public class Startup
     {
-        //static List<Cadete> listaCadetes = new List<Cadete>();
-        static DBTemporal DB = new DBTemporal(NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger());
+        
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -32,6 +32,7 @@ namespace TP3_HerreraLeonel
 
             IDataBase DB_ = new DataBase(Configuration.GetConnectionString("Default"), NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger());           
             services.AddSingleton(DB_);
+            services.AddAutoMapper(typeof(MapProfile));
             
             services.AddSession(options =>
                {
