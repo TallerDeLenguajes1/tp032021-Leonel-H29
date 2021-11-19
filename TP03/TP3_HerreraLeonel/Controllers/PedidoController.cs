@@ -61,9 +61,10 @@ namespace TP3_HerreraLeonel.Controllers
                 if (UserVM.Username != null)
                 {
                     var ListCadetes = mapper.Map<List<CadeteIndexViewModel>>(DB.RepoCadete_Sqlite.getAll());
-
-
-                    return View(new Tuple<List<CadeteIndexViewModel>, IndexViewModel>(ListCadetes, UserVM));
+                    AltaPedidoViewModel PedidoVM = new AltaPedidoViewModel();
+                    PedidoVM.UsuarioLog = UserVM;
+                    PedidoVM.ListaCadetes = ListCadetes;
+                    return View(PedidoVM);
                 }
                 else
                 {
@@ -88,6 +89,10 @@ namespace TP3_HerreraLeonel.Controllers
                 if (ModelState.IsValid)
                 {
                     //Pedido nuevoPedido = new Pedido(_Obs, _Estado, _NombreClie, _DireccionClie, _TelefonoClie);
+                    var nuevoPedido = mapper.Map<Pedido>(PedidoVM);
+                    Cadete cadeteSeleccionado = mapper.Map<Cadete>(PedidoVM.Cadete);
+                    DB.RepoPedido_Sqlite.InsertPedidos(nuevoPedido, cadeteSeleccionado.Id);
+                    return RedirectToAction("Index");
                     //Cadete cadeteSeleccionado = DB.RepoCadete_Sqlite.getCadeteAModificar(_IdCadete);
 
                     //DB.RepoPedido_Sqlite.InsertPedidos(nuevoPedido, cadeteSeleccionado.Id);
@@ -96,13 +101,15 @@ namespace TP3_HerreraLeonel.Controllers
                 }
                 else
                 {
+                    Console.WriteLine("El modelo no es valido");
                     return Redirect("~/Usuario/Login");
                 }
                 
                 return View();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.ToString());
                 return Redirect("~/Usuario/Login");
             }
         }
