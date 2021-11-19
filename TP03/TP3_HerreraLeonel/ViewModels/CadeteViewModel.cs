@@ -22,7 +22,22 @@ namespace TP3_HerreraLeonel.ViewModels
 
         public List<Pedido> ListadoPedidos { get; set; }
 
+        //public IndexViewModel UsuarioLog { get; set; }
+
         public CadeteIndexViewModel() { }
+
+        public int Pago()
+        {
+            int aux = 0;
+            foreach (var item in this.ListadoPedidos)
+            {
+                if (item.EstadoPedido() == "Entregado")
+                {
+                    aux += 100;
+                }
+            }
+            return aux;
+        }
     }
 
     public class CadeteAltaViewModel
@@ -40,6 +55,8 @@ namespace TP3_HerreraLeonel.ViewModels
         public string Telefono { get; set; }
 
         public List<Pedido> ListadoPedidos { get; set; }
+
+        public IndexViewModel UsuarioLog { get; set; }
 
         public CadeteAltaViewModel() { }
     }
@@ -61,6 +78,8 @@ namespace TP3_HerreraLeonel.ViewModels
         public string Telefono { get; set; }
 
         public List<Pedido> ListadoPedidos { get; set; }
+
+        public IndexViewModel UsuarioLog { get; set; }
 
         public CadeteModificarViewModel() { }
     }

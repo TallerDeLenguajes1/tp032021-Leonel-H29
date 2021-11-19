@@ -1,7 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Listado de Cadetes";
 }
-@model Tuple<List<TP3_HerreraLeonel.Entities.Cadete>, TP3_HerreraLeonel.ViewModels.IndexViewModel>
+@model Tuple<List<TP3_HerreraLeonel.ViewModels.CadeteIndexViewModel>, TP3_HerreraLeonel.ViewModels.IndexViewModel>
 
 @await Html.PartialAsync("_NavAdminPartial", Model.Item2)
 
@@ -29,7 +29,7 @@
     </ul>
     <br>
 
-    @if (Model.Item2.usuario.Username == "admin")
+    @if (Model.Item2.Username == "admin")
     {
         <ul class="nav justify-content-end">
             <li class="nav-item">

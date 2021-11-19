@@ -1,16 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TP3_HerreraLeonel.Entities;
-using TP3_HerreraLeonel.Models;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace TP3_HerreraLeonel.ViewModels
 {
     
     public class IndexViewModel
     {
-        public Usuario usuario { get; set; }
+        [Required(ErrorMessage = "El campo Username es requerido")]
+        [StringLength(16)]
+        public string Username { get; set; }
+
+        [Required(ErrorMessage = "El campo Username es requerido")]
+        [StringLength(100)]
+        public string Password { get; set; }
+ 
+        public IndexViewModel() { }
     }
 }
+
+
+

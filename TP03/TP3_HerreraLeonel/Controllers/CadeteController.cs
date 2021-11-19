@@ -9,43 +9,41 @@ using TP3_HerreraLeonel.Models;
 using TP3_HerreraLeonel.Entities;
 using TP3_HerreraLeonel.ViewModels;
 using Microsoft.AspNetCore.Http;
+using AutoMapper;
 
 namespace TP3_HerreraLeonel.Controllers
 {
     public class CadeteController : Controller
     {
         private readonly IDataBase DB;
+        private readonly IMapper mapper;
        
-        public CadeteController(IDataBase dataBase)
+        public CadeteController(IDataBase dataBase, IMapper autoMap)
         {
             DB = dataBase;
+            mapper = autoMap;
         }
-
+        
         public IActionResult Index()
         {
             try {
                 Usuario user = DB.RepoUsuario_Sqlite.LoginUser(HttpContext.Session.GetString("username"));
-                IndexViewModel UserLog = new IndexViewModel
+                var UsuarioMV = mapper.Map<IndexViewModel>(user);
+                var CadetesMV = mapper.Map<List<CadeteIndexViewModel>>(DB.RepoCadete_Sqlite.getAll());
+                if (UsuarioMV.Username != null)
                 {
-                    usuario = user
-                };
-                if (UserLog.usuario.Username != null)
-                {
-                    return View(new Tuple<List<Cadete>,IndexViewModel>(DB.RepoCadete_Sqlite.getAll(), UserLog));
+                    return View(new Tuple<List<CadeteIndexViewModel>,IndexViewModel>(CadetesMV, UsuarioMV));
                 }
                 else
                 {
                     return Redirect("~/Usuario/Login");
                 }
-                //return View(DB.RepoCadete_Sqlite.getAll());
             }
-            catch (Exception ex){
-                Console.WriteLine(ex);
-                return Redirect("~/Cadete"); 
-            }
-                
+            catch (Exception){
+                return Redirect("~/Usuario/Login");
+            }            
         }
-
+        
         //Vista de los pedidos asignados a cada cadete
         public IActionResult ListPedidos(int id)
         {
@@ -54,14 +52,11 @@ namespace TP3_HerreraLeonel.Controllers
             try
             {
                 Usuario user = DB.RepoUsuario_Sqlite.LoginUser(HttpContext.Session.GetString("username"));
-                IndexViewModel UserLog = new IndexViewModel
+                var UsuarioMV = mapper.Map<IndexViewModel>(user);
+                var CadeteMV = mapper.Map<CadeteIndexViewModel>(ListCadetes.Where(cad => cad.Id == id).Single());
+                if (UsuarioMV.Username != null)
                 {
-                    usuario = user
-                };
-                if (UserLog.usuario.Username != null)
-                {
-                    //return View(ListCadetes.Where(cad => cad.Id == id).Single());
-                    return View(new Tuple<Cadete, IndexViewModel>(ListCadetes.Where(cad => cad.Id == id).Single(), UserLog));
+                    return View(new Tuple<CadeteIndexViewModel, IndexViewModel>( CadeteMV, UsuarioMV));
                 }
                 else
                 {
@@ -75,47 +70,62 @@ namespace TP3_HerreraLeonel.Controllers
                 return Redirect("~/Cadete");
             }
         }
-        /*
-        public IActionResult Privacy()
-        {
-            return View();
-        }*/
 
-        //Alta de Cadete
-        public IActionResult AltaCadete(string _Nombre, string _Direccion, string _Telefono)
+        //Alta de Cadete 
+        public IActionResult AltaCadete()
         {
             try
             {
                 Usuario user = DB.RepoUsuario_Sqlite.LoginUser(HttpContext.Session.GetString("username"));
-                IndexViewModel UserLog = new IndexViewModel
+                var UsuarioMV = mapper.Map<IndexViewModel>(user);
+
+                if (UsuarioMV.Username != null)
                 {
-                    usuario = user
-                };
-                if (UserLog.usuario.Username != null)
-                {
-                    if (_Nombre == null || _Direccion == null || _Telefono == null)
-                    {
-                        return View(UserLog);
-                    }
-                    else
-                    {
-                        Cadete nuevoCadete = new Cadete(_Nombre, _Direccion, _Telefono);
-                        DB.RepoCadete_Sqlite.InsertCadetes(nuevoCadete);//Inserto en la DB
-                        DB.RepoCadete_Json.InsertCadetes(nuevoCadete);//Inserto en el Archivo Json
-                        return View(UserLog);
-                    }
-                    //return View(new Tuple<List<Pedido>, IndexViewModel>(DB.RepoPedido_Sqlite.getAllPedidos(), UserLog));
+                    var CadeteVM = new CadeteAltaViewModel();
+                    CadeteVM.UsuarioLog = UsuarioMV;
+                    return View(CadeteVM);
                 }
                 else
                 {
-                    return Redirect("~/Usuario/Login");
+                    return Error();
                 }
-                
+
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return Redirect("~/Usuario/Login");
             }
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult AltaCadete(CadeteAltaViewModel CadeteVM)
+        {
+            
+            try
+            {
+                Usuario user = DB.RepoUsuario_Sqlite.LoginUser(HttpContext.Session.GetString("username"));
+                CadeteVM.UsuarioLog = mapper.Map<IndexViewModel>(user);
+
+                if (CadeteVM.UsuarioLog != null && ModelState.IsValid)
+                {
+                    Cadete nuevoCadete = mapper.Map<Cadete>(CadeteVM);
+                    DB.RepoCadete_Sqlite.InsertCadetes(nuevoCadete);//Inserto en la DB
+                    DB.RepoCadete_Json.InsertCadetes(nuevoCadete);//Inserto en el Archivo Json
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return RedirectToAction("Error");
+                }
+
+            }
+            catch (Exception)
+            {
+                return Redirect("~/Usuario/Login");
+            }
+        }
+
         
         //Muestro los datos del cadete en el form de edicion
         public IActionResult ModificarCadete(int id)
@@ -123,16 +133,15 @@ namespace TP3_HerreraLeonel.Controllers
             try
             {
                 Usuario user = DB.RepoUsuario_Sqlite.LoginUser(HttpContext.Session.GetString("username"));
-                IndexViewModel UserLog = new IndexViewModel
+                var UsuarioMV = mapper.Map<IndexViewModel>(user);
+                
+                if (UsuarioMV.Username != null)
                 {
-                    usuario = user
-                };
-                if (UserLog.usuario.Username != null)
-                {
-                    Cadete cadeteADevolver = DB.RepoCadete_Sqlite.getCadeteAModificar(id);
+                    var cadeteADevolver = mapper.Map<CadeteModificarViewModel>(DB.RepoCadete_Sqlite.getCadeteAModificar(id));
+                    cadeteADevolver.UsuarioLog = UsuarioMV;
 
                     if (cadeteADevolver != null)
-                        return View(new Tuple<Cadete, IndexViewModel>(cadeteADevolver, UserLog));
+                        return View(cadeteADevolver);
                     else
                         return Redirect("~/Cadete");
                 }
@@ -145,15 +154,13 @@ namespace TP3_HerreraLeonel.Controllers
         }
 
         //Modifico los datos del cadete
-        public IActionResult ModificarUnCadete(int id, string _Nombre, string _Direccion, string _Telefono)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ModificarCadete(CadeteModificarViewModel CadeteVM)
         {
-            if (id > 0)
+            if (ModelState.IsValid && CadeteVM.Id > 0)
             {
-                Cadete cadeteAModificar = new Cadete();
-                cadeteAModificar.Id = id;
-                cadeteAModificar.Nombre = _Nombre;
-                cadeteAModificar.Direccion = _Direccion;
-                cadeteAModificar.Telefono = _Telefono;
+                var cadeteAModificar = mapper.Map<Cadete>(CadeteVM);
                 DB.RepoCadete_Sqlite.UpdateCadetes(cadeteAModificar);
                 DB.RepoCadete_Json.UpdateCadetes(cadeteAModificar);
             }

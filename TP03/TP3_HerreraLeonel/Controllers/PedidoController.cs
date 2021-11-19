@@ -15,16 +15,13 @@ namespace TP3_HerreraLeonel.Controllers
 {
     public class PedidoController : Controller
     {
-        //private readonly ILogger<PedidoController> _logger;
-        //private readonly RepositorioCadete repoCadete;
-        //private readonly RepositorioPedido repoPedido;
         private readonly IDataBase DB;
 
         public PedidoController(IDataBase dataBase)
         {
             DB = dataBase;
         }
-
+        /*
         public IActionResult Index()
         {
             try
@@ -50,10 +47,7 @@ namespace TP3_HerreraLeonel.Controllers
             }
         }
 
-        /*public IActionResult Privacy()
-        {
-            return View();
-        }*/
+       
         
         //Alta de pedidos
         public IActionResult AltaPedido(string _NombreClie, string _DireccionClie, string _TelefonoClie, string _Obs, Pedido.Estados _Estado, int _IdCadete)
@@ -149,7 +143,7 @@ namespace TP3_HerreraLeonel.Controllers
             }
             return Redirect("~/Pedido");
         }
-        
+        */
         //Elimino un pedido
         public IActionResult EliminarPedido(int id)
         {

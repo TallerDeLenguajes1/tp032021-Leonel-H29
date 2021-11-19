@@ -9,6 +9,7 @@ using TP3_HerreraLeonel.Models;
 using TP3_HerreraLeonel.Entities;
 using TP3_HerreraLeonel.ViewModels;
 using Microsoft.AspNetCore.Http;
+using AutoMapper;
 
 
 namespace TP3_HerreraLeonel.Controllers
@@ -16,11 +17,13 @@ namespace TP3_HerreraLeonel.Controllers
     public class HomeController : Controller
     {
 
-        private readonly IDataBase DB;        
+        private readonly IDataBase DB;
+        private readonly IMapper mapper;
 
-        public HomeController(IDataBase dataBase)
+        public HomeController(IDataBase dataBase, IMapper autoMap)
         {
             DB = dataBase;
+            mapper = autoMap;
         }
 
         public IActionResult Index()
@@ -28,11 +31,9 @@ namespace TP3_HerreraLeonel.Controllers
             try
             {
                 Usuario user = DB.RepoUsuario_Sqlite.LoginUser(HttpContext.Session.GetString("username"));
-                IndexViewModel UserLog = new IndexViewModel {  
-                    usuario = user
-                };
-                if (UserLog.usuario.Username != null) {
-                    return View(UserLog);
+                var UserVM = mapper.Map<IndexViewModel>(user);
+                if (UserVM.Username != null) {
+                    return View(UserVM);
                 }
                 else {
                     return Redirect("~/Usuario/Login");
@@ -44,16 +45,17 @@ namespace TP3_HerreraLeonel.Controllers
             }
         }
 
+        //Muestro el user logueado en el menu de navegacion
         public IActionResult _NavAdminPartial()
         {
             try
             {
                 Usuario user = DB.RepoUsuario_Sqlite.LoginUser(HttpContext.Session.GetString("username"));
-                IndexViewModel UserLog = new IndexViewModel {  
-                    usuario = user
-                };
-                if (UserLog.usuario.Username != null) {
-                    return PartialView(UserLog);
+                var UserVM = mapper.Map<IndexViewModel>(user);
+
+
+                if (UserVM.Username != null) {
+                    return PartialView(UserVM);
                 }
                 else {
                     return Redirect("~/Usuario/Login");
