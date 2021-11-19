@@ -1,10 +1,10 @@
 ﻿@{
     ViewData["Title"] = "Listado de Pedidos";
 }
-@model Tuple<List<TP3_HerreraLeonel.Entities.Pedido>, TP3_HerreraLeonel.ViewModels.IndexViewModel>
-@**
-    @await Html.PartialAsync("_NavAdminPartial", Model.Item2)
-*@
+@model Tuple<List<TP3_HerreraLeonel.ViewModels.PedidoIndexViewModel>, TP3_HerreraLeonel.ViewModels.IndexViewModel>
+
+@await Html.PartialAsync("_NavAdminPartial", Model.Item2)
+
 <div class="text-center">
 
     <ul class="nav nav-tabs">

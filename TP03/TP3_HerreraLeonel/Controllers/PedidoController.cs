@@ -9,6 +9,7 @@ using TP3_HerreraLeonel.Models;
 using TP3_HerreraLeonel.Entities;
 using TP3_HerreraLeonel.ViewModels;
 using Microsoft.AspNetCore.Http;
+using AutoMapper;
 
 
 namespace TP3_HerreraLeonel.Controllers
@@ -17,23 +18,24 @@ namespace TP3_HerreraLeonel.Controllers
     {
         private readonly IDataBase DB;
 
-        public PedidoController(IDataBase dataBase)
+        private readonly IMapper mapper;
+
+        public PedidoController(IDataBase dataBase, IMapper autoMap)
         {
             DB = dataBase;
+            mapper = autoMap;
         }
-        /*
+        
         public IActionResult Index()
         {
             try
             {
                 Usuario user = DB.RepoUsuario_Sqlite.LoginUser(HttpContext.Session.GetString("username"));
-                IndexViewModel UserLog = new IndexViewModel
+                var UserVM = mapper.Map<IndexViewModel>(user);
+                if (UserVM.Username != null)
                 {
-                    usuario = user
-                };
-                if (UserLog.usuario.Username != null)
-                {
-                    return View(new Tuple<List<Pedido>, IndexViewModel>(DB.RepoPedido_Sqlite.getAllPedidos(), UserLog));
+                    var ListPedidos = mapper.Map<List<PedidoIndexViewModel>>(DB.RepoPedido_Sqlite.getAllPedidos());
+                    return View(new Tuple<List<PedidoIndexViewModel>, IndexViewModel>(ListPedidos, UserVM));
                 }
                 else
                 {
@@ -47,103 +49,158 @@ namespace TP3_HerreraLeonel.Controllers
             }
         }
 
-       
-        
+
+
         //Alta de pedidos
-        public IActionResult AltaPedido(string _NombreClie, string _DireccionClie, string _TelefonoClie, string _Obs, Pedido.Estados _Estado, int _IdCadete)
+        public IActionResult AltaPedido()
         {
             try
             {
                 Usuario user = DB.RepoUsuario_Sqlite.LoginUser(HttpContext.Session.GetString("username"));
-                IndexViewModel UserLog = new IndexViewModel
+                var UserVM = mapper.Map<IndexViewModel>(user);
+                if (UserVM.Username != null)
                 {
-                    usuario = user
-                };
-                if (UserLog.usuario.Username != null)
-                {
-                    if (_NombreClie == null || _DireccionClie == null || _TelefonoClie == null)
-                    {
-                        return View(new Tuple<List<Cadete>, IndexViewModel>(DB.RepoCadete_Sqlite.getAll(), UserLog));
-                    }
-                    else
-                    {
-                        Pedido nuevoPedido = new Pedido(_Obs, _Estado, _NombreClie, _DireccionClie, _TelefonoClie);
-                        Cadete cadeteSeleccionado = DB.RepoCadete_Sqlite.getCadeteAModificar(_IdCadete);
+                    var ListCadetes = mapper.Map<List<CadeteIndexViewModel>>(DB.RepoCadete_Sqlite.getAll());
 
-                        DB.RepoPedido_Sqlite.InsertPedidos(nuevoPedido, cadeteSeleccionado.Id);
 
-                        return View(new Tuple<List<Cadete>, IndexViewModel>(DB.RepoCadete_Sqlite.getAll(), UserLog));
-                    }
+                    return View(new Tuple<List<CadeteIndexViewModel>, IndexViewModel>(ListCadetes, UserVM));
                 }
                 else
                 {
                     return Redirect("~/Usuario/Login");
-                }    
-            }catch(Exception) {
+                }
+            }
+            catch (Exception)
+            {
                 return Redirect("~/Usuario/Login");
             }
         }
-        
-        
-        //Muestro el pedido a modificar en el form
-        public IActionResult ModificarPedido(int id)
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult AltaPedido(AltaPedidoViewModel PedidoVM)
         {
             try
             {
-                Usuario user = DB.RepoUsuario_Sqlite.LoginUser(HttpContext.Session.GetString("username"));
-                IndexViewModel UserLog = new IndexViewModel
+                
+                //Usuario user = DB.RepoUsuario_Sqlite.LoginUser(HttpContext.Session.GetString("username"));
+                //PedidoVM.UsuarioLog = mapper.Map<IndexViewModel>(user);
+                if (ModelState.IsValid)
                 {
-                    usuario = user
-                };
-                if (UserLog.usuario.Username != null)
-                {
-                    List<Cadete> ListCadetes = DB.RepoCadete_Sqlite.getAll();
-                    Pedido pedidoADevolver = DB.RepoPedido_Sqlite.getPedidoAModificar(id);
-                    
+                    //Pedido nuevoPedido = new Pedido(_Obs, _Estado, _NombreClie, _DireccionClie, _TelefonoClie);
+                    //Cadete cadeteSeleccionado = DB.RepoCadete_Sqlite.getCadeteAModificar(_IdCadete);
 
-                    if (pedidoADevolver != null)
-                    {
-                        ModificarPedidoViewModel modificar = new ModificarPedidoViewModel
-                        {
-                            UsuarioLog = UserLog,
-                            listCadetes = ListCadetes,
-                            pedido = pedidoADevolver
-                        };
-                        return View(modificar);
-                    }
+                    //DB.RepoPedido_Sqlite.InsertPedidos(nuevoPedido, cadeteSeleccionado.Id);
 
-                    else
-                        return Redirect("~/Pedido");
+                    //return View(new Tuple<List<Cadete>, IndexViewModel>(DB.RepoCadete_Sqlite.getAll(), UserLog));
                 }
                 else
                 {
                     return Redirect("~/Usuario/Login");
                 }
                 
+                return View();
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return Redirect("~/Usuario/Login");
             }
         }
+        /*
+         public IActionResult AltaPedido(string _NombreClie, string _DireccionClie, string _TelefonoClie, string _Obs, Pedido.Estados _Estado, int _IdCadete)
+         {
+             try
+             {
+                 Usuario user = DB.RepoUsuario_Sqlite.LoginUser(HttpContext.Session.GetString("username"));
+                 IndexViewModel UserLog = new IndexViewModel
+                 {
+                     usuario = user
+                 };
+                 if (UserLog.usuario.Username != null)
+                 {
+                     if (_NombreClie == null || _DireccionClie == null || _TelefonoClie == null)
+                     {
+                         return View(new Tuple<List<Cadete>, IndexViewModel>(DB.RepoCadete_Sqlite.getAll(), UserLog));
+                     }
+                     else
+                     {
+                         Pedido nuevoPedido = new Pedido(_Obs, _Estado, _NombreClie, _DireccionClie, _TelefonoClie);
+                         Cadete cadeteSeleccionado = DB.RepoCadete_Sqlite.getCadeteAModificar(_IdCadete);
 
-        //Modifico los datos del pedido
-        public IActionResult ModificarUnPedido(int id, int id_cli ,string _NombreClie, string _DireccionClie, string _TelefonoClie, string _Obs, Pedido.Estados _Estado, int _IdCadete)
-        {
-            if (id >0 && _IdCadete>0)
-            {
-                Pedido pedidoADevolver = new Pedido();
-                pedidoADevolver.Nro = id;
-                pedidoADevolver.Cliente.Id = id_cli;
-                pedidoADevolver.Cliente.Nombre = _NombreClie;
-                pedidoADevolver.Cliente.Direccion = _DireccionClie;
-                pedidoADevolver.Cliente.Telefono = _TelefonoClie;
-                pedidoADevolver.Observacion = _Obs;
-                pedidoADevolver.Estado = _Estado;
-                DB.RepoPedido_Sqlite.UpdatePedidos(pedidoADevolver, _IdCadete);
-            }
-            return Redirect("~/Pedido");
-        }
-        */
+                         DB.RepoPedido_Sqlite.InsertPedidos(nuevoPedido, cadeteSeleccionado.Id);
+
+                         return View(new Tuple<List<Cadete>, IndexViewModel>(DB.RepoCadete_Sqlite.getAll(), UserLog));
+                     }
+                 }
+                 else
+                 {
+                     return Redirect("~/Usuario/Login");
+                 }    
+             }catch(Exception) {
+                 return Redirect("~/Usuario/Login");
+             }
+         }
+
+
+         //Muestro el pedido a modificar en el form
+         public IActionResult ModificarPedido(int id)
+         {
+             try
+             {
+                 Usuario user = DB.RepoUsuario_Sqlite.LoginUser(HttpContext.Session.GetString("username"));
+                 IndexViewModel UserLog = new IndexViewModel
+                 {
+                     usuario = user
+                 };
+                 if (UserLog.usuario.Username != null)
+                 {
+                     List<Cadete> ListCadetes = DB.RepoCadete_Sqlite.getAll();
+                     Pedido pedidoADevolver = DB.RepoPedido_Sqlite.getPedidoAModificar(id);
+
+
+                     if (pedidoADevolver != null)
+                     {
+                         ModificarPedidoViewModel modificar = new ModificarPedidoViewModel
+                         {
+                             UsuarioLog = UserLog,
+                             listCadetes = ListCadetes,
+                             pedido = pedidoADevolver
+                         };
+                         return View(modificar);
+                     }
+
+                     else
+                         return Redirect("~/Pedido");
+                 }
+                 else
+                 {
+                     return Redirect("~/Usuario/Login");
+                 }
+
+             }
+             catch (Exception) {
+                 return Redirect("~/Usuario/Login");
+             }
+         }
+
+         //Modifico los datos del pedido
+         public IActionResult ModificarUnPedido(int id, int id_cli ,string _NombreClie, string _DireccionClie, string _TelefonoClie, string _Obs, Pedido.Estados _Estado, int _IdCadete)
+         {
+             if (id >0 && _IdCadete>0)
+             {
+                 Pedido pedidoADevolver = new Pedido();
+                 pedidoADevolver.Nro = id;
+                 pedidoADevolver.Cliente.Id = id_cli;
+                 pedidoADevolver.Cliente.Nombre = _NombreClie;
+                 pedidoADevolver.Cliente.Direccion = _DireccionClie;
+                 pedidoADevolver.Cliente.Telefono = _TelefonoClie;
+                 pedidoADevolver.Observacion = _Obs;
+                 pedidoADevolver.Estado = _Estado;
+                 DB.RepoPedido_Sqlite.UpdatePedidos(pedidoADevolver, _IdCadete);
+             }
+             return Redirect("~/Pedido");
+         }
+         */
         //Elimino un pedido
         public IActionResult EliminarPedido(int id)
         {

@@ -12,7 +12,9 @@ namespace TP3_HerreraLeonel
             CreateMap<Cadete, CadeteIndexViewModel>().ReverseMap();
             CreateMap<Cadete, CadeteAltaViewModel>().ReverseMap();
             CreateMap<Cadete, CadeteModificarViewModel>().ReverseMap();
-            //CreateMap<>
+            CreateMap<Pedido, PedidoIndexViewModel>().ReverseMap();
+            CreateMap<Pedido, AltaPedidoViewModel>().ReverseMap();
+            CreateMap<Pedido, ModificarPedidoViewModel>().ReverseMap();
         }
     }
 }
