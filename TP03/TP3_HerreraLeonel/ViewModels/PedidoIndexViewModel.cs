@@ -46,7 +46,7 @@ namespace TP3_HerreraLeonel.ViewModels
         public string Observacion { get; set; }
         public Cliente Cliente { get; set; }
         public List<CadeteIndexViewModel> ListaCadetes { get; set; }
-        public CadeteIndexViewModel Cadete { get; set; }
+        public int idCadete { get; set; }
         public IndexViewModel UsuarioLog { get; set; }
 
         public AltaPedidoViewModel()
@@ -62,6 +62,10 @@ namespace TP3_HerreraLeonel.ViewModels
 
         public Cliente Cliente { get; set; }
         public Estados Estado { get; set; }
+
+        public List<CadeteIndexViewModel> ListaCadetes { get; set; }
+        public int idCadete { get; set; }
+        public IndexViewModel UsuarioLog { get; set; }
 
         public ModificarPedidoViewModel()
         {
