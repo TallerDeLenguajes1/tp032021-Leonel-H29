@@ -4,6 +4,8 @@ using System.Data.SQLite;
 using System.Linq;
 using System.Threading.Tasks;
 using TP3_HerreraLeonel.Entities;
+using System.IO;
+using System.Text.Json;
 using NLog;
 
 
@@ -137,6 +139,7 @@ namespace TP3_HerreraLeonel.Models
                         }
                     }
                     _logger.Info("SE INSERTARON LOS DATOS DEL CLIENTE DE FORMA EXITOSA");
+                    cliente.Id = GetNewIDCliente(cliente);
                 }
                 else
                 {
@@ -151,6 +154,14 @@ namespace TP3_HerreraLeonel.Models
                 _logger.Error("SE INSERTARON LOS DATOS DE LOS CLIENTES DE FORMA ERRONEA: ", ex.Message);
             }
             return cliente;
+        }
+
+        //Obtengo el ID del nuevo cliente creado
+        public int GetNewIDCliente(Cliente cliente)
+        {
+            List<Cliente> ListCliente = getAllClientes();
+            cliente = ListCliente.Where(x => x.Nombre == cliente.Nombre && x.Direccion == cliente.Direccion && x.Telefono == cliente.Telefono).Single();
+            return cliente.Id;
         }
 
         //Inserto datos a la tabla
@@ -191,13 +202,16 @@ namespace TP3_HerreraLeonel.Models
         public Pedido getPedidoAModificar(int id)
         {
             Pedido pedidoAModificar = new Pedido();
-            string SQLQuery = "SELECT * FROM Pedidos INNER JOIN Clientes ON Clientes.clienteID=Pedidos.clienteId WHERE pedidoID=" + Convert.ToString(id) + ";";
+            //string SQLQuery = "SELECT * FROM Pedidos INNER JOIN Clientes ON Clientes.clienteID=Pedidos.clienteId WHERE pedidoID=" + Convert.ToString(id) + ";";
+            string SQLQuery = "SELECT * FROM Pedidos INNER JOIN Clientes ON Clientes.clienteID=Pedidos.clienteId WHERE pedidoID=@id_ped;";
             try
             {
                 using (SQLiteConnection conexion = new SQLiteConnection(connectionString))
                 {
                     conexion.Open();
                     SQLiteCommand command = new SQLiteCommand(SQLQuery, conexion);
+                    command.Parameters.AddWithValue("@id_ped", id);
+                    command.ExecuteNonQuery();
                     using (SQLiteDataReader DataReader = command.ExecuteReader())
                     {
                         if (DataReader.HasRows)
@@ -343,6 +357,81 @@ namespace TP3_HerreraLeonel.Models
             {
                 _logger.Error("SE ELIMINARON LOS DATOS DE LOS PEDIDOS DE FORMA ERRONEA: ", ex.Message);
             }
+        }
+    }
+
+    public class JSONRepositorioPedido : IRepositorioPedido
+    {
+        private static ILogger _logger;
+        //static string rutaArchivoCadetes = @"Cadetes.json";
+        static string rutaArchivoPedidos = @"Pedidos.json";
+
+        public JSONRepositorioPedido(ILogger logger) {
+            _logger = logger;
+        }
+        public void DeleteAllPedidos()
+        {
+            try
+            {
+                //Elimino todos los pedidos del archivo los pedidos
+                using (FileStream archivoPedidos = new FileStream(rutaArchivoPedidos, FileMode.Create))
+                {
+                    using (StreamWriter escribirPedido = new StreamWriter(archivoPedidos))
+                    {
+                        escribirPedido.WriteLine("[]");
+                        escribirPedido.Close();
+                        escribirPedido.Dispose();
+                    }
+                }
+                string mensaje = "TODOS LOS DATOS DE LOS PEDIDOS SE ELIMINARON CORRECTAMENTE DEL ARCHIVO";
+                _logger.Info(mensaje);
+            }
+            catch (Exception ex)
+            {
+                //Console.WriteLine(ex);
+                string mensaje = "TODOS LOS DATOS DE LOS PEDIDOS SE ELIMINARON CORRECTAMENTE DEL ARCHIVO: "+ex.Message ;
+                _logger.Error(mensaje);
+            }
+        }
+
+        public void DeletePedido(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Cliente> getAllClientes()
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Pedido> getAllPedidos()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Pedido getPedidoAModificar(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Cliente InsertClientes(Cliente cliente)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void InsertPedidos(Pedido pedido, int id_cadete)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateCliente(Cliente cliente)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdatePedidos(Pedido pedido, int id_cadete)
+        {
+            throw new NotImplementedException();
         }
     }
 }

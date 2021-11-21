@@ -7,30 +7,71 @@ using System.Linq;
 using System.Threading.Tasks;
 using TP3_HerreraLeonel.Models;
 using TP3_HerreraLeonel.Entities;
+using TP3_HerreraLeonel.ViewModels;
+using Microsoft.AspNetCore.Http;
+using AutoMapper;
+
 
 namespace TP3_HerreraLeonel.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-        
 
-        public HomeController(ILogger<HomeController> logger)
+        private readonly IDataBase DB;
+        private readonly IMapper mapper;
+
+        public HomeController(IDataBase dataBase, IMapper autoMap)
         {
-            _logger = logger;
-            
+            DB = dataBase;
+            mapper = autoMap;
         }
 
         public IActionResult Index()
         {
-            return View();
+            try
+            {
+                Usuario user = DB.RepoUsuario_Sqlite.LoginUser(HttpContext.Session.GetString("username"));
+                var UserVM = mapper.Map<IndexViewModel>(user);
+                if (UserVM.Username != null) {
+                    return View(UserVM);
+                }
+                else {
+                    return Redirect("~/Usuario/Login");
+                }
+                
+            }
+            catch (Exception) {
+                return Redirect("~/Usuario/Login");
+            }
+        }
+
+        //Muestro el user logueado en el menu de navegacion
+        public IActionResult _NavAdminPartial()
+        {
+            try
+            {
+                Usuario user = DB.RepoUsuario_Sqlite.LoginUser(HttpContext.Session.GetString("username"));
+                var UserVM = mapper.Map<IndexViewModel>(user);
+
+
+                if (UserVM.Username != null) {
+                    return PartialView(UserVM);
+                }
+                else {
+                    return Redirect("~/Usuario/Login");
+                }
+                
+            }
+            catch (Exception) {
+                return Redirect("~/Usuario/Login");
+            }
         }
 
         public IActionResult Privacy()
         {
             return View();
         }
-      
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

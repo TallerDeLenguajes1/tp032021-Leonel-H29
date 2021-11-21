@@ -1,13 +1,19 @@
-﻿@{
+﻿@model TP3_HerreraLeonel.ViewModels.IndexViewModel
+@{
     ViewData["Title"] = "Inicio";
 }
 
+@await Html.PartialAsync("_NavAdminPartial", Model)
 <div class="text-center">
     <div class="alert alert-secondary" role="alert">
-        <h1 class="display-4"
-            style="font-family:Impact">
-            ¡BIENVENIDO AL SISTEMA!
-        </h1>
+        @if (Model.Username != null)
+        {
+            <h1 class="display-4"
+                style="font-family:Impact">
+                ¡BIENVENIDO AL SISTEMA @Model.Username!
+            </h1>
+        }
     </div>
 
 </div>
+

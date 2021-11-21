@@ -7,101 +7,174 @@ using System.Linq;
 using System.Threading.Tasks;
 using TP3_HerreraLeonel.Models;
 using TP3_HerreraLeonel.Entities;
+using TP3_HerreraLeonel.ViewModels;
+using Microsoft.AspNetCore.Http;
+using AutoMapper;
+
 
 namespace TP3_HerreraLeonel.Controllers
 {
     public class PedidoController : Controller
     {
-        //private readonly ILogger<PedidoController> _logger;
-        //private readonly RepositorioCadete repoCadete;
-        //private readonly RepositorioPedido repoPedido;
-        private readonly IDBSQLite DB;
+        private readonly IDataBase DB;
 
-        public PedidoController(IDBSQLite dBSQ)
+        private readonly IMapper mapper;
+
+        public PedidoController(IDataBase dataBase, IMapper autoMap)
         {
-            DB = dBSQ;
+            DB = dataBase;
+            mapper = autoMap;
         }
-
+        
         public IActionResult Index()
         {
             try
             {
-                return View(DB.RepositorioPedido.getAllPedidos());
+                Usuario user = DB.RepoUsuario_Sqlite.LoginUser(HttpContext.Session.GetString("username"));
+                var UserVM = mapper.Map<IndexViewModel>(user);
+                if (UserVM.Username != null)
+                {
+                    var ListPedidos = mapper.Map<List<PedidoIndexViewModel>>(DB.RepoPedido_Sqlite.getAllPedidos());
+                    return View(new Tuple<List<PedidoIndexViewModel>, IndexViewModel>(ListPedidos, UserVM));
+                }
+                else
+                {
+                    return Redirect("~/Usuario/Login");
+                }
             }
             catch(Exception ex)
             {
                 Console.WriteLine(ex);
-                return Redirect("~/Cadete");
+                return Redirect("~/Usuario/Login");
             }
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-        
+
         //Alta de pedidos
-        public IActionResult AltaPedido(string _NombreClie, string _DireccionClie, string _TelefonoClie, string _Obs, Pedido.Estados _Estado, int _IdCadete)
+        public IActionResult AltaPedido()
         {
-            if (_NombreClie == null || _DireccionClie == null || _TelefonoClie == null)
+            try
             {
-                return View(DB.RepositorioCadete.getAll());
+                Usuario user = DB.RepoUsuario_Sqlite.LoginUser(HttpContext.Session.GetString("username"));
+                var UserVM = mapper.Map<IndexViewModel>(user);
+                if (UserVM.Username != null)
+                {
+                    var ListCadetes = mapper.Map<List<CadeteIndexViewModel>>(DB.RepoCadete_Sqlite.getAll());
+                    AltaPedidoViewModel PedidoVM = new AltaPedidoViewModel();
+                    PedidoVM.UsuarioLog = UserVM;
+                    PedidoVM.ListaCadetes = ListCadetes;
+                    return View(PedidoVM);
+                }
+                else
+                {
+                    return Redirect("~/Usuario/Login");
+                }
             }
-            else
+            catch (Exception)
             {
-                Pedido nuevoPedido = new Pedido(_Obs, _Estado,_NombreClie, _DireccionClie, _TelefonoClie);
-                //List<Cadete> cadeteLista = DB.RepositorioCadete.getAll();
-                Cadete cadeteSeleccionado = DB.RepositorioCadete.getCadeteAModificar(_IdCadete);
-                //cadeteSeleccionado.AgregarPedido(nuevoPedido);
-
-                DB.RepositorioPedido.InsertPedidos(nuevoPedido, cadeteSeleccionado.Id);
-
-                return View(DB.RepositorioCadete.getAll());
+                return Redirect("~/Usuario/Login");
             }
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult AltaPedido(AltaPedidoViewModel PedidoVM)
+        {
+            try
+            {
+                
+                //Usuario user = DB.RepoUsuario_Sqlite.LoginUser(HttpContext.Session.GetString("username"));
+                //PedidoVM.UsuarioLog = mapper.Map<IndexViewModel>(user);
+                if (ModelState.IsValid)
+                {
+                    var nuevoPedido = mapper.Map<Pedido>(PedidoVM);
+                    Cadete cadeteSeleccionado = DB.RepoCadete_Sqlite.getCadeteAModificar(PedidoVM.idCadete);
+                    DB.RepoPedido_Sqlite.InsertPedidos(nuevoPedido, cadeteSeleccionado.Id);
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    //Console.WriteLine("El modelo no es valido");
+                    return RedirectToAction("Error");
+                }
+                
+                
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return Redirect("~/Usuario/Login");
+            }
+        }
         
-        //Muestro el pedido a modificar en el form
-        public IActionResult ModificarPedido(int id)
-        {
-            List<Cadete> ListCadetes = DB.RepositorioCadete.getAll();
-            Pedido pedidoADevolver = DB.RepositorioPedido.getPedidoAModificar(id);
 
-            if (pedidoADevolver != null)
-                return View(new Tuple<Pedido, List<Cadete>>(pedidoADevolver, ListCadetes));
-            else
-                return Redirect("~/Pedido");
-        }
+         //Muestro el pedido a modificar en el form
+         public IActionResult ModificarPedido(int id)
+         {
+             try
+             {
+                 Usuario user = DB.RepoUsuario_Sqlite.LoginUser(HttpContext.Session.GetString("username"));
+                 var UserVM = mapper.Map<IndexViewModel>(user);
+                 if (UserVM != null)
+                 {
+                    //List<Cadete> ListCadetes = DB.RepoCadete_Sqlite.getAll();
+                    //Pedido pedidoADevolver = DB.RepoPedido_Sqlite.getPedidoAModificar(id);
+                    var ListCadetes = mapper.Map<List<CadeteIndexViewModel>>(DB.RepoCadete_Sqlite.getAll());
+                    var pedidoADevolver = mapper.Map<PedidoIndexViewModel>(DB.RepoPedido_Sqlite.getPedidoAModificar(id));
+                     if (pedidoADevolver != null)
+                     {
+                        ModificarPedidoViewModel modificar = new ModificarPedidoViewModel
+                        {
+                            UsuarioLog = UserVM,
+                            ListaCadetes = ListCadetes,
+                            Nro = pedidoADevolver.Nro,
+                            Observacion = pedidoADevolver.Observacion,
+                            Estado = (ModificarPedidoViewModel.Estados)Enum.Parse(typeof(ModificarPedidoViewModel.Estados), pedidoADevolver.Estado.ToString()) ,
+                            Cliente = pedidoADevolver.Cliente,
+                         };
+                        
+                         return View(modificar);
+                     }
+
+                     else
+                         return Redirect("~/Pedido");
+                 }
+                 else
+                 {
+                     return Redirect("~/Usuario/Login");
+                 }
+
+             }
+             catch (Exception) {
+                 return Redirect("~/Usuario/Login");
+             }
+         }
 
         //Modifico los datos del pedido
-        public IActionResult ModificarUnPedido(int id, int id_cli ,string _NombreClie, string _DireccionClie, string _TelefonoClie, string _Obs, Pedido.Estados _Estado, int _IdCadete)
-        {
-            if (id >0 && _IdCadete>0)
-            {
-                Pedido pedidoADevolver = new Pedido();
-                pedidoADevolver.Nro = id;
-                pedidoADevolver.Cliente.Id = id_cli;
-                pedidoADevolver.Cliente.Nombre = _NombreClie;
-                pedidoADevolver.Cliente.Direccion = _DireccionClie;
-                pedidoADevolver.Cliente.Telefono = _TelefonoClie;
-                pedidoADevolver.Observacion = _Obs;
-                pedidoADevolver.Estado = _Estado;
-                DB.RepositorioPedido.UpdatePedidos(pedidoADevolver, _IdCadete);
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ModificarPedido(ModificarPedidoViewModel PedidoVM)
+         {
+             if (ModelState.IsValid)
+             {
+                Pedido pedidoADevolver = mapper.Map<Pedido>(PedidoVM);
+                DB.RepoPedido_Sqlite.UpdatePedidos(pedidoADevolver, PedidoVM.idCadete);
+                return Redirect("~/Pedido");
             }
-            return Redirect("~/Pedido");
-        }
-        
+            return RedirectToAction("Error");
+         }
+         
         //Elimino un pedido
         public IActionResult EliminarPedido(int id)
         {
-            DB.RepositorioPedido.DeletePedido(id);
+            DB.RepoPedido_Sqlite.DeletePedido(id);
             return Redirect("~/Pedido");
         }
 
         //Elimino todos los pedidos
         public IActionResult DeleteAll_Pedidos()
         {
-            DB.RepositorioPedido.DeleteAllPedidos();
+            DB.RepoPedido_Sqlite.DeleteAllPedidos();
             return Redirect("~/Pedido");
         }
         

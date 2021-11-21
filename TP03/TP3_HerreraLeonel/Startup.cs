@@ -1,9 +1,3 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,13 +5,19 @@ using System.Threading.Tasks;
 using TP3_HerreraLeonel.Entities;
 using NLog.Web;
 using TP3_HerreraLeonel.Models;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using AutoMapper;
 
 namespace TP3_HerreraLeonel
 {
     public class Startup
     {
-        //static List<Cadete> listaCadetes = new List<Cadete>();
-        static DBTemporal DB = new DBTemporal(NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger());
+        
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -29,14 +29,18 @@ namespace TP3_HerreraLeonel
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
-            //RepositorioCadete RepoCadetes = new RepositorioCadete (Configuration.GetConnectionString("Default"), NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger());
-            //RepositorioPedido RepoPedidos = new RepositorioPedido(Configuration.GetConnectionString("Default"), NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger());
 
-            IDBSQLite DB = new DBSQLite(Configuration.GetConnectionString("Default"), NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger());
-
-            services.AddSingleton(DB);
-            //services.AddSingleton(RepoCadetes);
-            //services.AddSingleton(RepoPedidos);
+            IDataBase DB_ = new DataBase(Configuration.GetConnectionString("Default"), NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger());           
+            services.AddSingleton(DB_);
+            services.AddAutoMapper(typeof(MapProfile));
+            
+            services.AddSession(options =>
+               {
+                   options.IdleTimeout = TimeSpan.FromSeconds(3600);
+                   options.Cookie.HttpOnly = true;
+                   options.Cookie.IsEssential = true;
+               } 
+            ); 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -56,6 +60,8 @@ namespace TP3_HerreraLeonel
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseSession();
 
             app.UseAuthorization();
 

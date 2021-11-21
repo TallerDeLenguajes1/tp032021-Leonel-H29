@@ -4,6 +4,8 @@ using System.Data.SQLite;
 using System.Linq;
 using System.Threading.Tasks;
 using TP3_HerreraLeonel.Entities;
+using System.IO;
+using System.Text.Json;
 using NLog;
 
 namespace TP3_HerreraLeonel.Models
@@ -74,16 +76,19 @@ namespace TP3_HerreraLeonel.Models
         public List<Pedido> getPedidos_delCadete(int id)
         {
             List<Pedido> ListadoDePedidos = new List<Pedido>();
+            
             string SQLQuery = "SELECT * FROM Pedidos INNER JOIN Cadetes " +
             "ON Pedidos.cadeteId=Cadetes.cadeteID" +
             " INNER JOIN Clientes ON Pedidos.clienteId=Clientes.clienteID" +
-            " WHERE Cadetes.cadeteID=" + id + "; ";
+            " WHERE Cadetes.cadeteID=@id_cad; ";
             try
             {
                 using (SQLiteConnection conexion = new SQLiteConnection(connectionString))
-                {
+                {        
                     conexion.Open();
                     SQLiteCommand command = new SQLiteCommand(SQLQuery, conexion);
+                    command.Parameters.AddWithValue("@id_cad", id);
+                    command.ExecuteNonQuery();
                     using (SQLiteDataReader DataReader = command.ExecuteReader())
                     {
                         while (DataReader.Read())
@@ -144,13 +149,17 @@ namespace TP3_HerreraLeonel.Models
         public Cadete getCadeteAModificar(int id)
         {
             Cadete cadeteAModificar = new Cadete();
-            string SQLQuery = "SELECT * FROM Cadetes WHERE cadeteID=" + Convert.ToString(id) + ";";
+            //string SQLQuery = "SELECT * FROM Cadetes WHERE cadeteID=" + Convert.ToString(id) + ";";
+            string SQLQuery = "SELECT * FROM Cadetes WHERE cadeteID=@id_cad;";
+
             try
             {
                 using (SQLiteConnection conexion = new SQLiteConnection(connectionString))
                 {
                     conexion.Open();
                     SQLiteCommand command = new SQLiteCommand(SQLQuery, conexion);
+                    command.Parameters.AddWithValue("@id_cad", id.ToString());
+                    command.ExecuteNonQuery();
                     using (SQLiteDataReader DataReader = command.ExecuteReader())
                     {
                         if (DataReader.HasRows)
@@ -266,50 +275,159 @@ namespace TP3_HerreraLeonel.Models
 
     public class JSONRepositorioCadete : IRepositorioCadete
     {
-
         private static ILogger _logger;
-        //public Cadeteria Cadeteria { get; set; }
-
-
         static string rutaArchivoCadetes = @"Cadetes.json";
-        static string rutaArchivoPedidos = @"Pedidos.json";
+        
 
         public JSONRepositorioCadete(ILogger logger) {
             _logger = logger;
         }
-        void IRepositorioCadete.DeleteAllCadetes()
+
+        public void DeleteAllCadetes()
+        {
+            try
+            {
+                using (FileStream archivoCadete = new FileStream(rutaArchivoCadetes, FileMode.Create)) {
+                    using (StreamWriter escribirCadete = new StreamWriter(archivoCadete)) {
+                        escribirCadete.WriteLine("[]");
+                        escribirCadete.Close();
+                        escribirCadete.Dispose();
+                    }
+                }   
+                string mensaje = "TODOS LOS DATOS DE LOS CADETES SE ELIMINARON CORRECTAMENTE DEL ARCHIVO";
+                _logger.Info(mensaje);
+            }
+            catch (Exception ex)
+            {
+                string mensaje = "TODOS LOS DATOS DE LOS CADETES SE ELIMINARON ERRONEAMENTE DEL ARCHIVO: " + ex.Message;
+                _logger.Error(mensaje);
+            }
+        }
+
+        public void DeleteCadetes(int id)
+        {
+            List<Cadete> listaCadetes = getAll();
+
+            try
+            {
+                Cadete cadeteAEliminar = listaCadetes.Where(cadete => cadete.Id == id).Single();
+                listaCadetes.Remove(cadeteAEliminar);
+
+                using (FileStream archivoCadetes = new FileStream(rutaArchivoCadetes, FileMode.Create))
+                {
+                    using (StreamWriter escribirCadete = new StreamWriter(archivoCadetes))
+                    {
+                        string strJson = JsonSerializer.Serialize(listaCadetes.ToList());
+                        escribirCadete.Write("{0}", strJson);
+
+                        escribirCadete.Close();
+                        escribirCadete.Dispose();
+                    }
+                }
+                string mensaje = "LOS DATOS DEL CADETE " + id + " SE ELIMINARON CORRECTAMENTE DEL ARCHIVO";
+                _logger.Info(mensaje);
+            }catch(Exception ex) {
+                string mensaje = "LOS DATOS DEL CADETE " + id + " SE ELIMINARON ERRONEAMENTE DEL ARCHIVO: "+ex.Message;
+                _logger.Error(mensaje);
+            }
+        }
+
+        public List<Cadete> getAll()
+        {
+            List<Cadete> listaCadetes;
+
+            try
+            {
+                using (StreamReader leerJason = File.OpenText(rutaArchivoCadetes))
+                {
+                    var Json = leerJason.ReadToEnd();
+                    if (Json != "")
+                        listaCadetes = JsonSerializer.Deserialize<List<Cadete>>(Json);
+                    else
+                    {
+                        listaCadetes = new List<Cadete>();
+                    }
+                    leerJason.Close();
+                    leerJason.Dispose();
+                    string mensaje = "ARCHIVO " + rutaArchivoCadetes + "ABIERTO CORRECTAMENTE";
+                    _logger.Info(mensaje);
+                }
+            }
+            catch (FileNotFoundException)
+            {
+                listaCadetes = new List<Cadete>();
+                _logger.Error("NO SE PUDO ABRIR EL ARCHIVO " + rutaArchivoCadetes + "CORRECTAMENTE");
+            }
+
+            return listaCadetes;
+        }
+
+        public Cadete getCadeteAModificar(int id)
         {
             throw new NotImplementedException();
         }
 
-        void IRepositorioCadete.DeleteCadetes(int id)
+        public List<Pedido> getPedidos_delCadete(int id)
         {
             throw new NotImplementedException();
         }
 
-        List<Cadete> IRepositorioCadete.getAll()
+        public void InsertCadetes(Cadete cadete)
         {
-            throw new NotImplementedException();
+            List<Cadete> listaCadetes = getAll();
+
+            try
+            {
+                listaCadetes.Add(cadete);
+
+                using(FileStream archivoCadetes = new FileStream(rutaArchivoCadetes, FileMode.Create)) {
+                    using (StreamWriter escribirCadete = new StreamWriter(archivoCadetes))
+                    {
+                        string strJson = JsonSerializer.Serialize(listaCadetes);
+                        escribirCadete.WriteLine("{0}", strJson);
+                        escribirCadete.Close();
+                    }   
+                }
+                string mensaje = "LOS DATOS DEL CADETE " + cadete.Id + " SE GUARDARON CORRECTAMENTE";
+                _logger.Info(mensaje);
+
+            }catch(Exception ex)
+            {
+                string mensaje = "LOS DATOS DEL CADETE " + cadete.Id + " SE GUARDARON ERRONEAMENTE: "+ ex.Message;
+                _logger.Error(mensaje);
+            }
         }
 
-        Cadete IRepositorioCadete.getCadeteAModificar(int id)
+        public void UpdateCadetes(Cadete cadete)
         {
-            throw new NotImplementedException();
-        }
+            List<Cadete> listaCadetes = getAll();
 
-        List<Pedido> IRepositorioCadete.getPedidos_delCadete(int id)
-        {
-            throw new NotImplementedException();
-        }
+            try
+            {
+                Cadete cadeteSeleccionado = listaCadetes.Where(cad => cad.Id == cadete.Id).Single();
+                if (cadeteSeleccionado != null)
+                {
+                    cadeteSeleccionado.Nombre = cadete.Nombre;
+                    cadeteSeleccionado.Direccion = cadete.Direccion;
+                    cadeteSeleccionado.Telefono = cadete.Telefono;
 
-        void IRepositorioCadete.InsertCadetes(Cadete cadete)
-        {
-            throw new NotImplementedException();
-        }
-
-        void IRepositorioCadete.UpdateCadetes(Cadete cadete)
-        {
-            throw new NotImplementedException();
+                    using(FileStream archivoCadete = new FileStream(rutaArchivoCadetes, FileMode.Create)) {
+                        using (StreamWriter escribirCadete = new StreamWriter(archivoCadete)) {
+                            string strJson = JsonSerializer.Serialize(listaCadetes);
+                            escribirCadete.WriteLine("{0}", strJson);
+                            escribirCadete.Close();
+                        }
+                    }
+                  
+                    string mensaje = "LOS DATOS DEL CADETE " + cadeteSeleccionado.Id + " SE MODIFICARON CORRECTAMENTE";
+                    _logger.Info(mensaje);
+                }
+            }
+            catch (Exception ex)
+            {
+                string mensaje = "LOS DATOS DEL CADETE SE MODIFICARON ERRONEAMENTE: "+ex.Message;
+                _logger.Error(mensaje);
+            }
         }
     }
 }

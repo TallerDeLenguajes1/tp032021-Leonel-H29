@@ -1,12 +1,12 @@
-﻿
+﻿@model TP3_HerreraLeonel.ViewModels.ModificarPedidoViewModel
+
+
 @{
-    ViewData["Title"] = "Alta Pedidos";
+    ViewData["Title"] = "Modificar Pedido";
 }
-@*
-    item 1: @model List<TP3_HerreraLeonel.Entities.Cadete>
-    item 2: @model TP3_HerreraLeonel.Entities.Pedido;
-*@
-@model Tuple<TP3_HerreraLeonel.Entities.Pedido, List<TP3_HerreraLeonel.Entities.Cadete>>;
+
+@await Html.PartialAsync("_NavAdminPartial", Model.UsuarioLog)
+
 <div class="text-center">
 
     <ul class="nav nav-tabs">
@@ -30,61 +30,76 @@
         </li>
     </ul>
     <br />
-    <h1 class="display-4">Modificar Pedido: <b>N° @Model.Item1.Nro</b></h1>
+    <h1 class="display-4">Modificar Pedido: <b>N° @Model.Nro</b></h1>
 
     <div class="card">
         <div class="card-body">
-            <form asp-action="ModificarUnPedido" method="post">
+            <form asp-action="ModificarPedido" method="post">
                 <fieldset>
                     <legend>Ingrese los datos</legend>
-
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input hidden asp-for="Nro" class="form-control" />
                     <div class="mb-3">
-                        <input hidden type="text" id="id" name="id" class="form-control" value="@Model.Item1.Nro" required>
+                        <label asp-for="Cliente.Nombre" class="control-label"></label>
+                        <input asp-for="Cliente.Nombre" class="form-control" />
+                        <span asp-validation-for="Cliente.Nombre" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Cliente.Direccion" class="control-label"></label>
+                        <input asp-for="Cliente.Direccion" class="form-control" />
+                        <span asp-validation-for="Cliente.Direccion" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Cliente.Telefono" class="control-label"></label>
+                        <input asp-for="Cliente.Telefono" class="form-control" />
+                        <span asp-validation-for="Cliente.Telefono" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Observacion" class="control-label"></label>
+                        <!--
+                        <input asp-for="Observacion" class="form-control"/>
+                        -->
+                        <textarea asp-for="Observacion" class="form-control" required autofocus></textarea>
+                        <span asp-validation-for="Observacion" class="text-danger"></span>
                     </div>
 
                     <div class="mb-3">
-                        <input hidden type="text" id="id_cli" name="id_cli" class="form-control" value="@Model.Item1.Cliente.Id" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="name" class="form-label">NOMBRE COMPLETO</label>
-                        <input type="text" class="form-control" id="_NombreClie" name="_NombreClie" value="@Model.Item1.Cliente.Nombre" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="address" class="form-label">DIRECCION</label>
-                        <input type="text" class="form-control" id="_DireccionClie" name="_DireccionClie" value="@Model.Item1.Cliente.Direccion" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="phoneNumber" class="form-label">TELEFONO</label>
-                        <input type="text" class="form-control" id="_TelefonoClie" name="_TelefonoClie" value="@Model.Item1.Cliente.Telefono" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="Observations" class="form-label">OBSERVACIONES</label>
-                        <textarea type="text" class="form-control" id="_Obs" name="_Obs" value="@Model.Item1.Observacion" required></textarea>
-                    </div>
-                    <div>
-                        <label for="Estados" class="form-label">ESTADO</label>
-                        <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" name="_Estado" id="_Estado" required>
-                            <option value="0" selected> Recibido</option>
-                            <option value="1"> En camino </option>
-                            <option value="2"> Entregado </option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="Cadete" class="form-label">CADETE</label>
-                        <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" name="_IdCadete" id="_IdCadete" required>
+                        <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" asp-for="idCadete" required>
                             <option selected disabled>--SELECCIONE UN CADETE--</option>
-                            @foreach (var item in Model.Item2)
+                            @foreach (var item in Model.ListaCadetes)
                             {
                                 <option value="@item.Id">@item.Id- @item.Nombre</option>
                             }
 
                         </select>
                     </div>
-
-                    <button type="submit" class="btn btn-primary" title="Enviar">ENVIAR</button>
+                    <div class="mb-3">
+                        <label asp-for="Estado" class="control-label"></label>
+                        <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" asp-for="Estado" asp-items="Html.GetEnumSelectList<TP3_HerreraLeonel.ViewModels.ModificarPedidoViewModel.Estados>()">
+                            <option selected disabled>--SELECCIONE UN ESTADO--</option>
+                        </select>
+                        <span asp-validation-for="Estado" class="text-danger"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary" value="ENVIAR" title="Enviar">ENVIAR</button>
                 </fieldset>
             </form>
         </div>
     </div>
 </div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+
+
+
+
+
+
+
+
+
+
+
