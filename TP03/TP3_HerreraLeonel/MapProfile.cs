@@ -9,6 +9,8 @@ namespace TP3_HerreraLeonel
         public MapProfile()
         {
             CreateMap<Usuario, IndexViewModel>().ReverseMap();
+            CreateMap<Usuario, AltaUsuarioViewModel>().ReverseMap();
+            CreateMap<Usuario, LoginViewModel>().ReverseMap();
             CreateMap<Cadete, CadeteIndexViewModel>().ReverseMap();
             CreateMap<Cadete, CadeteAltaViewModel>().ReverseMap();
             CreateMap<Cadete, CadeteModificarViewModel>().ReverseMap();

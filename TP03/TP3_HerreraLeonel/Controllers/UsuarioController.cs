@@ -3,12 +3,11 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using TP3_HerreraLeonel.Models;
 using TP3_HerreraLeonel.Entities;
 using TP3_HerreraLeonel.ViewModels;
 using Microsoft.AspNetCore.Http;
+using AutoMapper;
 
 namespace TP3_HerreraLeonel.Controllers
 {
@@ -16,40 +15,41 @@ namespace TP3_HerreraLeonel.Controllers
     {
         //private readonly ILogger<HomeController> _logger;
         private readonly IDataBase DB;
+        private readonly IMapper mapper;
 
-
-        public UsuarioController(IDataBase dataBase)
+        public UsuarioController(IDataBase dataBase, IMapper autoMap)
         {
             DB = dataBase;
+            mapper = autoMap;
         }
 
         public IActionResult Index()
         {
             return View();
         }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
+        //Inicio de seccion
         public IActionResult Login()
         {
-            return View(true);
+            return View(new LoginViewModel());
         }
 
         [HttpPost]
-        public IActionResult Login(string username, string password)
-        {
-            
-            if (DB.RepoUsuario_Sqlite.IsResgisterUser(username, password))
+        public IActionResult Login(LoginViewModel UserVM)
+        {    
+            if (DB.RepoUsuario_Sqlite.IsResgisterUser(UserVM.Username,UserVM.Password))
             {
-                HttpContext.Session.SetString("username", username);
+                HttpContext.Session.SetString("username", UserVM.Username);
                 return Redirect("~/Home");
             }
-            return View(false);
+            else
+            {
+                UserVM.ErrorMessage = "Usuario o contraseña incorrecta";
+                return View(UserVM);
+            }
+            
         }
         
+        //Cierro la seccion
         public IActionResult Logout()
         {
 
@@ -59,24 +59,44 @@ namespace TP3_HerreraLeonel.Controllers
                 HttpContext.Session.Clear();
                 return Redirect("~/Usuario/Login");
             }
-            return View(false);
+            return View(new LoginViewModel());
         }
-        
 
 
         //Alta de Usuario
-        public IActionResult AltaUsuario(string username, string password)
+        public IActionResult AltaUsuario()
         {
-            if (username == null || password == null)
+            return View(new AltaUsuarioViewModel());
+        }
+
+        [HttpPost]
+        public IActionResult AltaUsuario(AltaUsuarioViewModel UsuarioVM)
+        {
+            if (ModelState.IsValid)
             {
-                return View(new Usuario());
+                if (UsuarioVM.Password != UsuarioVM.Confirm_Password)
+                {
+                    UsuarioVM.ErrorMessage = "Las contraseñas deben ser iguales";
+                    return View(UsuarioVM);
+                }
+                else
+                {
+                    Usuario New_usuario = mapper.Map<Usuario>(UsuarioVM);
+                    if (!DB.RepoUsuario_Sqlite.IsResgisterUser(New_usuario.Username, New_usuario.Password))
+                    {
+                        DB.RepoUsuario_Sqlite.InsertUsuarios(New_usuario);
+                        Console.WriteLine("Usuario Creado");
+                        return RedirectToAction("Login");
+                    }
+                    else {
+                        UsuarioVM.ErrorMessage = "El usuario '" + UsuarioVM.Username + "' ya se encuentra registrado"; ;
+                        return View(UsuarioVM);
+                    }
+                }
             }
-            else
-            {
-                Usuario New_usuario = new Usuario(username, password);
-                DB.RepoUsuario_Sqlite.InsertUsuarios(New_usuario);
-                Console.WriteLine("Usuario Creado");
-                return RedirectToAction("Login");
+            else {
+                UsuarioVM.ErrorMessage = "Ha ocurrido un error. Intente nuevamente";
+                return View(UsuarioVM);
             }
         }
 

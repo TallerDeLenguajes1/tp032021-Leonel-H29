@@ -14,6 +14,8 @@ namespace TP3_HerreraLeonel.ViewModels
         public Cliente Cliente { get; set; }
         public Estados Estado { get; set; }
 
+        public CadeteIndexViewModel getCadete{ get; set; }
+
         public PedidoIndexViewModel()
         {
         }   

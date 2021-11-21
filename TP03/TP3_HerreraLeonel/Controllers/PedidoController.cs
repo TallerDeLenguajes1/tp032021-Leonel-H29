@@ -35,6 +35,12 @@ namespace TP3_HerreraLeonel.Controllers
                 if (UserVM.Username != null)
                 {
                     var ListPedidos = mapper.Map<List<PedidoIndexViewModel>>(DB.RepoPedido_Sqlite.getAllPedidos());
+                    
+                    foreach (var ped in ListPedidos)
+                    {
+                        var _pedido = mapper.Map<Pedido>(ped);
+                        ped.getCadete = mapper.Map<CadeteIndexViewModel>(DB.RepoPedido_Sqlite.get_Only_Pedido_delCadete(_pedido));
+                    }
                     return View(new Tuple<List<PedidoIndexViewModel>, IndexViewModel>(ListPedidos, UserVM));
                 }
                 else
