@@ -20,7 +20,7 @@ namespace TP3_HerreraLeonel.ViewModels
         [ValidateNever][StringLength(20)]
         public string Telefono { get; set; }
 
-        public List<Pedido> ListadoPedidos { get; set; }
+        public List<PedidoIndexViewModel> ListadoPedidos { get; set; }
 
         //public IndexViewModel UsuarioLog { get; set; }
 
@@ -54,7 +54,7 @@ namespace TP3_HerreraLeonel.ViewModels
         [StringLength(20)]
         public string Telefono { get; set; }
 
-        public List<Pedido> ListadoPedidos { get; set; }
+        public List<PedidoIndexViewModel> ListadoPedidos { get; set; }
 
         public IndexViewModel UsuarioLog { get; set; }
 
@@ -77,7 +77,7 @@ namespace TP3_HerreraLeonel.ViewModels
         [StringLength(20)]
         public string Telefono { get; set; }
 
-        public List<Pedido> ListadoPedidos { get; set; }
+        public List<PedidoIndexViewModel> ListadoPedidos { get; set; }
 
         public IndexViewModel UsuarioLog { get; set; }
 

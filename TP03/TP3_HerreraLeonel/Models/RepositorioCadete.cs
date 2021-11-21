@@ -72,7 +72,7 @@ namespace TP3_HerreraLeonel.Models
             return ListadoDeCadetes;
         }
 
-        //Obtengo todos los datos de la tabla Cadetes en la DB
+        //Obtengo todos los datos de todos los pedidos del cadete en la BD
         public List<Pedido> getPedidos_delCadete(int id)
         {
             List<Pedido> ListadoDePedidos = new List<Pedido>();
@@ -112,7 +112,7 @@ namespace TP3_HerreraLeonel.Models
             catch (Exception ex)
             {
                 ListadoDePedidos = new List<Pedido>();
-                _logger.Error("ERROR AL OBTENER LOS DATOS DE LOS CADETES: ", ex.Message);
+                _logger.Error("ERROR AL OBTENER LOS DATOS DE LOS PEDIDOS: ", ex.Message);
             }
             return ListadoDePedidos;
         }

@@ -22,6 +22,7 @@ namespace TP3_HerreraLeonel.Models
         void InsertPedidos(Pedido pedido, int id_cadete);
         void UpdateCliente(Cliente cliente);
         void UpdatePedidos(Pedido pedido, int id_cadete);
+        public Cadete get_Only_Pedido_delCadete(Pedido pedido);
     }
 
     public class SQLiteRepositorioPedido : IRepositorioPedido
@@ -358,6 +359,50 @@ namespace TP3_HerreraLeonel.Models
                 _logger.Error("SE ELIMINARON LOS DATOS DE LOS PEDIDOS DE FORMA ERRONEA: ", ex.Message);
             }
         }
+
+        //Obtengo todos los datos de un pedido del cadete en la BD
+        public Cadete get_Only_Pedido_delCadete(Pedido pedido)
+        {
+            Cadete cadeteAdevolver = new Cadete();
+
+            string SQLQuery = "SELECT * FROM Pedidos INNER JOIN Cadetes " +
+            "ON Pedidos.cadeteId=Cadetes.cadeteID" +
+            " WHERE pedidoID=@id_ped; ";
+            try
+            {
+                using (SQLiteConnection conexion = new SQLiteConnection(connectionString))
+                {
+                    conexion.Open();
+                    SQLiteCommand command = new SQLiteCommand(SQLQuery, conexion);
+                    command.Parameters.AddWithValue("@id_ped", pedido.Nro);
+                    command.ExecuteNonQuery();
+                    using (SQLiteDataReader DataReader = command.ExecuteReader())
+                    {
+                        while (DataReader.Read())
+                        {
+                            Cadete _cadete = new Cadete()
+                            {
+                                Id = Convert.ToInt32(DataReader["cadeteID"]),
+                                Nombre = DataReader["cadeteNombre"].ToString(),
+                                Direccion = DataReader["cadeteDireccion"].ToString(),
+                                Telefono = DataReader["cadeteTelefono"].ToString()
+                            };
+                            cadeteAdevolver = _cadete;
+                        }
+                        DataReader.Close();
+                    }
+
+                    conexion.Close();
+                }
+                _logger.Info("SE OBTUVO LOS DATOS DE PEDIDOS LOS CADETES DE FORMA EXITOSA");
+            }
+            catch (Exception ex)
+            {
+                cadeteAdevolver = new Cadete();
+                _logger.Error("ERROR AL OBTENER LOS DATOS DEL CADETE: ", ex.Message);
+            }
+            return cadeteAdevolver;
+        }
     }
 
     public class JSONRepositorioPedido : IRepositorioPedido
@@ -431,6 +476,9 @@ namespace TP3_HerreraLeonel.Models
 
         public void UpdatePedidos(Pedido pedido, int id_cadete)
         {
+            throw new NotImplementedException();
+        }
+        public Cadete get_Only_Pedido_delCadete(Pedido pedido) {
             throw new NotImplementedException();
         }
     }
