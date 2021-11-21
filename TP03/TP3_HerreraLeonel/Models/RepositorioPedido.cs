@@ -139,6 +139,7 @@ namespace TP3_HerreraLeonel.Models
                         }
                     }
                     _logger.Info("SE INSERTARON LOS DATOS DEL CLIENTE DE FORMA EXITOSA");
+                    cliente.Id = GetNewIDCliente(cliente);
                 }
                 else
                 {
@@ -153,6 +154,14 @@ namespace TP3_HerreraLeonel.Models
                 _logger.Error("SE INSERTARON LOS DATOS DE LOS CLIENTES DE FORMA ERRONEA: ", ex.Message);
             }
             return cliente;
+        }
+
+        //Obtengo el ID del nuevo cliente creado
+        public int GetNewIDCliente(Cliente cliente)
+        {
+            List<Cliente> ListCliente = getAllClientes();
+            cliente = ListCliente.Where(x => x.Nombre == cliente.Nombre && x.Direccion == cliente.Direccion && x.Telefono == cliente.Telefono).Single();
+            return cliente.Id;
         }
 
         //Inserto datos a la tabla

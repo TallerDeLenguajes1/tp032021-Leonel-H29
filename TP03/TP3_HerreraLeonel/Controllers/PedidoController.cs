@@ -95,7 +95,7 @@ namespace TP3_HerreraLeonel.Controllers
                 else
                 {
                     //Console.WriteLine("El modelo no es valido");
-                    return Redirect("~/Usuario/Login");
+                    return RedirectToAction("Error");
                 }
                 
                 
@@ -107,7 +107,6 @@ namespace TP3_HerreraLeonel.Controllers
             }
         }
         
-
 
          //Muestro el pedido a modificar en el form
          public IActionResult ModificarPedido(int id)
@@ -160,8 +159,9 @@ namespace TP3_HerreraLeonel.Controllers
              {
                 Pedido pedidoADevolver = mapper.Map<Pedido>(PedidoVM);
                 DB.RepoPedido_Sqlite.UpdatePedidos(pedidoADevolver, PedidoVM.idCadete);
-             }
-             return Redirect("~/Pedido");
+                return Redirect("~/Pedido");
+            }
+            return RedirectToAction("Error");
          }
          
         //Elimino un pedido

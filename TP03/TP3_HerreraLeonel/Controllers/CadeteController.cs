@@ -87,7 +87,7 @@ namespace TP3_HerreraLeonel.Controllers
                 }
                 else
                 {
-                    return Error();
+                    return RedirectToAction("Error");
                 }
 
             }
@@ -163,9 +163,10 @@ namespace TP3_HerreraLeonel.Controllers
                 var cadeteAModificar = mapper.Map<Cadete>(CadeteVM);
                 DB.RepoCadete_Sqlite.UpdateCadetes(cadeteAModificar);
                 DB.RepoCadete_Json.UpdateCadetes(cadeteAModificar);
+                return Redirect("~/Cadete");
             }
+            return RedirectToAction("Error");
             
-            return Redirect("~/Cadete");
         }
         
         //Elimino el cadete

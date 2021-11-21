@@ -69,15 +69,14 @@ namespace TP3_HerreraLeonel.Controllers
         {
             if (username == null || password == null)
             {
-                //return View(DB.RepositorioCadete.getAll());
                 return View(new Usuario());
             }
             else
             {
                 Usuario New_usuario = new Usuario(username, password);
                 DB.RepoUsuario_Sqlite.InsertUsuarios(New_usuario);
-                //return View(DB.RepositorioCadete.getAll());
-                return View(new Usuario());
+                Console.WriteLine("Usuario Creado");
+                return RedirectToAction("Login");
             }
         }
 
