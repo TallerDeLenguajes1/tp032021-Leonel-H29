@@ -63,13 +63,18 @@ namespace TP3_HerreraLeonel.Controllers
             {
                 Usuario user = DB.RepoUsuario_Sqlite.LoginUser(HttpContext.Session.GetString("username"));
                 var UserVM = mapper.Map<IndexViewModel>(user);
-                if (UserVM.Username != null)
+                if (UserVM.Username != null && UserVM.Username =="admin")
                 {
                     var ListCadetes = mapper.Map<List<CadeteIndexViewModel>>(DB.RepoCadete_Sqlite.getAll());
                     AltaPedidoViewModel PedidoVM = new AltaPedidoViewModel();
                     PedidoVM.UsuarioLog = UserVM;
                     PedidoVM.ListaCadetes = ListCadetes;
                     return View(PedidoVM);
+                }
+                else if (UserVM.Username != null)
+                {
+                    
+                    return RedirectToAction("Index");
                 }
                 else
                 {
@@ -88,9 +93,6 @@ namespace TP3_HerreraLeonel.Controllers
         {
             try
             {
-                
-                //Usuario user = DB.RepoUsuario_Sqlite.LoginUser(HttpContext.Session.GetString("username"));
-                //PedidoVM.UsuarioLog = mapper.Map<IndexViewModel>(user);
                 if (ModelState.IsValid)
                 {
                     var nuevoPedido = mapper.Map<Pedido>(PedidoVM);
@@ -100,11 +102,8 @@ namespace TP3_HerreraLeonel.Controllers
                 }
                 else
                 {
-                    //Console.WriteLine("El modelo no es valido");
                     return RedirectToAction("Error");
-                }
-                
-                
+                }         
             }
             catch (Exception ex)
             {
@@ -121,10 +120,8 @@ namespace TP3_HerreraLeonel.Controllers
              {
                  Usuario user = DB.RepoUsuario_Sqlite.LoginUser(HttpContext.Session.GetString("username"));
                  var UserVM = mapper.Map<IndexViewModel>(user);
-                 if (UserVM != null)
+                 if (UserVM.Username != null && UserVM.Username =="admin")
                  {
-                    //List<Cadete> ListCadetes = DB.RepoCadete_Sqlite.getAll();
-                    //Pedido pedidoADevolver = DB.RepoPedido_Sqlite.getPedidoAModificar(id);
                     var ListCadetes = mapper.Map<List<CadeteIndexViewModel>>(DB.RepoCadete_Sqlite.getAll());
                     var pedidoADevolver = mapper.Map<PedidoIndexViewModel>(DB.RepoPedido_Sqlite.getPedidoAModificar(id));
                      if (pedidoADevolver != null)
@@ -144,6 +141,9 @@ namespace TP3_HerreraLeonel.Controllers
 
                      else
                          return Redirect("~/Pedido");
+                 }
+                 else if (UserVM.Username != null) {
+                    return Redirect("~/Pedido");
                  }
                  else
                  {
@@ -173,14 +173,19 @@ namespace TP3_HerreraLeonel.Controllers
         //Elimino un pedido
         public IActionResult EliminarPedido(int id)
         {
-            DB.RepoPedido_Sqlite.DeletePedido(id);
+            if (HttpContext.Session.GetString("username") == "admin") {
+                DB.RepoPedido_Sqlite.DeletePedido(id);
+            }
             return Redirect("~/Pedido");
         }
 
         //Elimino todos los pedidos
         public IActionResult DeleteAll_Pedidos()
         {
-            DB.RepoPedido_Sqlite.DeleteAllPedidos();
+            if (HttpContext.Session.GetString("username") == "admin")
+            {
+                DB.RepoPedido_Sqlite.DeleteAllPedidos();
+            }
             return Redirect("~/Pedido");
         }
         

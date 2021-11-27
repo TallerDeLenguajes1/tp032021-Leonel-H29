@@ -54,9 +54,13 @@ namespace TP3_HerreraLeonel.Controllers
                 Usuario user = DB.RepoUsuario_Sqlite.LoginUser(HttpContext.Session.GetString("username"));
                 var UsuarioMV = mapper.Map<IndexViewModel>(user);
                 var CadeteMV = mapper.Map<CadeteIndexViewModel>(ListCadetes.Where(cad => cad.Id == id).Single());
-                if (UsuarioMV.Username != null)
+                if (UsuarioMV.Username != null && UsuarioMV.Username =="admin")
                 {
                     return View(new Tuple<CadeteIndexViewModel, IndexViewModel>( CadeteMV, UsuarioMV));
+                }
+                if (UsuarioMV.Username != null)
+                {
+                    return RedirectToAction("Index");
                 }
                 else
                 {
@@ -79,11 +83,15 @@ namespace TP3_HerreraLeonel.Controllers
                 Usuario user = DB.RepoUsuario_Sqlite.LoginUser(HttpContext.Session.GetString("username"));
                 var UsuarioMV = mapper.Map<IndexViewModel>(user);
 
-                if (UsuarioMV.Username != null)
+                if (UsuarioMV.Username != null && UsuarioMV.Username == "admin")
                 {
                     var CadeteVM = new CadeteAltaViewModel();
                     CadeteVM.UsuarioLog = UsuarioMV;
                     return View(CadeteVM);
+                }
+                else if (UsuarioMV.Username != null)
+                {
+                    return RedirectToAction("Index");
                 }
                 else
                 {
@@ -135,7 +143,7 @@ namespace TP3_HerreraLeonel.Controllers
                 Usuario user = DB.RepoUsuario_Sqlite.LoginUser(HttpContext.Session.GetString("username"));
                 var UsuarioMV = mapper.Map<IndexViewModel>(user);
                 
-                if (UsuarioMV.Username != null)
+                if (UsuarioMV.Username != null && UsuarioMV.Username =="admin")
                 {
                     var cadeteADevolver = mapper.Map<CadeteModificarViewModel>(DB.RepoCadete_Sqlite.getCadeteAModificar(id));
                     cadeteADevolver.UsuarioLog = UsuarioMV;
@@ -144,6 +152,10 @@ namespace TP3_HerreraLeonel.Controllers
                         return View(cadeteADevolver);
                     else
                         return Redirect("~/Cadete");
+                }
+                else if (UsuarioMV.Username != null) {
+
+                    return RedirectToAction("Index");
                 }
                 else
                 {
@@ -172,16 +184,23 @@ namespace TP3_HerreraLeonel.Controllers
         //Elimino el cadete
         public IActionResult EliminarCadete(int id)
         {
-            DB.RepoCadete_Sqlite.DeleteCadetes(id);
-            DB.RepoCadete_Json.DeleteCadetes(id);
+            if (HttpContext.Session.GetString("username") == "admin") {
+                DB.RepoCadete_Sqlite.DeleteCadetes(id);
+                DB.RepoCadete_Json.DeleteCadetes(id);
+            }
+           
             return Redirect("~/Cadete");
         }
 
         //Elimino todos los cadetes
         public IActionResult DeleteAll_Cadetes()
         {
-            DB.RepoCadete_Sqlite.DeleteAllCadetes();
-            DB.RepoCadete_Json.DeleteAllCadetes();
+            if (HttpContext.Session.GetString("username") == "admin")
+            {
+                DB.RepoCadete_Sqlite.DeleteAllCadetes();
+                DB.RepoCadete_Json.DeleteAllCadetes();
+            }
+               
             return Redirect("~/Cadete");
         }
         
