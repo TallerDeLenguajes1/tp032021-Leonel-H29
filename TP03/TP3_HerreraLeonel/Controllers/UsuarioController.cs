@@ -25,12 +25,36 @@ namespace TP3_HerreraLeonel.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            Usuario user = DB.RepoUsuario_Sqlite.LoginUser(HttpContext.Session.GetString("username"));
+            var UserVM = mapper.Map<IndexViewModel>(user);
+            if (UserVM.Username != null && UserVM.Username == "admin")
+            {
+                var ListUsuariosVM = mapper.Map<List<IndexViewModel>>(DB.RepoUsuario_Sqlite.getAll());
+
+                return View(new Tuple<List<IndexViewModel>, IndexViewModel>(ListUsuariosVM, UserVM));
+
+            }
+            
+            else
+            {
+                if (UserVM.Username != null)
+                {
+                    return Redirect("~/Home");
+                    
+                }
+                else {
+                     return Redirect("~/Usuario/Login");
+                }
+            }
         }
+
         //Inicio de seccion
         public IActionResult Login()
         {
-            return View(new LoginViewModel());
+            if (HttpContext.Session.GetString("username") == null)
+                return View(new LoginViewModel());
+            else
+                return Redirect("~/Home");
         }
 
         [HttpPost]
@@ -66,7 +90,11 @@ namespace TP3_HerreraLeonel.Controllers
         //Alta de Usuario
         public IActionResult AltaUsuario()
         {
-            return View(new AltaUsuarioViewModel());
+            if (HttpContext.Session.GetString("username") == null)
+            {
+                return View(new AltaUsuarioViewModel());
+            }
+            return Redirect("~/Home");
         }
 
         [HttpPost]
@@ -98,6 +126,87 @@ namespace TP3_HerreraLeonel.Controllers
                 UsuarioVM.ErrorMessage = "Ha ocurrido un error. Intente nuevamente";
                 return View(UsuarioVM);
             }
+        }
+
+
+        //Muestro los datos del usuario en el form de edicion
+        public IActionResult ModificarUsuario(int id)
+        {
+            try
+            {
+                Usuario user = DB.RepoUsuario_Sqlite.LoginUser(HttpContext.Session.GetString("username"));
+                var UsuarioMV = mapper.Map<IndexViewModel>(user);
+
+                if (UsuarioMV.Username != null && UsuarioMV.Username == "admin")
+                {
+                    var usuarioADevolver = mapper.Map<ModificarUsuarioViewModel>(DB.RepoUsuario_Sqlite.getUsuarioAModificar(id));
+                    usuarioADevolver.UsuarioLog = UsuarioMV;
+
+                    if (usuarioADevolver != null)
+                        return View(usuarioADevolver);
+                    else
+                        return RedirectToAction("Index");
+                }
+                else if (UsuarioMV.Username != null)
+                {
+
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return RedirectToAction("Login");
+                }
+            }
+            catch (Exception) { return RedirectToAction("Login"); }
+        }
+
+        //Modifico los datos del usuario
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ModificarUsuario(ModificarUsuarioViewModel UsuarioVM)
+        {
+            if (ModelState.IsValid && UsuarioVM.Id_usuario>0)
+            {
+                Usuario user = DB.RepoUsuario_Sqlite.LoginUser(HttpContext.Session.GetString("username"));
+                var UsuarioLogMV = mapper.Map<IndexViewModel>(user);
+                UsuarioVM.UsuarioLog = UsuarioLogMV;
+
+                if (UsuarioVM.Password==UsuarioVM.Confirm_Password)
+                {
+                    var usuarioAModificar = mapper.Map<Usuario>(UsuarioVM);
+                    DB.RepoUsuario_Sqlite.UpdateUsuarios(usuarioAModificar);
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    UsuarioVM.ErrorMessage = "Las contraseñas tienen que coincidir";
+                    return View(UsuarioVM);
+                }
+            }
+            return RedirectToAction("Error");
+
+        }
+
+        //Elimino el cadete
+        public IActionResult EliminarUsuario(int id)
+        {
+            if (HttpContext.Session.GetString("username") == "admin")
+            {
+                DB.RepoUsuario_Sqlite.DeleteUsuarios(id);
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        //Elimino todos los cadetes
+        public IActionResult DeleteAll_Usuarios()
+        {
+            if (HttpContext.Session.GetString("username") == "admin")
+            {
+                DB.RepoUsuario_Sqlite.DeleteAllUsers();
+            }
+
+            return RedirectToAction("Index");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

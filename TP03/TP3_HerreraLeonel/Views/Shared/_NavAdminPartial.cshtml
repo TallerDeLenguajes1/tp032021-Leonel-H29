@@ -19,6 +19,12 @@
                     <li class="nav-item">
                         <a class="nav-link" asp-area="" asp-controller="Pedido" asp-action="Index" title="Pedidos">Pedidos</a>
                     </li>
+                    @if (Model.Username == "admin")
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Usuario" asp-action="Index" title="Usuarios">Usuarios</a>
+                        </li>
+                    }
                 </ul>
             </div>
         </div>

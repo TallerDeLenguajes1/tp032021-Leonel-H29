@@ -9,6 +9,7 @@ namespace TP3_HerreraLeonel.ViewModels
     
     public class IndexViewModel
     {
+        public int Id_usuario { get; set; }
         [Required(ErrorMessage = "El campo Username es requerido")]
         [StringLength(16)]
         public string Username { get; set; }
@@ -52,6 +53,26 @@ namespace TP3_HerreraLeonel.ViewModels
         public string ErrorMessage { get; set; }
 
         public AltaUsuarioViewModel() { }
+    }
+
+    public class ModificarUsuarioViewModel
+    {
+        public int Id_usuario { get; set; }
+        public string Username { get; set; }
+
+        [Required(ErrorMessage = "El campo Password es requerido")]
+        [StringLength(100)]
+        public string Password { get; set; }
+
+        [Required(ErrorMessage = "El campo Password es requerido")]
+        [StringLength(100)]
+        public string Confirm_Password { get; set; }
+
+        public string ErrorMessage { get; set; }
+
+        public IndexViewModel UsuarioLog { get; set; }
+
+        public ModificarUsuarioViewModel() { }
     }
 }
 

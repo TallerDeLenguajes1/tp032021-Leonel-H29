@@ -149,7 +149,6 @@ namespace TP3_HerreraLeonel.Models
         public Cadete getCadeteAModificar(int id)
         {
             Cadete cadeteAModificar = new Cadete();
-            //string SQLQuery = "SELECT * FROM Cadetes WHERE cadeteID=" + Convert.ToString(id) + ";";
             string SQLQuery = "SELECT * FROM Cadetes WHERE cadeteID=@id_cad;";
 
             try
